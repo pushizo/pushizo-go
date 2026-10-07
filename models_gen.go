@@ -188,9 +188,47 @@ type AppSettingsSDKSetup struct {
 
 // AppSettingsWebPush: AppSettingsWebPush şeması.
 type AppSettingsWebPush struct {
-	ServiceWorkerPath  *string                   `json:"serviceWorkerPath,omitempty"`
-	ServiceWorkerScope *string                   `json:"serviceWorkerScope,omitempty"`
-	Prompt             *AppSettingsWebPushPrompt `json:"prompt,omitempty"`
+	ServiceWorkerPath   *string                                `json:"serviceWorkerPath,omitempty"`
+	ServiceWorkerScope  *string                                `json:"serviceWorkerScope,omitempty"`
+	Prompt              *AppSettingsWebPushPrompt              `json:"prompt,omitempty"`
+	WelcomeNotification *AppSettingsWebPushWelcomeNotification `json:"welcomeNotification,omitempty"`
+	ClickBehavior       *AppSettingsWebPushClickBehavior       `json:"clickBehavior,omitempty"`
+	CustomLink          *AppSettingsWebPushCustomLink          `json:"customLink,omitempty"`
+	PromptBackoffDays   []int64                                `json:"promptBackoffDays,omitempty"`
+}
+
+// AppSettingsWebPushClickBehavior: AppSettingsWebPushClickBehavior şeması.
+type AppSettingsWebPushClickBehavior struct {
+	// Zorunlu. Değerler: "exact", "origin".
+	Match string `json:"match"`
+	// Zorunlu. Değerler: "navigate", "focus".
+	Action string `json:"action"`
+}
+
+// AppSettingsWebPushCustomLink: AppSettingsWebPushCustomLink şeması.
+type AppSettingsWebPushCustomLink struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu. Değerler: "button", "link".
+	Style string `json:"style"`
+	// Zorunlu. Değerler: "small", "medium", "large".
+	Size               string                                            `json:"size"`
+	Color              *AppSettingsWebPushCustomLinkColor                `json:"color,omitempty"`
+	Texts              map[string]AppSettingsWebPushCustomLinkTextsValue `json:"texts,omitempty"`
+	UnsubscribeEnabled *bool                                             `json:"unsubscribeEnabled,omitempty"`
+}
+
+// AppSettingsWebPushCustomLinkColor: AppSettingsWebPushCustomLinkColor şeması.
+type AppSettingsWebPushCustomLinkColor struct {
+	Button *string `json:"button,omitempty"`
+	Text   *string `json:"text,omitempty"`
+}
+
+// AppSettingsWebPushCustomLinkTextsValue: AppSettingsWebPushCustomLinkTextsValue şeması.
+type AppSettingsWebPushCustomLinkTextsValue struct {
+	Subscribe   *string `json:"subscribe,omitempty"`
+	Unsubscribe *string `json:"unsubscribe,omitempty"`
+	Explanation *string `json:"explanation,omitempty"`
 }
 
 // AppSettingsWebPushPrompt: AppSettingsWebPushPrompt şeması.
@@ -221,6 +259,20 @@ type AppSettingsWebPushPromptTextsValue struct {
 	Message *string `json:"message,omitempty"`
 	Accept  *string `json:"accept,omitempty"`
 	Cancel  *string `json:"cancel,omitempty"`
+}
+
+// AppSettingsWebPushWelcomeNotification: AppSettingsWebPushWelcomeNotification şeması.
+type AppSettingsWebPushWelcomeNotification struct {
+	// Zorunlu.
+	Enabled bool                                                       `json:"enabled"`
+	URL     *string                                                    `json:"url,omitempty"`
+	Texts   map[string]AppSettingsWebPushWelcomeNotificationTextsValue `json:"texts,omitempty"`
+}
+
+// AppSettingsWebPushWelcomeNotificationTextsValue: AppSettingsWebPushWelcomeNotificationTextsValue şeması.
+type AppSettingsWebPushWelcomeNotificationTextsValue struct {
+	Title   *string `json:"title,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 // AuditEntry: AuditEntry şeması.
@@ -2703,9 +2755,47 @@ type UpdateAppDtoSettingsSDKSetup struct {
 
 // UpdateAppDtoSettingsWebPush: UpdateAppDtoSettingsWebPush şeması.
 type UpdateAppDtoSettingsWebPush struct {
-	ServiceWorkerPath  *string                            `json:"serviceWorkerPath,omitempty"`
-	ServiceWorkerScope *string                            `json:"serviceWorkerScope,omitempty"`
-	Prompt             *UpdateAppDtoSettingsWebPushPrompt `json:"prompt,omitempty"`
+	ServiceWorkerPath   *string                                         `json:"serviceWorkerPath,omitempty"`
+	ServiceWorkerScope  *string                                         `json:"serviceWorkerScope,omitempty"`
+	Prompt              *UpdateAppDtoSettingsWebPushPrompt              `json:"prompt,omitempty"`
+	WelcomeNotification *UpdateAppDtoSettingsWebPushWelcomeNotification `json:"welcomeNotification,omitempty"`
+	ClickBehavior       *UpdateAppDtoSettingsWebPushClickBehavior       `json:"clickBehavior,omitempty"`
+	CustomLink          *UpdateAppDtoSettingsWebPushCustomLink          `json:"customLink,omitempty"`
+	PromptBackoffDays   []int64                                         `json:"promptBackoffDays,omitempty"`
+}
+
+// UpdateAppDtoSettingsWebPushClickBehavior: UpdateAppDtoSettingsWebPushClickBehavior şeması.
+type UpdateAppDtoSettingsWebPushClickBehavior struct {
+	// Zorunlu. Değerler: "exact", "origin".
+	Match string `json:"match"`
+	// Zorunlu. Değerler: "navigate", "focus".
+	Action string `json:"action"`
+}
+
+// UpdateAppDtoSettingsWebPushCustomLink: UpdateAppDtoSettingsWebPushCustomLink şeması.
+type UpdateAppDtoSettingsWebPushCustomLink struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu. Değerler: "button", "link".
+	Style string `json:"style"`
+	// Zorunlu. Değerler: "small", "medium", "large".
+	Size               string                                                     `json:"size"`
+	Color              *UpdateAppDtoSettingsWebPushCustomLinkColor                `json:"color,omitempty"`
+	Texts              map[string]UpdateAppDtoSettingsWebPushCustomLinkTextsValue `json:"texts,omitempty"`
+	UnsubscribeEnabled *bool                                                      `json:"unsubscribeEnabled,omitempty"`
+}
+
+// UpdateAppDtoSettingsWebPushCustomLinkColor: UpdateAppDtoSettingsWebPushCustomLinkColor şeması.
+type UpdateAppDtoSettingsWebPushCustomLinkColor struct {
+	Button *string `json:"button,omitempty"`
+	Text   *string `json:"text,omitempty"`
+}
+
+// UpdateAppDtoSettingsWebPushCustomLinkTextsValue: UpdateAppDtoSettingsWebPushCustomLinkTextsValue şeması.
+type UpdateAppDtoSettingsWebPushCustomLinkTextsValue struct {
+	Subscribe   *string `json:"subscribe,omitempty"`
+	Unsubscribe *string `json:"unsubscribe,omitempty"`
+	Explanation *string `json:"explanation,omitempty"`
 }
 
 // UpdateAppDtoSettingsWebPushPrompt: UpdateAppDtoSettingsWebPushPrompt şeması.
@@ -2736,6 +2826,20 @@ type UpdateAppDtoSettingsWebPushPromptTextsValue struct {
 	Message *string `json:"message,omitempty"`
 	Accept  *string `json:"accept,omitempty"`
 	Cancel  *string `json:"cancel,omitempty"`
+}
+
+// UpdateAppDtoSettingsWebPushWelcomeNotification: UpdateAppDtoSettingsWebPushWelcomeNotification şeması.
+type UpdateAppDtoSettingsWebPushWelcomeNotification struct {
+	// Zorunlu.
+	Enabled bool                                                                `json:"enabled"`
+	URL     *string                                                             `json:"url,omitempty"`
+	Texts   map[string]UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue `json:"texts,omitempty"`
+}
+
+// UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue: UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue şeması.
+type UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue struct {
+	Title   *string `json:"title,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 // UpdateInAppDto: UpdateInAppDto şeması.
