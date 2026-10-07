@@ -271,9 +271,11 @@ func (s *NotificationsService) DeliveriesAll(ctx context.Context, messageID stri
 // History: Bildirim geçmişi CSV işi (teslimatlar; tamamlanınca download_url)
 //
 // GET /v1/notifications/{messageId}/history
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
 func (s *NotificationsService) History(ctx context.Context, messageID string, opts ...RequestOption) (*Export, error) {
 	ro := s.client.requestConfig(opts)
-	op := &operation{method: "GET", path: "/v1/notifications/{messageId}/history"}
+	op := &operation{method: "GET", path: "/v1/notifications/{messageId}/history", queryAppID: true}
 	op.pathParams = map[string]string{"messageId": messageID}
 	var out Export
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
@@ -285,9 +287,11 @@ func (s *NotificationsService) History(ctx context.Context, messageID string, op
 // ExportEvents: Mesaj olay CSV işi (gönderildi/teslim/açıldı/tıklandı/bounce…; tamamlanınca download_url)
 //
 // POST /v1/notifications/{messageId}/export_events
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
 func (s *NotificationsService) ExportEvents(ctx context.Context, messageID string, opts ...RequestOption) (*Export, error) {
 	ro := s.client.requestConfig(opts)
-	op := &operation{method: "POST", path: "/v1/notifications/{messageId}/export_events"}
+	op := &operation{method: "POST", path: "/v1/notifications/{messageId}/export_events", queryAppID: true}
 	op.pathParams = map[string]string{"messageId": messageID}
 	var out Export
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
@@ -898,17 +902,30 @@ func (s *SegmentsService) UsedBy(ctx context.Context, segmentID string, opts ...
 	return &out, nil
 }
 
+// SegmentsEstimateParams: SegmentsService.Estimate için isteğe bağlı sorgu parametreleri.
+type SegmentsEstimateParams struct {
+	// true: önbelleği atla, tam sayım Değerler: "true", "false".
+	Force *string
+}
+
+func (p *SegmentsEstimateParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "force", p.Force)
+}
+
 // Estimate: Tahmini sayım
 //
 // POST /v1/apps/{appId}/segments/{segmentId}/estimate
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *SegmentsService) Estimate(ctx context.Context, segmentID string, force string, opts ...RequestOption) (*SegmentEstimate, error) {
+func (s *SegmentsService) Estimate(ctx context.Context, segmentID string, params *SegmentsEstimateParams, opts ...RequestOption) (*SegmentEstimate, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/segments/{segmentId}/estimate"}
 	op.pathParams = map[string]string{"segmentId": segmentID}
 	op.query = url.Values{}
-	addQuery(op.query, "force", &force)
+	params.appendQuery(op.query)
 	var out SegmentEstimate
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
