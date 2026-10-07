@@ -32,6 +32,7 @@ type services struct {
 	Apps          *AppsService
 	APIKeys       *APIKeysService
 	Organization  *OrganizationService
+	Journeys      *JourneysService
 }
 
 func (c *Client) initServices() {
@@ -54,6 +55,7 @@ func (c *Client) initServices() {
 	c.Apps = &AppsService{client: c}
 	c.APIKeys = &APIKeysService{client: c}
 	c.Organization = &OrganizationService{client: c}
+	c.Journeys = &JourneysService{client: c}
 }
 
 // NotificationsService: Bildirim gönderme, durum, iptal, teslimatlar ve geçmiş dışa aktarımı.
@@ -2805,4 +2807,427 @@ func (s *OrganizationService) AuditLogsAll(ctx context.Context, params *Organiza
 		}
 		return page.Data, page.NextCursor, page.HasMore, nil
 	})
+}
+
+// JourneysService: journeys kaynağı.
+type JourneysService struct {
+	client *Client
+}
+
+// JourneysListParams: JourneysService.List için isteğe bağlı sorgu parametreleri.
+type JourneysListParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "draft", "active", "paused", "archived".
+	Status *string
+	Q      *string
+}
+
+func (p *JourneysListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+	addQuery(q, "q", p.Q)
+}
+
+// List: Journey listesi
+//
+// GET /v1/apps/{appId}/journeys
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) List(ctx context.Context, params *JourneysListParams, opts ...RequestOption) (*JourneyPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/journeys"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out JourneyPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAll: List sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *JourneysService) ListAll(ctx context.Context, params *JourneysListParams, opts ...RequestOption) iter.Seq2[Journey, error] {
+	var p JourneysListParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]Journey, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.List(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Create: Journey oluştur (taslak)
+//
+// POST /v1/apps/{appId}/journeys
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Create(ctx context.Context, body *JourneysCreateBody, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Journey detayı
+//
+// GET /v1/apps/{appId}/journeys/{journeyId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Get(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/journeys/{journeyId}"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Ad / açıklama
+//
+// PATCH /v1/apps/{appId}/journeys/{journeyId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Update(ctx context.Context, journeyID string, body *UpdateJourneyDto, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/journeys/{journeyId}"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Hiç yayınlanmamış journey'i sil
+//
+// DELETE /v1/apps/{appId}/journeys/{journeyId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Delete(ctx context.Context, journeyID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/journeys/{journeyId}"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SaveDraft: Taslağı kaydet
+//
+// PUT /v1/apps/{appId}/journeys/{journeyId}/draft
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) SaveDraft(ctx context.Context, journeyID string, body *JourneysSaveDraftBody, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/journeys/{journeyId}/draft"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateNode: Taslaktaki düğümü güncelle
+//
+// PATCH /v1/apps/{appId}/journeys/{journeyId}/nodes/{nodeId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) UpdateNode(ctx context.Context, journeyID string, nodeID string, body *UpdateNodeDto, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/journeys/{journeyId}/nodes/{nodeId}"}
+	op.pathParams = map[string]string{"journeyId": journeyID, "nodeId": nodeID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Versions: Sürümler
+//
+// GET /v1/apps/{appId}/journeys/{journeyId}/versions
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Versions(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyVersionList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/journeys/{journeyId}/versions"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyVersionList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Publish: Yayınla
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/publish
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Publish(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyPublishResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/publish"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyPublishResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Pause: Duraklat
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/pause
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Pause(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/pause"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Resume: Devam ettir
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/resume
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Resume(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/resume"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Archive: Arşivle
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/archive
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Archive(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/archive"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Duplicate: Kopyala
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/duplicate
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Duplicate(ctx context.Context, journeyID string, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/duplicate"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// JourneysStatsParams: JourneysService.Stats için isteğe bağlı sorgu parametreleri.
+type JourneysStatsParams struct {
+	Version *int64
+}
+
+func (p *JourneysStatsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "version", p.Version)
+}
+
+// Stats: Düğüm bazlı istatistik
+//
+// GET /v1/apps/{appId}/journeys/{journeyId}/stats
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Stats(ctx context.Context, journeyID string, params *JourneysStatsParams, opts ...RequestOption) (*JourneyStats, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/journeys/{journeyId}/stats"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out JourneyStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// JourneysRunsParams: JourneysService.Runs için isteğe bağlı sorgu parametreleri.
+type JourneysRunsParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "active", "waiting", "completed", "exited", "failed".
+	Status  *string
+	UserID  *string
+	Version *int64
+}
+
+func (p *JourneysRunsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+	addQuery(q, "user_id", p.UserID)
+	addQuery(q, "version", p.Version)
+}
+
+// Runs: Run listesi
+//
+// GET /v1/apps/{appId}/journeys/{journeyId}/runs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Runs(ctx context.Context, journeyID string, params *JourneysRunsParams, opts ...RequestOption) (*JourneyRunPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/journeys/{journeyId}/runs"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out JourneyRunPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RunsAll: Runs sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *JourneysService) RunsAll(ctx context.Context, journeyID string, params *JourneysRunsParams, opts ...RequestOption) iter.Seq2[JourneyRun, error] {
+	var p JourneysRunsParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]JourneyRun, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.Runs(ctx, journeyID, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Trigger: Kullanıcıyı journey'e sok (external_id, user_id veya alias; context Liquid custom_data)
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/runs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Trigger(ctx context.Context, journeyID string, body *TriggerRunDto, opts ...RequestOption) (*JourneyTriggerResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/runs"}
+	op.pathParams = map[string]string{"journeyId": journeyID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out JourneyTriggerResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Run: Run detayı ve adımlar
+//
+// GET /v1/apps/{appId}/journeys/{journeyId}/runs/{runId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) Run(ctx context.Context, journeyID string, runID string, opts ...RequestOption) (*JourneyRunDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/journeys/{journeyId}/runs/{runId}"}
+	op.pathParams = map[string]string{"journeyId": journeyID, "runId": runID}
+	var out JourneyRunDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ExitRun: Run'ı sonlandır
+//
+// DELETE /v1/apps/{appId}/journeys/{journeyId}/runs/{runId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) ExitRun(ctx context.Context, journeyID string, runID string, opts ...RequestOption) (*JourneyRunDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/journeys/{journeyId}/runs/{runId}"}
+	op.pathParams = map[string]string{"journeyId": journeyID, "runId": runID}
+	var out JourneyRunDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListForUser: Kullanıcının journey run'ları
+//
+// GET /v1/apps/{appId}/users/by/{label}/{value}/journeys
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) ListForUser(ctx context.Context, label string, value string, opts ...RequestOption) (*UserJourneyRuns, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/users/by/{label}/{value}/journeys"}
+	op.pathParams = map[string]string{"label": label, "value": value}
+	var out UserJourneyRuns
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
 }

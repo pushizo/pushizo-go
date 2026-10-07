@@ -856,12 +856,13 @@ type CreateInAppDto struct {
 	// Zorunlu.
 	Triggers []any `json:"triggers"`
 	// Zorunlu.
-	Display   CreateInAppDtoDisplay    `json:"display"`
-	Audience  *CreateInAppDtoAudience  `json:"audience,omitempty"`
-	Frequency *CreateInAppDtoFrequency `json:"frequency,omitempty"`
-	Priority  *int64                   `json:"priority,omitempty"`
-	StartAt   *string                  `json:"start_at,omitempty"`
-	EndAt     *string                  `json:"end_at,omitempty"`
+	Display     CreateInAppDtoDisplay    `json:"display"`
+	Audience    *CreateInAppDtoAudience  `json:"audience,omitempty"`
+	Frequency   *CreateInAppDtoFrequency `json:"frequency,omitempty"`
+	JourneyOnly *bool                    `json:"journey_only,omitempty"`
+	Priority    *int64                   `json:"priority,omitempty"`
+	StartAt     *string                  `json:"start_at,omitempty"`
+	EndAt       *string                  `json:"end_at,omitempty"`
 }
 
 // CreateInAppDtoAudience: CreateInAppDtoAudience şeması.
@@ -1110,7 +1111,7 @@ type CreateWebhookDto struct {
 	// Zorunlu.
 	URL         string  `json:"url"`
 	Description *string `json:"description,omitempty"`
-	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed".
+	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited".
 	Events       []string                      `json:"events"`
 	EventFilters *CreateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -1587,6 +1588,8 @@ type InAppMessage struct {
 	// Zorunlu.
 	Frequency InAppMessageFrequency `json:"frequency"`
 	// Zorunlu.
+	JourneyOnly bool `json:"journey_only"`
+	// Zorunlu.
 	StartAt *string `json:"start_at"`
 	// Zorunlu.
 	EndAt *string `json:"end_at"`
@@ -1699,6 +1702,390 @@ type InboxReadAllResult struct {
 	Updated int64 `json:"updated"`
 	// Zorunlu.
 	UnreadCount int64 `json:"unread_count"`
+}
+
+// Journey: Journey şeması.
+type Journey struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	CurrentVersion *int64 `json:"current_version"`
+	// Zorunlu.
+	DraftVersion *int64 `json:"draft_version"`
+	// Zorunlu.
+	TriggerKind *string `json:"trigger_kind"`
+	// Zorunlu.
+	PublishedAt *string `json:"published_at"`
+	// Zorunlu.
+	CreatedBy *string `json:"created_by"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+	// Zorunlu.
+	Summary JourneySummary `json:"summary"`
+}
+
+// JourneyDetail: JourneyDetail şeması.
+type JourneyDetail struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	CurrentVersion *int64 `json:"current_version"`
+	// Zorunlu.
+	DraftVersion *int64 `json:"draft_version"`
+	// Zorunlu.
+	TriggerKind *string `json:"trigger_kind"`
+	// Zorunlu.
+	PublishedAt *string `json:"published_at"`
+	// Zorunlu.
+	CreatedBy *string `json:"created_by"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+	// Zorunlu.
+	Summary JourneyDetailSummary `json:"summary"`
+	// Zorunlu.
+	Editing JourneyDetailEditing `json:"editing"`
+	// Zorunlu.
+	Issues []JourneyDetailIssuesItem `json:"issues"`
+}
+
+// JourneyDetailEditing: JourneyDetailEditing şeması.
+type JourneyDetailEditing struct {
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	Graph map[string]any `json:"graph"`
+	// Zorunlu.
+	Settings map[string]any `json:"settings"`
+	// Zorunlu.
+	PublishedAt *string `json:"published_at"`
+	// Zorunlu.
+	PublishedBy *string `json:"published_by"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// JourneyDetailIssuesItem: JourneyDetailIssuesItem şeması.
+type JourneyDetailIssuesItem struct {
+	// Zorunlu.
+	Code   string  `json:"code"`
+	NodeID *string `json:"node_id,omitempty"`
+	EdgeID *string `json:"edge_id,omitempty"`
+	// Zorunlu.
+	Message string `json:"message"`
+}
+
+// JourneyDetailSummary: JourneyDetailSummary şeması.
+type JourneyDetailSummary struct {
+	// Zorunlu.
+	RunsTotal int64 `json:"runs_total"`
+	// Zorunlu.
+	Active int64 `json:"active"`
+	// Zorunlu.
+	Completed int64 `json:"completed"`
+	// Zorunlu.
+	Exited int64 `json:"exited"`
+	// Zorunlu.
+	Failed int64 `json:"failed"`
+	// Zorunlu.
+	GoalReached int64 `json:"goal_reached"`
+}
+
+// JourneyPage: JourneyPage şeması.
+type JourneyPage struct {
+	// Zorunlu.
+	Data []Journey `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// JourneyPublishResult: JourneyPublishResult şeması.
+type JourneyPublishResult struct {
+	// Zorunlu.
+	Journey Journey `json:"journey"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	Issues []JourneyPublishResultIssuesItem `json:"issues"`
+}
+
+// JourneyPublishResultIssuesItem: JourneyPublishResultIssuesItem şeması.
+type JourneyPublishResultIssuesItem struct {
+	// Zorunlu.
+	Code   string  `json:"code"`
+	NodeID *string `json:"node_id,omitempty"`
+	EdgeID *string `json:"edge_id,omitempty"`
+	// Zorunlu.
+	Message string `json:"message"`
+}
+
+// JourneyRun: JourneyRun şeması.
+type JourneyRun struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	JourneyID string `json:"journey_id"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu. Değerler: "active", "waiting", "completed", "exited", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	CurrentNodeID *string `json:"current_node_id"`
+	// Zorunlu.
+	NextActionAt *string `json:"next_action_at"`
+	// Zorunlu.
+	EnteredAt string `json:"entered_at"`
+	// Zorunlu.
+	CompletedAt *string `json:"completed_at"`
+	// Zorunlu.
+	ExitReason *string `json:"exit_reason"`
+	// Zorunlu.
+	GoalID *string `json:"goal_id"`
+	// Zorunlu.
+	GoalReachedAt *string `json:"goal_reached_at"`
+	// Zorunlu.
+	Context map[string]any `json:"context"`
+}
+
+// JourneyRunDetail: JourneyRunDetail şeması.
+type JourneyRunDetail struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	JourneyID string `json:"journey_id"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu. Değerler: "active", "waiting", "completed", "exited", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	CurrentNodeID *string `json:"current_node_id"`
+	// Zorunlu.
+	NextActionAt *string `json:"next_action_at"`
+	// Zorunlu.
+	EnteredAt string `json:"entered_at"`
+	// Zorunlu.
+	CompletedAt *string `json:"completed_at"`
+	// Zorunlu.
+	ExitReason *string `json:"exit_reason"`
+	// Zorunlu.
+	GoalID *string `json:"goal_id"`
+	// Zorunlu.
+	GoalReachedAt *string `json:"goal_reached_at"`
+	// Zorunlu.
+	Context map[string]any `json:"context"`
+	// Zorunlu.
+	JourneyName string `json:"journey_name"`
+	// Zorunlu.
+	Steps []JourneyRunDetailStepsItem `json:"steps"`
+}
+
+// JourneyRunDetailStepsItem: JourneyRunDetailStepsItem şeması.
+type JourneyRunDetailStepsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	NodeID string `json:"node_id"`
+	// Zorunlu.
+	NodeType string `json:"node_type"`
+	// Zorunlu. Değerler: "completed", "waiting", "failed", "skipped".
+	Status string `json:"status"`
+	// Zorunlu.
+	Branch *string `json:"branch"`
+	// Zorunlu.
+	Result map[string]any `json:"result"`
+	// Zorunlu.
+	StartedAt string `json:"started_at"`
+	// Zorunlu.
+	FinishedAt *string `json:"finished_at"`
+}
+
+// JourneyRunPage: JourneyRunPage şeması.
+type JourneyRunPage struct {
+	// Zorunlu.
+	Data []JourneyRun `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// JourneysCreateBody: JourneysCreateBody şeması.
+type JourneysCreateBody struct {
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	// React Flow uyumlu journey grafı: { nodes: [{ id, type, position, data }], edges: [{ id, source, target, sourceHandle }] } (docs/journeys.md)
+	Graph *JourneysCreateBodyGraph `json:"graph,omitempty"`
+	// Yeniden giriş, yalnızca yeni girenler, çıkış kuralları, çıkış tag'leri, hedefler, takvim (docs/journeys.md)
+	Settings map[string]any `json:"settings,omitempty"`
+}
+
+// JourneysCreateBodyGraph: React Flow uyumlu journey grafı: { nodes: [{ id, type, position, data }], edges: [{ id, source, target, sourceHandle }] } (docs/journeys.md)
+type JourneysCreateBodyGraph struct {
+	// Zorunlu.
+	Nodes []map[string]any `json:"nodes"`
+	// Zorunlu.
+	Edges []map[string]any `json:"edges"`
+}
+
+// JourneysSaveDraftBody: JourneysSaveDraftBody şeması.
+type JourneysSaveDraftBody struct {
+	// Zorunlu. React Flow uyumlu journey grafı: { nodes: [{ id, type, position, data }], edges: [{ id, source, target, sourceHandle }] } (docs/journeys.md)
+	Graph JourneysSaveDraftBodyGraph `json:"graph"`
+	// Yeniden giriş, yalnızca yeni girenler, çıkış kuralları, çıkış tag'leri, hedefler, takvim (docs/journeys.md)
+	Settings map[string]any `json:"settings,omitempty"`
+}
+
+// JourneysSaveDraftBodyGraph: React Flow uyumlu journey grafı: { nodes: [{ id, type, position, data }], edges: [{ id, source, target, sourceHandle }] } (docs/journeys.md)
+type JourneysSaveDraftBodyGraph struct {
+	// Zorunlu.
+	Nodes []map[string]any `json:"nodes"`
+	// Zorunlu.
+	Edges []map[string]any `json:"edges"`
+}
+
+// JourneyStats: JourneyStats şeması.
+type JourneyStats struct {
+	// Zorunlu.
+	Version *int64 `json:"version"`
+	// Zorunlu.
+	Summary JourneyStatsSummary `json:"summary"`
+	// Zorunlu.
+	Nodes []JourneyStatsNodesItem `json:"nodes"`
+	// Zorunlu.
+	Goals []JourneyStatsGoalsItem `json:"goals"`
+	// Zorunlu.
+	ExitReasons map[string]int64 `json:"exit_reasons"`
+}
+
+// JourneyStatsGoalsItem: JourneyStatsGoalsItem şeması.
+type JourneyStatsGoalsItem struct {
+	// Zorunlu.
+	GoalID string `json:"goal_id"`
+	// Zorunlu.
+	Reached int64 `json:"reached"`
+}
+
+// JourneyStatsNodesItem: JourneyStatsNodesItem şeması.
+type JourneyStatsNodesItem struct {
+	// Zorunlu.
+	NodeID string `json:"node_id"`
+	// Zorunlu.
+	NodeType string `json:"node_type"`
+	// Zorunlu.
+	Entered int64 `json:"entered"`
+	// Zorunlu.
+	Completed int64 `json:"completed"`
+	// Zorunlu.
+	WaitingNow int64 `json:"waiting_now"`
+	// Zorunlu.
+	Skipped int64 `json:"skipped"`
+	// Zorunlu.
+	Failed int64 `json:"failed"`
+	// Zorunlu.
+	Branches map[string]int64 `json:"branches"`
+	Messages map[string]int64 `json:"messages,omitempty"`
+}
+
+// JourneyStatsSummary: JourneyStatsSummary şeması.
+type JourneyStatsSummary struct {
+	// Zorunlu.
+	RunsTotal int64 `json:"runs_total"`
+	// Zorunlu.
+	Active int64 `json:"active"`
+	// Zorunlu.
+	Completed int64 `json:"completed"`
+	// Zorunlu.
+	Exited int64 `json:"exited"`
+	// Zorunlu.
+	Failed int64 `json:"failed"`
+	// Zorunlu.
+	GoalReached int64 `json:"goal_reached"`
+	// Zorunlu.
+	Waiting int64 `json:"waiting"`
+	// Zorunlu.
+	GoalConversionRate float64 `json:"goal_conversion_rate"`
+}
+
+// JourneySummary: JourneySummary şeması.
+type JourneySummary struct {
+	// Zorunlu.
+	RunsTotal int64 `json:"runs_total"`
+	// Zorunlu.
+	Active int64 `json:"active"`
+	// Zorunlu.
+	Completed int64 `json:"completed"`
+	// Zorunlu.
+	Exited int64 `json:"exited"`
+	// Zorunlu.
+	Failed int64 `json:"failed"`
+	// Zorunlu.
+	GoalReached int64 `json:"goal_reached"`
+}
+
+// JourneyTriggerResult: JourneyTriggerResult şeması.
+type JourneyTriggerResult struct {
+	// Zorunlu.
+	Entered bool `json:"entered"`
+	// Zorunlu.
+	Run *JourneyRun `json:"run"`
+	// Zorunlu. Değerler: "inactive", "outside_schedule", "re_entry", "already_active", "unknown_user".
+	Reason *string `json:"reason"`
+}
+
+// JourneyVersionList: JourneyVersionList şeması.
+type JourneyVersionList struct {
+	// Zorunlu.
+	Data []JourneyVersionListDataItem `json:"data"`
+}
+
+// JourneyVersionListDataItem: JourneyVersionListDataItem şeması.
+type JourneyVersionListDataItem struct {
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	Graph map[string]any `json:"graph"`
+	// Zorunlu.
+	Settings map[string]any `json:"settings"`
+	// Zorunlu.
+	PublishedAt *string `json:"published_at"`
+	// Zorunlu.
+	PublishedBy *string `json:"published_by"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
 }
 
 // Member: Member şeması.
@@ -2670,6 +3057,22 @@ type TemplateVersionListDataItem struct {
 	CreatedAt string `json:"created_at"`
 }
 
+// TriggerRunDto: TriggerRunDto şeması.
+type TriggerRunDto struct {
+	ExternalID *string             `json:"external_id,omitempty"`
+	UserID     *string             `json:"user_id,omitempty"`
+	Alias      *TriggerRunDtoAlias `json:"alias,omitempty"`
+	Context    map[string]any      `json:"context,omitempty"`
+}
+
+// TriggerRunDtoAlias: TriggerRunDtoAlias şeması.
+type TriggerRunDtoAlias struct {
+	// Zorunlu.
+	Label string `json:"label"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
 // UpdateAPIKeyDto: UpdateApiKeyDto şeması.
 type UpdateAPIKeyDto struct {
 	Name *string `json:"name,omitempty"`
@@ -2844,14 +3247,15 @@ type UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue struct {
 
 // UpdateInAppDto: UpdateInAppDto şeması.
 type UpdateInAppDto struct {
-	Name      *string                  `json:"name,omitempty"`
-	Triggers  []any                    `json:"triggers,omitempty"`
-	Display   *UpdateInAppDtoDisplay   `json:"display,omitempty"`
-	Audience  *UpdateInAppDtoAudience  `json:"audience,omitempty"`
-	Frequency *UpdateInAppDtoFrequency `json:"frequency,omitempty"`
-	Priority  *int64                   `json:"priority,omitempty"`
-	StartAt   *string                  `json:"start_at,omitempty"`
-	EndAt     *string                  `json:"end_at,omitempty"`
+	Name        *string                  `json:"name,omitempty"`
+	Triggers    []any                    `json:"triggers,omitempty"`
+	Display     *UpdateInAppDtoDisplay   `json:"display,omitempty"`
+	Audience    *UpdateInAppDtoAudience  `json:"audience,omitempty"`
+	Frequency   *UpdateInAppDtoFrequency `json:"frequency,omitempty"`
+	JourneyOnly *bool                    `json:"journey_only,omitempty"`
+	Priority    *int64                   `json:"priority,omitempty"`
+	StartAt     *string                  `json:"start_at,omitempty"`
+	EndAt       *string                  `json:"end_at,omitempty"`
 }
 
 // UpdateInAppDtoAudience: UpdateInAppDtoAudience şeması.
@@ -2877,6 +3281,26 @@ type UpdateInAppDtoFrequency struct {
 	MaxImpressions       *int64 `json:"max_impressions,omitempty"`
 	MinIntervalSeconds   *int64 `json:"min_interval_seconds,omitempty"`
 	StopAfterInteraction *bool  `json:"stop_after_interaction,omitempty"`
+}
+
+// UpdateJourneyDto: UpdateJourneyDto şeması.
+type UpdateJourneyDto struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+// UpdateNodeDto: UpdateNodeDto şeması.
+type UpdateNodeDto struct {
+	Data     map[string]any         `json:"data,omitempty"`
+	Position *UpdateNodeDtoPosition `json:"position,omitempty"`
+}
+
+// UpdateNodeDtoPosition: UpdateNodeDtoPosition şeması.
+type UpdateNodeDtoPosition struct {
+	// Zorunlu.
+	X float64 `json:"x"`
+	// Zorunlu.
+	Y float64 `json:"y"`
 }
 
 // UpdateTemplateDto: UpdateTemplateDto şeması.
@@ -2965,7 +3389,7 @@ type UpdateTemplateDtoContentWebButtonsItem struct {
 type UpdateWebhookDto struct {
 	URL         *string `json:"url,omitempty"`
 	Description *string `json:"description,omitempty"`
-	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed".
+	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited".
 	Events       []string                      `json:"events,omitempty"`
 	EventFilters *UpdateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -3094,6 +3518,46 @@ type UserExportEventsItem struct {
 type UserIdentity struct {
 	// Zorunlu.
 	Identity map[string]string `json:"identity"`
+}
+
+// UserJourneyRuns: UserJourneyRuns şeması.
+type UserJourneyRuns struct {
+	// Zorunlu.
+	Data []UserJourneyRunsDataItem `json:"data"`
+}
+
+// UserJourneyRunsDataItem: UserJourneyRunsDataItem şeması.
+type UserJourneyRunsDataItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	JourneyID string `json:"journey_id"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu. Değerler: "active", "waiting", "completed", "exited", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	CurrentNodeID *string `json:"current_node_id"`
+	// Zorunlu.
+	NextActionAt *string `json:"next_action_at"`
+	// Zorunlu.
+	EnteredAt string `json:"entered_at"`
+	// Zorunlu.
+	CompletedAt *string `json:"completed_at"`
+	// Zorunlu.
+	ExitReason *string `json:"exit_reason"`
+	// Zorunlu.
+	GoalID *string `json:"goal_id"`
+	// Zorunlu.
+	GoalReachedAt *string `json:"goal_reached_at"`
+	// Zorunlu.
+	Context map[string]any `json:"context"`
+	// Zorunlu.
+	JourneyName string `json:"journey_name"`
 }
 
 // UserList: UserList şeması.
