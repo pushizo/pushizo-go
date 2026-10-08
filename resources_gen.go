@@ -32,7 +32,9 @@ type services struct {
 	Apps          *AppsService
 	APIKeys       *APIKeysService
 	Organization  *OrganizationService
+	Categories    *CategoriesService
 	Journeys      *JourneysService
+	Preferences   *PreferencesService
 }
 
 func (c *Client) initServices() {
@@ -55,7 +57,9 @@ func (c *Client) initServices() {
 	c.Apps = &AppsService{client: c}
 	c.APIKeys = &APIKeysService{client: c}
 	c.Organization = &OrganizationService{client: c}
+	c.Categories = &CategoriesService{client: c}
 	c.Journeys = &JourneysService{client: c}
+	c.Preferences = &PreferencesService{client: c}
 }
 
 // NotificationsService: Bildirim gönderme, durum, iptal, teslimatlar ve geçmiş dışa aktarımı.
@@ -106,7 +110,8 @@ type NotificationsListParams struct {
 	// Değerler: "queued", "processing", "completed", "cancelled", "failed".
 	Status *string
 	// Değerler: "created_at", "-created_at".
-	Sort *string
+	Sort  *string
+	Label *string
 }
 
 func (p *NotificationsListParams) appendQuery(q url.Values) {
@@ -119,6 +124,7 @@ func (p *NotificationsListParams) appendQuery(q url.Values) {
 	addQuery(q, "kind", p.Kind)
 	addQuery(q, "status", p.Status)
 	addQuery(q, "sort", p.Sort)
+	addQuery(q, "label", p.Label)
 }
 
 // List: Mesaj listesi (app_id zorunlu)
@@ -1066,6 +1072,22 @@ func (s *TemplatesService) Delete(ctx context.Context, templateID string, opts .
 	return &out, nil
 }
 
+// Stats: Şablon analitiği
+//
+// GET /v1/apps/{appId}/templates/{templateId}/stats
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *TemplatesService) Stats(ctx context.Context, templateID string, opts ...RequestOption) (*TemplateStats, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/templates/{templateId}/stats"}
+	op.pathParams = map[string]string{"templateId": templateID}
+	var out TemplateStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // CopyToApp: Şablonu aynı organizasyondaki başka bir app'e kopyala
 //
 // POST /v1/apps/{appId}/templates/{templateId}/copy_to_app
@@ -1138,6 +1160,7 @@ type CampaignsListParams struct {
 	Type *string
 	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
 	Channel *string
+	Label   *string
 }
 
 func (p *CampaignsListParams) appendQuery(q url.Values) {
@@ -1150,6 +1173,7 @@ func (p *CampaignsListParams) appendQuery(q url.Values) {
 	addQuery(q, "status", p.Status)
 	addQuery(q, "type", p.Type)
 	addQuery(q, "channel", p.Channel)
+	addQuery(q, "label", p.Label)
 }
 
 // List: Kampanya listesi
@@ -1385,6 +1409,42 @@ func (s *CampaignsService) Stats(ctx context.Context, campaignID string, opts ..
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/campaigns/{campaignId}/stats"}
 	op.pathParams = map[string]string{"campaignId": campaignID}
 	var out CampaignStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// VariantStats: A/B varyant karşılaştırması
+//
+// GET /v1/apps/{appId}/campaigns/{campaignId}/variants/stats
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CampaignsService) VariantStats(ctx context.Context, campaignID string, opts ...RequestOption) (*CampaignVariantStats, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/campaigns/{campaignId}/variants/stats"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	var out CampaignVariantStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SelectWinner: A/B kazananını seç
+//
+// POST /v1/apps/{appId}/campaigns/{campaignId}/winner
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CampaignsService) SelectWinner(ctx context.Context, campaignID string, body *SelectWinnerDto, opts ...RequestOption) (*Campaign, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/campaigns/{campaignId}/winner"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Campaign
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
@@ -2523,6 +2583,38 @@ func (s *AnalyticsService) Providers(ctx context.Context, params *AnalyticsProvi
 	return &out, nil
 }
 
+// AnalyticsRetentionParams: AnalyticsService.Retention için isteğe bağlı sorgu parametreleri.
+type AnalyticsRetentionParams struct {
+	Weeks *int64
+	// Değerler: "json", "csv".
+	Format *string
+}
+
+func (p *AnalyticsRetentionParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "weeks", p.Weeks)
+	addQuery(q, "format", p.Format)
+}
+
+// Retention: Retention kohortu
+//
+// GET /v1/apps/{appId}/analytics/retention
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) Retention(ctx context.Context, params *AnalyticsRetentionParams, opts ...RequestOption) (*RetentionReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/analytics/retention"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out RetentionReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // AnalyticsEngagementParams: AnalyticsService.Engagement için isteğe bağlı sorgu parametreleri.
 type AnalyticsEngagementParams struct {
 	From *string
@@ -2807,6 +2899,81 @@ func (s *OrganizationService) AuditLogsAll(ctx context.Context, params *Organiza
 		}
 		return page.Data, page.NextCursor, page.HasMore, nil
 	})
+}
+
+// CategoriesService: categories kaynağı.
+type CategoriesService struct {
+	client *Client
+}
+
+// List: Mesaj kategorileri
+//
+// GET /v1/apps/{appId}/categories
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CategoriesService) List(ctx context.Context, opts ...RequestOption) (*MessageCategoryList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/categories"}
+	var out MessageCategoryList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Kategori oluştur
+//
+// POST /v1/apps/{appId}/categories
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CategoriesService) Create(ctx context.Context, body *CreateCategoryDto, opts ...RequestOption) (*MessageCategory, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/categories"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out MessageCategory
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Kategori güncelle
+//
+// PATCH /v1/apps/{appId}/categories/{categoryId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CategoriesService) Update(ctx context.Context, categoryID string, body *UpdateCategoryDto, opts ...RequestOption) (*MessageCategory, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/categories/{categoryId}"}
+	op.pathParams = map[string]string{"categoryId": categoryID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out MessageCategory
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Kategori sil
+//
+// DELETE /v1/apps/{appId}/categories/{categoryId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CategoriesService) Delete(ctx context.Context, categoryID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/categories/{categoryId}"}
+	op.pathParams = map[string]string{"categoryId": categoryID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // JourneysService: journeys kaynağı.
@@ -3226,6 +3393,47 @@ func (s *JourneysService) ListForUser(ctx context.Context, label string, value s
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/users/by/{label}/{value}/journeys"}
 	op.pathParams = map[string]string{"label": label, "value": value}
 	var out UserJourneyRuns
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PreferencesService: preferences kaynağı.
+type PreferencesService struct {
+	client *Client
+}
+
+// Get: Kullanıcının tercihleri (alias ile)
+//
+// GET /v1/apps/{appId}/users/by/{label}/{value}/preferences
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PreferencesService) Get(ctx context.Context, label string, value string, opts ...RequestOption) (*UserPreferences, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/users/by/{label}/{value}/preferences"}
+	op.pathParams = map[string]string{"label": label, "value": value}
+	var out UserPreferences
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Set: Kullanıcı tercihlerini yaz (alias ile)
+//
+// PUT /v1/apps/{appId}/users/by/{label}/{value}/preferences
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PreferencesService) Set(ctx context.Context, label string, value string, body *SetPreferencesDto, opts ...RequestOption) (*UserPreferences, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/users/by/{label}/{value}/preferences"}
+	op.pathParams = map[string]string{"label": label, "value": value}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out UserPreferences
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
