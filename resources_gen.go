@@ -3273,6 +3273,8 @@ func (s *JourneysService) Duplicate(ctx context.Context, journeyID string, opts 
 // JourneysStatsParams: JourneysService.Stats için isteğe bağlı sorgu parametreleri.
 type JourneysStatsParams struct {
 	Version *int64
+	// Değerler: "true", "false".
+	AllVersions *string
 }
 
 func (p *JourneysStatsParams) appendQuery(q url.Values) {
@@ -3280,6 +3282,7 @@ func (p *JourneysStatsParams) appendQuery(q url.Values) {
 		return
 	}
 	addQuery(q, "version", p.Version)
+	addQuery(q, "all_versions", p.AllVersions)
 }
 
 // Stats: Düğüm bazlı istatistik
