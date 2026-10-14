@@ -1048,6 +1048,8 @@ type ConversionsReportByCampaignItem struct {
 	// Zorunlu.
 	Influenced int64 `json:"influenced"`
 	// Zorunlu.
+	Unattributed int64 `json:"unattributed"`
+	// Zorunlu.
 	Revenue float64 `json:"revenue"`
 	// Zorunlu.
 	Sent int64 `json:"sent"`
@@ -1063,6 +1065,8 @@ type ConversionsReportPrevious struct {
 	Direct int64 `json:"direct"`
 	// Zorunlu.
 	Influenced int64 `json:"influenced"`
+	// Zorunlu.
+	Unattributed int64 `json:"unattributed"`
 	// Zorunlu.
 	Revenue float64 `json:"revenue"`
 }
@@ -1085,6 +1089,8 @@ type ConversionsReportTotals struct {
 	Direct int64 `json:"direct"`
 	// Zorunlu.
 	Influenced int64 `json:"influenced"`
+	// Zorunlu.
+	Unattributed int64 `json:"unattributed"`
 	// Zorunlu.
 	Revenue float64 `json:"revenue"`
 }
@@ -1653,6 +1659,10 @@ type EventDefinition struct {
 	// Zorunlu.
 	IsConversion bool `json:"is_conversion"`
 	// Zorunlu.
+	OutcomeUnique bool `json:"outcome_unique"`
+	// Zorunlu.
+	OutcomeUnattributed bool `json:"outcome_unattributed"`
+	// Zorunlu.
 	FirstSeenAt string `json:"first_seen_at"`
 	// Zorunlu.
 	LastSeenAt string `json:"last_seen_at"`
@@ -1678,6 +1688,10 @@ type EventDefinitionDetail struct {
 	PropertiesSchema map[string]string `json:"properties_schema"`
 	// Zorunlu.
 	IsConversion bool `json:"is_conversion"`
+	// Zorunlu.
+	OutcomeUnique bool `json:"outcome_unique"`
+	// Zorunlu.
+	OutcomeUnattributed bool `json:"outcome_unattributed"`
 	// Zorunlu.
 	FirstSeenAt string `json:"first_seen_at"`
 	// Zorunlu.
@@ -2891,8 +2905,10 @@ type OverviewStatsTopErrorsItem struct {
 
 // PatchEventDefinitionDto: PatchEventDefinitionDto şeması.
 type PatchEventDefinitionDto struct {
-	DisplayName  *string `json:"display_name,omitempty"`
-	IsConversion *bool   `json:"is_conversion,omitempty"`
+	DisplayName         *string `json:"display_name,omitempty"`
+	IsConversion        *bool   `json:"is_conversion,omitempty"`
+	OutcomeUnique       *bool   `json:"outcome_unique,omitempty"`
+	OutcomeUnattributed *bool   `json:"outcome_unattributed,omitempty"`
 }
 
 // PatchSubscriptionDto: PatchSubscriptionDto şeması.
