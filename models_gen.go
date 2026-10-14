@@ -1206,6 +1206,7 @@ type CreateInAppDto struct {
 	Triggers      []any                        `json:"triggers"`
 	TriggerGroups [][]any                      `json:"trigger_groups,omitempty"`
 	Variants      []CreateInAppDtoVariantsItem `json:"variants,omitempty"`
+	AbTest        *CreateInAppDtoAbTest        `json:"ab_test,omitempty"`
 	// Zorunlu.
 	Display     CreateInAppDtoDisplay    `json:"display"`
 	Audience    *CreateInAppDtoAudience  `json:"audience,omitempty"`
@@ -1214,6 +1215,19 @@ type CreateInAppDto struct {
 	Priority    *int64                   `json:"priority,omitempty"`
 	StartAt     *string                  `json:"start_at,omitempty"`
 	EndAt       *string                  `json:"end_at,omitempty"`
+}
+
+// CreateInAppDtoAbTest: CreateInAppDtoAbTest şeması.
+type CreateInAppDtoAbTest struct {
+	Winner *CreateInAppDtoAbTestWinner `json:"winner,omitempty"`
+}
+
+// CreateInAppDtoAbTestWinner: CreateInAppDtoAbTestWinner şeması.
+type CreateInAppDtoAbTestWinner struct {
+	// Zorunlu. Değerler: "manual", "auto".
+	Mode           string   `json:"mode"`
+	MinImpressions *int64   `json:"min_impressions,omitempty"`
+	Confidence     *float64 `json:"confidence,omitempty"`
 }
 
 // CreateInAppDtoAudience: CreateInAppDtoAudience şeması.
@@ -1987,9 +2001,32 @@ type InAppMessage struct {
 	// Zorunlu.
 	VariantStats []InAppMessageVariantStatsItem `json:"variant_stats"`
 	// Zorunlu.
+	AbTest InAppMessageAbTest `json:"ab_test"`
+	// Zorunlu.
+	VariantSignificance *InAppMessageVariantSignificance `json:"variant_significance"`
+	// Zorunlu.
 	CreatedAt string `json:"created_at"`
 	// Zorunlu.
 	UpdatedAt string `json:"updated_at"`
+}
+
+// InAppMessageAbTest: InAppMessageAbTest şeması.
+type InAppMessageAbTest struct {
+	Winner *InAppMessageAbTestWinner `json:"winner,omitempty"`
+	// Zorunlu.
+	WinnerVariantID *string `json:"winner_variant_id"`
+	// Zorunlu.
+	DecidedAt *string `json:"decided_at"`
+	// Zorunlu.
+	DecidedBy *string `json:"decided_by"`
+}
+
+// InAppMessageAbTestWinner: InAppMessageAbTestWinner şeması.
+type InAppMessageAbTestWinner struct {
+	// Zorunlu. Değerler: "manual", "auto".
+	Mode           string   `json:"mode"`
+	MinImpressions *int64   `json:"min_impressions,omitempty"`
+	Confidence     *float64 `json:"confidence,omitempty"`
 }
 
 // InAppMessageAudience: InAppMessageAudience şeması.
@@ -2065,6 +2102,16 @@ type InAppMessageVariantsItemDisplay struct {
 	Blocks []any `json:"blocks"`
 }
 
+// InAppMessageVariantSignificance: InAppMessageVariantSignificance şeması.
+type InAppMessageVariantSignificance struct {
+	// Zorunlu.
+	Leader *string `json:"leader"`
+	// Zorunlu.
+	PValue float64 `json:"p_value"`
+	// Zorunlu.
+	Significant bool `json:"significant"`
+}
+
 // InAppMessageVariantStatsItem: InAppMessageVariantStatsItem şeması.
 type InAppMessageVariantStatsItem struct {
 	// Zorunlu.
@@ -2081,6 +2128,12 @@ type InAppMessageVariantStatsItem struct {
 type InAppStatusDto struct {
 	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
 	Status string `json:"status"`
+}
+
+// InAppWinnerDto: InAppWinnerDto şeması.
+type InAppWinnerDto struct {
+	// Zorunlu.
+	VariantID string `json:"variant_id"`
 }
 
 // InboxItem: InboxItem şeması.
@@ -3902,6 +3955,7 @@ type UpdateInAppDto struct {
 	Triggers      []any                        `json:"triggers,omitempty"`
 	TriggerGroups [][]any                      `json:"trigger_groups,omitempty"`
 	Variants      []UpdateInAppDtoVariantsItem `json:"variants,omitempty"`
+	AbTest        *UpdateInAppDtoAbTest        `json:"ab_test,omitempty"`
 	Display       *UpdateInAppDtoDisplay       `json:"display,omitempty"`
 	Audience      *UpdateInAppDtoAudience      `json:"audience,omitempty"`
 	Frequency     *UpdateInAppDtoFrequency     `json:"frequency,omitempty"`
@@ -3909,6 +3963,19 @@ type UpdateInAppDto struct {
 	Priority      *int64                       `json:"priority,omitempty"`
 	StartAt       *string                      `json:"start_at,omitempty"`
 	EndAt         *string                      `json:"end_at,omitempty"`
+}
+
+// UpdateInAppDtoAbTest: UpdateInAppDtoAbTest şeması.
+type UpdateInAppDtoAbTest struct {
+	Winner *UpdateInAppDtoAbTestWinner `json:"winner,omitempty"`
+}
+
+// UpdateInAppDtoAbTestWinner: UpdateInAppDtoAbTestWinner şeması.
+type UpdateInAppDtoAbTestWinner struct {
+	// Zorunlu. Değerler: "manual", "auto".
+	Mode           string   `json:"mode"`
+	MinImpressions *int64   `json:"min_impressions,omitempty"`
+	Confidence     *float64 `json:"confidence,omitempty"`
 }
 
 // UpdateInAppDtoAudience: UpdateInAppDtoAudience şeması.

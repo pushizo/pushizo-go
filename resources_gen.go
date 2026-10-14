@@ -1686,6 +1686,26 @@ func (s *InAppMessagesService) Status(ctx context.Context, messageID string, bod
 	return &out, nil
 }
 
+// Winner: A/B kazananını elle seç
+//
+// POST /v1/apps/{appId}/in-app-messages/{messageId}/winner
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InAppMessagesService) Winner(ctx context.Context, messageID string, body *InAppWinnerDto, opts ...RequestOption) (*InAppMessage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/in-app-messages/{messageId}/winner"}
+	op.pathParams = map[string]string{"messageId": messageID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out InAppMessage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // InboxService: Kullanıcı bildirim kutusu (inbox): listeleme, okundu işaretleme ve arşivleme.
 type InboxService struct {
 	client *Client
