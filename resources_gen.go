@@ -2901,6 +2901,33 @@ func (s *OrganizationService) AuditLogsAll(ctx context.Context, params *Organiza
 	})
 }
 
+// OrganizationUsageParams: OrganizationService.Usage için isteğe bağlı sorgu parametreleri.
+type OrganizationUsageParams struct {
+	Days *int64
+}
+
+func (p *OrganizationUsageParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "days", p.Days)
+}
+
+// Usage: Organizasyon kullanımı ve plan kotaları (org geneli anahtar)
+//
+// GET /v1/organization/usage
+func (s *OrganizationService) Usage(ctx context.Context, params *OrganizationUsageParams, opts ...RequestOption) (*UsageReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/organization/usage"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out UsageReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // CategoriesService: categories kaynağı.
 type CategoriesService struct {
 	client *Client

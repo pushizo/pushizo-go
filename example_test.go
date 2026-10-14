@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"os"
 
-	herosignal "github.com/herosignal/herosignal-go"
+	herosignal "github.com/exec0de/herosignal/sdk/go"
 )
 
 // README'deki kullanım örneği (derlenir, çalıştırılmaz).
