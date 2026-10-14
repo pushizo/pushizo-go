@@ -2082,6 +2082,16 @@ type InAppMessageStats struct {
 	Ctr float64 `json:"ctr"`
 }
 
+// InAppMessageVariantSignificance: InAppMessageVariantSignificance şeması.
+type InAppMessageVariantSignificance struct {
+	// Zorunlu.
+	Leader *string `json:"leader"`
+	// Zorunlu.
+	PValue float64 `json:"p_value"`
+	// Zorunlu.
+	Significant bool `json:"significant"`
+}
+
 // InAppMessageVariantsItem: InAppMessageVariantsItem şeması.
 type InAppMessageVariantsItem struct {
 	// Zorunlu.
@@ -2104,16 +2114,6 @@ type InAppMessageVariantsItemDisplay struct {
 	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
 	// Zorunlu.
 	Blocks []any `json:"blocks"`
-}
-
-// InAppMessageVariantSignificance: InAppMessageVariantSignificance şeması.
-type InAppMessageVariantSignificance struct {
-	// Zorunlu.
-	Leader *string `json:"leader"`
-	// Zorunlu.
-	PValue float64 `json:"p_value"`
-	// Zorunlu.
-	Significant bool `json:"significant"`
 }
 
 // InAppMessageVariantStatsItem: InAppMessageVariantStatsItem şeması.
