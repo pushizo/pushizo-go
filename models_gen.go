@@ -4176,6 +4176,8 @@ type User struct {
 	// Zorunlu.
 	SessionCount int64 `json:"session_count"`
 	// Zorunlu.
+	UsageSeconds int64 `json:"usage_seconds"`
+	// Zorunlu.
 	MergedInto *string `json:"merged_into"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
@@ -4205,6 +4207,8 @@ type UserDetail struct {
 	LastActiveAt string `json:"last_active_at"`
 	// Zorunlu.
 	SessionCount int64 `json:"session_count"`
+	// Zorunlu.
+	UsageSeconds int64 `json:"usage_seconds"`
 	// Zorunlu.
 	MergedInto *string `json:"merged_into"`
 	// Zorunlu.
