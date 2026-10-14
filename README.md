@@ -7,7 +7,7 @@ yeniden deneme, idempotency, sayfalama ve webhook imza doğrulaması el yazımı
 ## Kurulum
 
 ```bash
-go get github.com/herosignal/herosignal-go
+go get github.com/exec0de/herosignal/sdk/go
 ```
 
 ## Kullanım
@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	herosignal "github.com/herosignal/herosignal-go"
+	herosignal "github.com/exec0de/herosignal/sdk/go"
 )
 
 func main() {

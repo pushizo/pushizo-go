@@ -890,7 +890,7 @@ type ChannelConfig struct {
 	Channel string `json:"channel"`
 	// Zorunlu. Değerler: "apns", "fcm", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "mock".
 	Provider *string `json:"provider"`
-	// Zorunlu. Değerler: "unconfigured", "active", "invalid".
+	// Zorunlu. Değerler: "unconfigured", "active", "invalid", "suspended".
 	Status string `json:"status"`
 	// Zorunlu.
 	Config ChannelConfigConfig `json:"config"`
@@ -904,6 +904,10 @@ type ChannelConfig struct {
 	LastError *string `json:"last_error"`
 	// Zorunlu.
 	UpdatedAt *string `json:"updated_at"`
+	// Zorunlu.
+	SuspendedReason *string `json:"suspended_reason"`
+	// Zorunlu.
+	DnsCheck *ChannelConfigDnsCheck `json:"dns_check"`
 }
 
 // ChannelConfigConfig: ChannelConfigConfig şeması.
@@ -927,6 +931,7 @@ type ChannelConfigConfig struct {
 	FromAddress         *string `json:"from_address,omitempty"`
 	FromName            *string `json:"from_name,omitempty"`
 	ReplyTo             *string `json:"reply_to,omitempty"`
+	DkimSelector        *string `json:"dkim_selector,omitempty"`
 	PostalAddress       *string `json:"postal_address,omitempty"`
 	Host                *string `json:"host,omitempty"`
 	Port                *int64  `json:"port,omitempty"`
@@ -942,6 +947,54 @@ type ChannelConfigConfig struct {
 	Msgheader           *string `json:"msgheader,omitempty"`
 	// Değerler: "0", "11", "12".
 	IYSFilter *string `json:"iys_filter,omitempty"`
+}
+
+// ChannelConfigDnsCheck: ChannelConfigDnsCheck şeması.
+type ChannelConfigDnsCheck struct {
+	// Zorunlu.
+	Domain string `json:"domain"`
+	// Zorunlu.
+	CheckedAt string `json:"checked_at"`
+	// Zorunlu.
+	Spf ChannelConfigDnsCheckSpf `json:"spf"`
+	// Zorunlu.
+	Dkim ChannelConfigDnsCheckDkim `json:"dkim"`
+	// Zorunlu.
+	Dmarc ChannelConfigDnsCheckDmarc `json:"dmarc"`
+	// Zorunlu.
+	Issues []string `json:"issues"`
+}
+
+// ChannelConfigDnsCheckDkim: ChannelConfigDnsCheckDkim şeması.
+type ChannelConfigDnsCheckDkim struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+	// Zorunlu.
+	Selector string `json:"selector"`
+	// Zorunlu.
+	Record *string `json:"record"`
+	// Zorunlu.
+	Expected string `json:"expected"`
+}
+
+// ChannelConfigDnsCheckDmarc: ChannelConfigDnsCheckDmarc şeması.
+type ChannelConfigDnsCheckDmarc struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+	// Zorunlu.
+	Record *string `json:"record"`
+	// Zorunlu.
+	Expected string `json:"expected"`
+}
+
+// ChannelConfigDnsCheckSpf: ChannelConfigDnsCheckSpf şeması.
+type ChannelConfigDnsCheckSpf struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+	// Zorunlu.
+	Record *string `json:"record"`
+	// Zorunlu.
+	Expected string `json:"expected"`
 }
 
 // ChannelList: ChannelList şeması.
@@ -2475,7 +2528,7 @@ type Member struct {
 	Email string `json:"email"`
 	// Zorunlu.
 	Name string `json:"name"`
-	// Zorunlu. Değerler: "owner", "admin", "developer", "marketer", "analyst", "billing", "viewer".
+	// Zorunlu. Değerler: "owner", "admin", "developer", "marketer", "analyst", "billing", "viewer", "composer".
 	Role string `json:"role"`
 	// Zorunlu.
 	AppScopes []string `json:"app_scopes"`
@@ -2760,7 +2813,7 @@ type OverviewStatsChannelsItem struct {
 	Channel string `json:"channel"`
 	// Zorunlu. Değerler: "apns", "fcm", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "mock".
 	Provider *string `json:"provider"`
-	// Zorunlu. Değerler: "unconfigured", "active", "invalid".
+	// Zorunlu. Değerler: "unconfigured", "active", "invalid", "suspended".
 	Status string `json:"status"`
 	// Zorunlu.
 	LastError *string `json:"last_error"`
@@ -4018,6 +4071,74 @@ type UpsertUserDto struct {
 	Properties    map[string]any       `json:"properties,omitempty"`
 	Tags          map[string]string    `json:"tags,omitempty"`
 	Subscriptions []AddSubscriptionDto `json:"subscriptions,omitempty"`
+}
+
+// UsageReport: UsageReport şeması.
+type UsageReport struct {
+	// Zorunlu.
+	OrgID string `json:"org_id"`
+	// Zorunlu.
+	PlanCode string `json:"plan_code"`
+	// Zorunlu.
+	Period UsageReportPeriod `json:"period"`
+	// Zorunlu.
+	Metrics []UsageReportMetricsItem `json:"metrics"`
+	// Zorunlu.
+	Apps []UsageReportAppsItem `json:"apps"`
+	// Zorunlu.
+	Daily []UsageReportDailyItem `json:"daily"`
+	// Zorunlu.
+	Trialing bool `json:"trialing"`
+	// Zorunlu.
+	TrialEndsAt *string `json:"trial_ends_at"`
+}
+
+// UsageReportAppsItem: UsageReportAppsItem şeması.
+type UsageReportAppsItem struct {
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	MessagesSent float64 `json:"messages_sent"`
+	// Zorunlu.
+	ActiveSubscriptions float64 `json:"active_subscriptions"`
+	// Zorunlu.
+	Mau float64 `json:"mau"`
+}
+
+// UsageReportDailyItem: UsageReportDailyItem şeması.
+type UsageReportDailyItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	MessagesSent float64 `json:"messages_sent"`
+	// Zorunlu.
+	APIRequests float64 `json:"api_requests"`
+	// Zorunlu.
+	EventsIngested float64 `json:"events_ingested"`
+}
+
+// UsageReportMetricsItem: UsageReportMetricsItem şeması.
+type UsageReportMetricsItem struct {
+	// Zorunlu.
+	Metric string `json:"metric"`
+	// Zorunlu.
+	Used float64 `json:"used"`
+	// Zorunlu.
+	Limit *float64 `json:"limit"`
+	// Zorunlu.
+	Percent *float64 `json:"percent"`
+	// Zorunlu.
+	Hard bool `json:"hard"`
+}
+
+// UsageReportPeriod: UsageReportPeriod şeması.
+type UsageReportPeriod struct {
+	// Zorunlu.
+	Start string `json:"start"`
+	// Zorunlu.
+	End string `json:"end"`
 }
 
 // User: User şeması.
