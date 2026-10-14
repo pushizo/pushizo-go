@@ -20,6 +20,7 @@ import (
 	"io"
 	"iter"
 	"mime/multipart"
+	"net"
 	"net/http"
 	"net/textproto"
 	"net/url"
@@ -75,7 +76,9 @@ func WithHTTPClient(h *http.Client) ClientOption { return func(c *Client) { c.ht
 // WithTimeout, deneme başına istek zaman aşımıdır (varsayılan 30 sn).
 func WithTimeout(d time.Duration) ClientOption { return func(c *Client) { c.timeout = d } }
 
-// WithMaxRetries, 429/5xx ve ağ hatalarında en fazla yeniden deneme sayısıdır (varsayılan 3).
+// WithMaxRetries, en fazla yeniden deneme sayısıdır (varsayılan 3). 429 her metotta; 5xx ve ağ hataları
+// GET/HEAD/OPTIONS/PUT/DELETE'te, POST/PATCH'te yalnızca Idempotency-Key varsa veya istek sunucuya hiç
+// gönderilmediyse (bağlantı reddi, DNS hatası, bağlantı zaman aşımı) yeniden denenir.
 func WithMaxRetries(n int) ClientOption { return func(c *Client) { c.maxRetries = n } }
 
 // WithUserAgent, User-Agent başlığını değiştirir.
@@ -254,20 +257,23 @@ func (c *Client) do(ctx context.Context, op *operation, ro *requestConfig, out a
 		key = newUUID()
 	}
 
+	hasKey := key != "" || ro.headers.Get("Idempotency-Key") != ""
 	for attempt := 0; ; attempt++ {
 		resp, respBody, err := c.attempt(ctx, op.method, fullURL, payload, contentType, key, ro)
 		var apiErr *Error
+		notSent := false
 		if err != nil {
 			if ctx.Err() != nil {
 				return ctx.Err()
 			}
 			apiErr = &Error{StatusCode: 0, Code: CodeNetwork, Message: err.Error(), cause: err}
+			notSent = requestNotSent(err)
 		} else if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 			return decodeResponse(resp, respBody, out)
 		} else {
 			apiErr = errorFromResponse(resp, respBody)
 		}
-		if !apiErr.Retryable() || attempt >= ro.maxRetries {
+		if attempt >= ro.maxRetries || !shouldRetry(op.method, apiErr, hasKey, notSent) {
 			return apiErr
 		}
 		delay := apiErr.RetryAfter
@@ -278,6 +284,34 @@ func (c *Client) do(ctx context.Context, op *operation, ro *requestConfig, out a
 			return err
 		}
 	}
+}
+
+// shouldRetry, yeniden deneme politikasıdır: 429 her metotta (istek işlenmeden reddedilmiştir); 5xx ve ağ
+// hataları idempotent metotlarda, POST/PATCH'te yalnızca Idempotency-Key varsa ya da istek sunucuya hiç
+// gönderilmediyse. Aksi hâlde sunucu isteği işlemiş olabilir ve tekrar çift kayıt üretebilir.
+func shouldRetry(method string, e *Error, hasIdempotencyKey, notSent bool) bool {
+	if e.StatusCode == 429 {
+		return true
+	}
+	if !e.Retryable() {
+		return false
+	}
+	switch strings.ToUpper(method) {
+	case http.MethodGet, http.MethodHead, http.MethodOptions, http.MethodPut, http.MethodDelete:
+		return true
+	}
+	return hasIdempotencyKey || notSent
+}
+
+// requestNotSent, hatanın bağlantı kurulmadan (DNS çözümlenemedi, bağlantı reddi, bağlantı zaman aşımı, proxy
+// bağlantısı) oluştuğunu, yani isteğin sunucuya hiç gönderilmediğini bildirir.
+func requestNotSent(err error) bool {
+	var dnsErr *net.DNSError
+	if errors.As(err, &dnsErr) {
+		return true
+	}
+	var opErr *net.OpError
+	return errors.As(err, &opErr) && (opErr.Op == "dial" || opErr.Op == "proxyconnect")
 }
 
 func (c *Client) attempt(ctx context.Context, method, fullURL string, payload []byte, contentType, key string, ro *requestConfig) (*http.Response, []byte, error) {
