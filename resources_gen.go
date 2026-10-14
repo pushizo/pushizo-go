@@ -696,19 +696,54 @@ func (s *EventsService) Send(ctx context.Context, body *APIEventsDto, opts ...Re
 	return &out, nil
 }
 
+// EventsListDefinitionsParams: EventsService.ListDefinitions için isteğe bağlı sorgu parametreleri.
+type EventsListDefinitionsParams struct {
+	Limit  *int64
+	Cursor *string
+}
+
+func (p *EventsListDefinitionsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
 // ListDefinitions: Olay tanımları
 //
 // GET /v1/apps/{appId}/events/definitions
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *EventsService) ListDefinitions(ctx context.Context, opts ...RequestOption) (*EventDefinitionList, error) {
+func (s *EventsService) ListDefinitions(ctx context.Context, params *EventsListDefinitionsParams, opts ...RequestOption) (*EventDefinitionList, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/events/definitions"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
 	var out EventDefinitionList
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
 	return &out, nil
+}
+
+// ListDefinitionsAll: ListDefinitions sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *EventsService) ListDefinitionsAll(ctx context.Context, params *EventsListDefinitionsParams, opts ...RequestOption) iter.Seq2[EventDefinition, error] {
+	var p EventsListDefinitionsParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]EventDefinition, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.ListDefinitions(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
 }
 
 // GetDefinition: Olay detayı
@@ -1686,11 +1721,33 @@ func (s *InAppMessagesService) Status(ctx context.Context, messageID string, bod
 	return &out, nil
 }
 
+// SelectWinner: A/B kazananını elle seç
+//
+// POST /v1/apps/{appId}/in-app-messages/{messageId}/winner
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InAppMessagesService) SelectWinner(ctx context.Context, messageID string, body *InAppWinnerDto, opts ...RequestOption) (*InAppMessage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/in-app-messages/{messageId}/winner"}
+	op.pathParams = map[string]string{"messageId": messageID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out InAppMessage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // Winner: A/B kazananını elle seç
 //
 // POST /v1/apps/{appId}/in-app-messages/{messageId}/winner
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+//
+// Deprecated: SelectWinner kullanın; bu ad geriye dönük uyumluluk için korunur.
 func (s *InAppMessagesService) Winner(ctx context.Context, messageID string, body *InAppWinnerDto, opts ...RequestOption) (*InAppMessage, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/in-app-messages/{messageId}/winner"}

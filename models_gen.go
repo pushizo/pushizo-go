@@ -1754,6 +1754,10 @@ type EventDefinitionDetailPropertiesItemValuesItem struct {
 type EventDefinitionList struct {
 	// Zorunlu.
 	Data []EventDefinition `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
 }
 
 // EventsAccepted: EventsAccepted şeması.

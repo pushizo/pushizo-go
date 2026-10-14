@@ -80,7 +80,7 @@ err := hs.Request(ctx, "GET", "/v1/apps/{appId}/analytics/messages", url.Values{
 | `WithAppID` | — | Çağrıda `ForApp` verilmezse kullanılan app |
 | `WithBaseURL` | `https://api.herosignal.dev` | API adresi |
 | `WithTimeout` | 30 sn | Deneme başına zaman aşımı |
-| `WithMaxRetries` | 3 | 429/5xx ve ağ hatalarında yeniden deneme |
+| `WithMaxRetries` | 3 | En fazla yeniden deneme (politika: aşağıda) |
 | `WithAutoIdempotencyKey` | `true` | `Idempotency-Key` destekleyen çağrılarda otomatik UUID |
 | `WithHTTPClient` | `http.DefaultClient` | Özel `*http.Client` |
 
@@ -88,7 +88,7 @@ err := hs.Request(ctx, "GET", "/v1/apps/{appId}/analytics/messages", url.Values{
 
 ### Hatalar
 
-429, 5xx ve ağ hatalarında üstel geri çekilmeyle (0,3 / 1 / 3 sn) yeniden denenir; `Retry-After` başlığına uyulur.
+429 her metotta; 5xx ve ağ hataları GET/HEAD/OPTIONS/PUT/DELETE'te, POST/PATCH'te yalnızca `Idempotency-Key` varsa (otomatik anahtar dahil) veya istek sunucuya hiç gönderilemediyse (bağlantı reddi, DNS hatası, bağlantı zaman aşımı) üstel geri çekilmeyle (0,3 / 1 / 3 sn) yeniden denenir; `Retry-After` başlığına uyulur.
 API hataları `*herosignal.Error` tipindedir (`StatusCode`, `Code` (`HS_…`), `Message`, `RequestID`, `Details`):
 
 ```go

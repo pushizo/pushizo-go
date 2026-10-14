@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -29,6 +30,8 @@ type fakeResponse struct {
 	body    string
 	headers map[string]string
 	netErr  bool
+	// dialErr, bağlantı kurulamadı (istek sunucuya hiç gitmedi) benzetimidir.
+	dialErr bool
 }
 
 // scriptTransport, sıradaki yanıt ağ hatasıysa sunucuya gitmeden hata döndürür (bağlantı kopması benzetimi).
@@ -43,6 +46,11 @@ func (s scriptTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 		*s.responses = (*s.responses)[1:]
 		s.mu.Unlock()
 		return nil, errors.New("bağlantı koptu")
+	}
+	if len(*s.responses) > 0 && (*s.responses)[0].dialErr {
+		*s.responses = (*s.responses)[1:]
+		s.mu.Unlock()
+		return nil, &net.OpError{Op: "dial", Net: "tcp", Err: errors.New("connection refused")}
 	}
 	s.mu.Unlock()
 	return http.DefaultTransport.RoundTrip(r)
@@ -283,6 +291,139 @@ func TestRetriesExhausted(t *testing.T) {
 	_, err = hs2.Apps.List(context.Background())
 	if !errors.Is(err, ErrNetwork) {
 		t.Fatalf("ağ hatası bekleniyordu: %v", err)
+	}
+}
+
+var unavailable = fakeResponse{status: 503, body: `{"error":{"code":"HS_SERVICE_UNAVAILABLE","message":"x"}}`}
+
+func TestPostWithoutIdempotencyKeyNotRetriedOn5xx(t *testing.T) {
+	srv, calls := fakeServer(t, unavailable)
+	var slept []time.Duration
+	hs := newTestClient(t, srv, &slept)
+	_, err := hs.Events.Send(context.Background(), &APIEventsDto{Events: []APIEventsDtoEventsItem{}})
+	if !errors.Is(err, ErrServer) || len(*calls) != 1 || len(slept) != 0 {
+		t.Fatalf("err=%v çağrı=%d bekleme=%v", err, len(*calls), slept)
+	}
+
+	// Otomatik anahtar kapalıyken notifications.create de anahtarsız POST'tur.
+	srv2, calls2 := fakeServer(t, unavailable)
+	hs2 := newTestClient(t, srv2, nil, WithAutoIdempotencyKey(false))
+	if _, err := hs2.Notifications.Create(context.Background(), &CreateNotificationDto{}); !errors.Is(err, ErrServer) || len(*calls2) != 1 {
+		t.Fatalf("err=%v çağrı=%d", err, len(*calls2))
+	}
+
+	// Gönderildikten sonra kopan bağlantı: sunucu isteği işlemiş olabilir, tekrarlanmaz.
+	srv3, _ := fakeServer(t, fakeResponse{netErr: true})
+	var slept3 []time.Duration
+	hs3 := newTestClient(t, srv3, &slept3)
+	if _, err := hs3.Events.Send(context.Background(), &APIEventsDto{}); !errors.Is(err, ErrNetwork) || len(slept3) != 0 {
+		t.Fatalf("err=%v bekleme=%v", err, slept3)
+	}
+}
+
+func TestPostWithIdempotencyKeyRetriedOn5xx(t *testing.T) {
+	srv, calls := fakeServer(t, unavailable, fakeResponse{status: 200, body: `{"accepted":1}`})
+	hs := newTestClient(t, srv, nil)
+	if _, err := hs.Events.Send(context.Background(), &APIEventsDto{}, WithIdempotencyKey("evt-1")); err != nil {
+		t.Fatal(err)
+	}
+	if len(*calls) != 2 || (*calls)[1].Header.Get("Idempotency-Key") != "evt-1" {
+		t.Fatalf("çağrı=%d", len(*calls))
+	}
+
+	// WithHeader ile verilen anahtar da sayılır; PATCH aynı kurala uyar.
+	srv2, calls2 := fakeServer(t, unavailable, fakeResponse{status: 200, body: `{}`})
+	hs2 := newTestClient(t, srv2, nil)
+	if err := hs2.Request(context.Background(), "PATCH", "/v1/apps/{appId}", nil, map[string]string{"name": "x"}, nil, WithHeader("Idempotency-Key", "upd-1")); err != nil {
+		t.Fatal(err)
+	}
+	if len(*calls2) != 2 || (*calls2)[0].Method != "PATCH" {
+		t.Fatalf("çağrı=%d", len(*calls2))
+	}
+}
+
+func TestIdempotentMethodsRetriedOn5xx(t *testing.T) {
+	srv, calls := fakeServer(t, unavailable, fakeResponse{status: 200, body: `{"id":"msg_1"}`}, unavailable, fakeResponse{status: 200, body: `{"ok":true}`})
+	hs := newTestClient(t, srv, nil)
+	if _, err := hs.Notifications.Get(context.Background(), "msg_1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := hs.Webhooks.Delete(context.Background(), "whk_1"); err != nil {
+		t.Fatal(err)
+	}
+	got := []string{}
+	for _, c := range *calls {
+		got = append(got, c.Method)
+	}
+	if strings.Join(got, ",") != "GET,GET,DELETE,DELETE" {
+		t.Fatal(got)
+	}
+}
+
+func TestRateLimitedPostRetriedWithoutKey(t *testing.T) {
+	srv, calls := fakeServer(t,
+		fakeResponse{status: 429, body: `{"error":{"code":"HS_RATE_LIMITED","message":"x"}}`, headers: map[string]string{"Retry-After": "1"}},
+		fakeResponse{status: 200, body: `{"accepted":1}`},
+	)
+	var slept []time.Duration
+	hs := newTestClient(t, srv, &slept)
+	if _, err := hs.Events.Send(context.Background(), &APIEventsDto{}); err != nil {
+		t.Fatal(err)
+	}
+	if len(*calls) != 2 || len(slept) != 1 || slept[0] != time.Second || (*calls)[0].Header.Get("Idempotency-Key") != "" {
+		t.Fatalf("çağrı=%d bekleme=%v", len(*calls), slept)
+	}
+}
+
+func TestPostRetriedWhenRequestNeverSent(t *testing.T) {
+	srv, calls := fakeServer(t, fakeResponse{dialErr: true}, fakeResponse{status: 200, body: `{"accepted":1}`})
+	hs := newTestClient(t, srv, nil)
+	if _, err := hs.Events.Send(context.Background(), &APIEventsDto{}); err != nil {
+		t.Fatal(err)
+	}
+	if len(*calls) != 1 {
+		t.Fatalf("sunucuya ulaşan çağrı=%d", len(*calls))
+	}
+	if !requestNotSent(&net.DNSError{Err: "no such host", Name: "api.invalid", IsNotFound: true}) {
+		t.Fatal("DNS hatası gönderilmemiş sayılmalı")
+	}
+}
+
+func TestPostRetriedOnRealConnectionRefused(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	addr := ln.Addr().String()
+	ln.Close()
+	var slept []time.Duration
+	hs, err := NewClient("k", WithBaseURL("http://"+addr), WithAppID("app_1"), WithMaxRetries(1))
+	if err != nil {
+		t.Fatal(err)
+	}
+	hs.sleep = func(_ context.Context, d time.Duration) error { slept = append(slept, d); return nil }
+	if _, err := hs.Events.Send(context.Background(), &APIEventsDto{}); !errors.Is(err, ErrNetwork) {
+		t.Fatalf("ağ hatası bekleniyordu: %v", err)
+	}
+	if len(slept) != 1 {
+		t.Fatalf("bağlantı reddinde POST bir kez yeniden denenmeli: %v", slept)
+	}
+}
+
+func TestInAppSelectWinnerAndDeprecatedAlias(t *testing.T) {
+	srv, calls := fakeServer(t, fakeResponse{status: 200, body: `{"id":"iam_1"}`}, fakeResponse{status: 200, body: `{"id":"iam_1"}`})
+	hs := newTestClient(t, srv, nil)
+	ctx := context.Background()
+	if _, err := hs.InAppMessages.SelectWinner(ctx, "iam_1", &InAppWinnerDto{VariantID: "b"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := hs.InAppMessages.Winner(ctx, "iam_1", &InAppWinnerDto{VariantID: "b"}); err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range *calls {
+		if c.Method != "POST" || c.Path != "/v1/apps/app_1/in-app-messages/iam_1/winner" || string(c.Body) != `{"variant_id":"b"}` {
+			t.Fatalf("%s %s %s", c.Method, c.Path, c.Body)
+		}
 	}
 }
 
