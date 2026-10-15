@@ -13,29 +13,30 @@ const APIVersion = "0.1.0"
 
 // services, istemciye eklenen üretilmiş kaynak alanlarıdır.
 type services struct {
-	Notifications *NotificationsService
-	Users         *UsersService
-	Aliases       *AliasesService
-	Subscriptions *SubscriptionsService
-	Events        *EventsService
-	Segments      *SegmentsService
-	Templates     *TemplatesService
-	Campaigns     *CampaignsService
-	InAppMessages *InAppMessagesService
-	Inbox         *InboxService
-	Suppressions  *SuppressionsService
-	Exports       *ExportsService
-	Imports       *ImportsService
-	Webhooks      *WebhooksService
-	Channels      *ChannelsService
-	Analytics     *AnalyticsService
-	Apps          *AppsService
-	APIKeys       *APIKeysService
-	Organization  *OrganizationService
-	Categories    *CategoriesService
-	IdentityKeys  *IdentityKeysService
-	Journeys      *JourneysService
-	Preferences   *PreferencesService
+	Notifications  *NotificationsService
+	Users          *UsersService
+	Aliases        *AliasesService
+	Subscriptions  *SubscriptionsService
+	Events         *EventsService
+	Segments       *SegmentsService
+	Templates      *TemplatesService
+	Campaigns      *CampaignsService
+	InAppMessages  *InAppMessagesService
+	Inbox          *InboxService
+	Suppressions   *SuppressionsService
+	Exports        *ExportsService
+	Imports        *ImportsService
+	Webhooks       *WebhooksService
+	Channels       *ChannelsService
+	Analytics      *AnalyticsService
+	Apps           *AppsService
+	APIKeys        *APIKeysService
+	Organization   *OrganizationService
+	Categories     *CategoriesService
+	IdentityKeys   *IdentityKeysService
+	Journeys       *JourneysService
+	LiveActivities *LiveActivitiesService
+	Preferences    *PreferencesService
 }
 
 func (c *Client) initServices() {
@@ -61,6 +62,7 @@ func (c *Client) initServices() {
 	c.Categories = &CategoriesService{client: c}
 	c.IdentityKeys = &IdentityKeysService{client: c}
 	c.Journeys = &JourneysService{client: c}
+	c.LiveActivities = &LiveActivitiesService{client: c}
 	c.Preferences = &PreferencesService{client: c}
 }
 
@@ -3559,6 +3561,145 @@ func (s *JourneysService) ListForUser(ctx context.Context, label string, value s
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/users/by/{label}/{value}/journeys"}
 	op.pathParams = map[string]string{"label": label, "value": value}
 	var out UserJourneyRuns
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// LiveActivitiesService: liveActivities kaynağı.
+type LiveActivitiesService struct {
+	client *Client
+}
+
+// ListTypes: Live Activity türleri
+//
+// GET /v1/apps/{appId}/live-activities/types
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) ListTypes(ctx context.Context, opts ...RequestOption) (*LiveActivityTypeList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/live-activities/types"}
+	var out LiveActivityTypeList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateType: Live Activity türü oluştur
+//
+// POST /v1/apps/{appId}/live-activities/types
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) CreateType(ctx context.Context, body *CreateLiveActivityTypeDto, opts ...RequestOption) (*LiveActivityType, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/live-activities/types"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out LiveActivityType
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateType: Live Activity türünü güncelle
+//
+// PATCH /v1/apps/{appId}/live-activities/types/{activityType}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) UpdateType(ctx context.Context, activityType string, body *UpdateLiveActivityTypeDto, opts ...RequestOption) (*LiveActivityType, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/live-activities/types/{activityType}"}
+	op.pathParams = map[string]string{"activityType": activityType}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out LiveActivityType
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DeleteType: Live Activity türünü sil
+//
+// DELETE /v1/apps/{appId}/live-activities/types/{activityType}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) DeleteType(ctx context.Context, activityType string, opts ...RequestOption) (*LiveActivityTokenResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/live-activities/types/{activityType}"}
+	op.pathParams = map[string]string{"activityType": activityType}
+	var out LiveActivityTokenResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Start: Live Activity başlat (push-to-start)
+//
+// POST /v1/apps/{appId}/live-activities/{activityType}/start
+//
+// Hedefteki iOS aboneliklerinin push-to-start belirteçleriyle etkinliği uzaktan başlatır (iOS 17.2+). `attributes` ve `content_state` türün şemasına uymalıdır. Dönen `activity_id` ile sonraki update/end yapılır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) Start(ctx context.Context, activityType string, body *StartLiveActivityDto, opts ...RequestOption) (*LiveActivitySendResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/live-activities/{activityType}/start"}
+	op.pathParams = map[string]string{"activityType": activityType}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out LiveActivitySendResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Live Activity güncelle
+//
+// POST /v1/apps/{appId}/live-activities/{activityType}/update
+//
+// Etkinliğin cihazlardan bildirilen güncelleme belirteçlerine yeni içerik durumu gönderir. Sessiz saat ve frekans sınırı uygulanmaz; priority 5 Apple bütçesini korur.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) Update(ctx context.Context, activityType string, body *UpdateLiveActivityDto, opts ...RequestOption) (*LiveActivitySendResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/live-activities/{activityType}/update"}
+	op.pathParams = map[string]string{"activityType": activityType}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out LiveActivitySendResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// End: Live Activity bitir
+//
+// POST /v1/apps/{appId}/live-activities/{activityType}/end
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LiveActivitiesService) End(ctx context.Context, activityType string, body *EndLiveActivityDto, opts ...RequestOption) (*LiveActivitySendResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/live-activities/{activityType}/end"}
+	op.pathParams = map[string]string{"activityType": activityType}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out LiveActivitySendResult
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
