@@ -10,7 +10,7 @@ type AddAliasDto struct {
 
 // AddSubscriptionDto: AddSubscriptionDto şeması.
 type AddSubscriptionDto struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Token  string                    `json:"token"`
@@ -179,7 +179,7 @@ type AppSettingsFrequencyCapsItem struct {
 	Max int64 `json:"max"`
 	// Zorunlu.
 	Window AppSettingsFrequencyCapsItemWindow `json:"window"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels []string `json:"channels,omitempty"`
 }
 
@@ -565,7 +565,7 @@ type CampaignsCreateBodyAudience struct {
 	ExcludeSegments []string `json:"exclude_segments,omitempty"`
 	// Filtre AST: all/any/none grupları ve { field, op, value } koşulları (docs/plan/05 §5.7).
 	Filters *CampaignsCreateBodyAudienceFilters `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels        []string `json:"channels,omitempty"`
 	TestDevicesOnly *bool    `json:"test_devices_only,omitempty"`
 }
@@ -645,7 +645,7 @@ type CampaignStats2 struct {
 
 // CampaignStatsChannelsItem: CampaignStatsChannelsItem şeması.
 type CampaignStatsChannelsItem struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Targeted int64 `json:"targeted"`
@@ -739,7 +739,7 @@ type CampaignsUpdateBodyAudience struct {
 	ExcludeSegments []string `json:"exclude_segments,omitempty"`
 	// Filtre AST: all/any/none grupları ve { field, op, value } koşulları (docs/plan/05 §5.7).
 	Filters *CampaignsUpdateBodyAudienceFilters `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels        []string `json:"channels,omitempty"`
 	TestDevicesOnly *bool    `json:"test_devices_only,omitempty"`
 }
@@ -888,9 +888,9 @@ type CampaignVariantStatsVariantsItem struct {
 
 // ChannelConfig: ChannelConfig şeması.
 type ChannelConfig struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
-	// Zorunlu. Değerler: "apns", "fcm", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "mock".
+	// Zorunlu. Değerler: "apns", "fcm", "hms", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "mock".
 	Provider *string `json:"provider"`
 	// Zorunlu. Değerler: "unconfigured", "active", "invalid", "suspended".
 	Status string `json:"status"`
@@ -927,6 +927,8 @@ type ChannelConfigConfig struct {
 	Environment         *string `json:"environment,omitempty"`
 	ProjectID           *string `json:"project_id,omitempty"`
 	ClientEmail         *string `json:"client_email,omitempty"`
+	HmsAppID            *string `json:"hms_app_id,omitempty"`
+	HighPriority        *bool   `json:"high_priority,omitempty"`
 	Subject             *string `json:"subject,omitempty"`
 	VAPIDPublicKey      *string `json:"vapid_public_key,omitempty"`
 	SiteURL             *string `json:"site_url,omitempty"`
@@ -1142,7 +1144,7 @@ type CreateCategoryDto struct {
 	// Zorunlu.
 	Name        map[string]string `json:"name"`
 	Description map[string]string `json:"description,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels       []string `json:"channels,omitempty"`
 	DefaultOptedIn *bool    `json:"default_opted_in,omitempty"`
 	Position       *int64   `json:"position,omitempty"`
@@ -1195,7 +1197,7 @@ type CreateExportDtoFilters struct {
 	MessageID  *string `json:"message_id,omitempty"`
 	CampaignID *string `json:"campaign_id,omitempty"`
 	Status     *string `json:"status,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel   *string `json:"channel,omitempty"`
 	SegmentID *string `json:"segment_id,omitempty"`
 }
@@ -1432,7 +1434,7 @@ type CreateNotificationDtoTarget struct {
 	IncludedSegments       []string            `json:"included_segments,omitempty"`
 	ExcludedSegments       []string            `json:"excluded_segments,omitempty"`
 	Filters                any                 `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels            []string `json:"channels,omitempty"`
 	TestDevicesOnly     *bool    `json:"test_devices_only,omitempty"`
 	EmailTo             []string `json:"email_to,omitempty"`
@@ -1477,7 +1479,7 @@ type CreateSuppressionDto struct {
 type CreateTemplateDto struct {
 	// Zorunlu.
 	Name string `json:"name"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel *string  `json:"channel,omitempty"`
 	Tags    []string `json:"tags,omitempty"`
 	// Zorunlu.
@@ -1584,7 +1586,7 @@ type Delivery struct {
 	SubscriptionID string `json:"subscription_id"`
 	// Zorunlu.
 	UserID *string `json:"user_id"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Provider *string `json:"provider"`
@@ -1720,7 +1722,7 @@ type EstimateAudienceDtoTarget struct {
 	IncludedSegments       []string            `json:"included_segments,omitempty"`
 	ExcludedSegments       []string            `json:"excluded_segments,omitempty"`
 	Filters                any                 `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels            []string `json:"channels,omitempty"`
 	TestDevicesOnly     *bool    `json:"test_devices_only,omitempty"`
 	EmailTo             []string `json:"email_to,omitempty"`
@@ -1931,7 +1933,7 @@ type ExportFilters struct {
 	MessageID  *string `json:"message_id,omitempty"`
 	CampaignID *string `json:"campaign_id,omitempty"`
 	Status     *string `json:"status,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel   *string `json:"channel,omitempty"`
 	SegmentID *string `json:"segment_id,omitempty"`
 }
@@ -3080,9 +3082,9 @@ type OverviewStats struct {
 
 // OverviewStatsChannelsItem: OverviewStatsChannelsItem şeması.
 type OverviewStatsChannelsItem struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
-	// Zorunlu. Değerler: "apns", "fcm", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "mock".
+	// Zorunlu. Değerler: "apns", "fcm", "hms", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "mock".
 	Provider *string `json:"provider"`
 	// Zorunlu. Değerler: "unconfigured", "active", "invalid", "suspended".
 	Status string `json:"status"`
@@ -3283,7 +3285,7 @@ type ProvidersReportTotals struct {
 
 // RenderPreview: RenderPreview şeması.
 type RenderPreview struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Language string `json:"language"`
@@ -3351,7 +3353,7 @@ type RenderPreviewSMS struct {
 
 // RenderTemplateDto: RenderTemplateDto şeması.
 type RenderTemplateDto struct {
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel    *string                   `json:"channel,omitempty"`
 	Language   *string                   `json:"language,omitempty"`
 	User       *RenderTemplateDtoUser    `json:"user,omitempty"`
@@ -3641,7 +3643,7 @@ type SetPreferencesDto struct {
 type SetPreferencesDtoPreferencesItem struct {
 	// Zorunlu.
 	Category string `json:"category"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel *string `json:"channel,omitempty"`
 	// Zorunlu.
 	OptedIn bool `json:"opted_in"`
@@ -3687,7 +3689,7 @@ type Subscription struct {
 	AppID string `json:"app_id"`
 	// Zorunlu.
 	UserID *string `json:"user_id"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Token string `json:"token"`
@@ -3712,6 +3714,8 @@ type Subscription struct {
 	// Zorunlu.
 	UnsubscribedAt *string `json:"unsubscribed_at"`
 	// Zorunlu.
+	Location *SubscriptionLocation `json:"location"`
+	// Zorunlu.
 	CreatedAt string `json:"created_at"`
 }
 
@@ -3729,6 +3733,22 @@ type SubscriptionDevice struct {
 	PushCapable *bool   `json:"push_capable,omitempty"`
 	// Değerler: "sandbox", "production".
 	PushEnvironment *string `json:"push_environment,omitempty"`
+}
+
+// SubscriptionLocation: SubscriptionLocation şeması.
+type SubscriptionLocation struct {
+	// Zorunlu.
+	Lat float64 `json:"lat"`
+	// Zorunlu.
+	Lng float64 `json:"lng"`
+	// Zorunlu.
+	AccuracyM *float64 `json:"accuracy_m"`
+	// Zorunlu.
+	Geohash *string `json:"geohash"`
+	// Zorunlu.
+	UpdatedAt *string `json:"updated_at"`
+	// Zorunlu.
+	ConsentAt *string `json:"consent_at"`
 }
 
 // SubscriptionsReport: SubscriptionsReport şeması.
@@ -3843,7 +3863,7 @@ type Template struct {
 	AppID string `json:"app_id"`
 	// Zorunlu.
 	Name string `json:"name"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel *string `json:"channel"`
 	// Zorunlu.
 	CurrentVersion int64 `json:"current_version"`
@@ -4011,7 +4031,7 @@ type UpdateAppDtoSettingsFrequencyCapsItem struct {
 	Max int64 `json:"max"`
 	// Zorunlu.
 	Window UpdateAppDtoSettingsFrequencyCapsItemWindow `json:"window"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels []string `json:"channels,omitempty"`
 }
 
@@ -4182,7 +4202,7 @@ type UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue struct {
 type UpdateCategoryDto struct {
 	Name        map[string]string `json:"name,omitempty"`
 	Description map[string]string `json:"description,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels       []string `json:"channels,omitempty"`
 	DefaultOptedIn *bool    `json:"default_opted_in,omitempty"`
 	Position       *int64   `json:"position,omitempty"`
@@ -4358,7 +4378,7 @@ type UpdateNodeDtoPosition struct {
 // UpdateTemplateDto: UpdateTemplateDto şeması.
 type UpdateTemplateDto struct {
 	Name *string `json:"name,omitempty"`
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel *string                   `json:"channel,omitempty"`
 	Tags    []string                  `json:"tags,omitempty"`
 	Content *UpdateTemplateDtoContent `json:"content,omitempty"`
@@ -4560,7 +4580,7 @@ type User struct {
 	UpdatedAt string `json:"updated_at"`
 	// Zorunlu.
 	SubscriptionCount int64 `json:"subscription_count"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels []string `json:"channels"`
 }
 
@@ -4592,7 +4612,7 @@ type UserDetail struct {
 	UpdatedAt string `json:"updated_at"`
 	// Zorunlu.
 	SubscriptionCount int64 `json:"subscription_count"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channels []string `json:"channels"`
 	// Zorunlu.
 	Aliases []UserDetailAliasesItem `json:"aliases"`

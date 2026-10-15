@@ -636,7 +636,7 @@ func (s *SubscriptionsService) GetUserIdentity(ctx context.Context, subscription
 	return &out, nil
 }
 
-// UpdateByToken: Token ile abonelik güncelle (token_type: ios_push, android_push, web_push, email, sms veya eski sağlayıcı adları iOSPush, AndroidPush, ChromePush, FirefoxPush, SafariPush, Email, SMS)
+// UpdateByToken: Token ile abonelik güncelle (token_type: ios_push, android_push, hms_push, web_push, email, sms veya eski sağlayıcı adları iOSPush, AndroidPush, HuaweiPush, ChromePush, FirefoxPush, SafariPush, Email, SMS)
 //
 // PATCH /v1/apps/{appId}/subscriptions_by_token/{tokenType}/{token}
 //
@@ -990,7 +990,7 @@ type TemplatesListParams struct {
 	Limit  *int64
 	Cursor *string
 	Q      *string
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel *string
 }
 
@@ -1197,7 +1197,7 @@ type CampaignsListParams struct {
 	Status *string
 	// Değerler: "one_time", "scheduled", "recurring", "automated", "transactional".
 	Type *string
-	// Değerler: "ios_push", "android_push", "web_push", "email", "sms".
+	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms".
 	Channel *string
 	Label   *string
 }
