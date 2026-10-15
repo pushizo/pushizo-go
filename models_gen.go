@@ -1289,6 +1289,56 @@ type CreateInAppDtoVariantsItemDisplay struct {
 	Blocks []any `json:"blocks"`
 }
 
+// CreateLiveActivityTypeDto: CreateLiveActivityTypeDto şeması.
+type CreateLiveActivityTypeDto struct {
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	// Zorunlu.
+	ContentStateSchema CreateLiveActivityTypeDtoContentStateSchema `json:"content_state_schema"`
+	AttributesSchema   *CreateLiveActivityTypeDtoAttributesSchema  `json:"attributes_schema,omitempty"`
+}
+
+// CreateLiveActivityTypeDtoAttributesSchema: CreateLiveActivityTypeDtoAttributesSchema şeması.
+type CreateLiveActivityTypeDtoAttributesSchema struct {
+	// Zorunlu. Değerler: "object".
+	Type string `json:"type"`
+	// Zorunlu.
+	Properties map[string]CreateLiveActivityTypeDtoAttributesSchemaPropertiesValue `json:"properties"`
+	Required   []string                                                            `json:"required,omitempty"`
+}
+
+// CreateLiveActivityTypeDtoAttributesSchemaPropertiesValue: CreateLiveActivityTypeDtoAttributesSchemaPropertiesValue şeması.
+type CreateLiveActivityTypeDtoAttributesSchemaPropertiesValue struct {
+	// Zorunlu. Değerler: "string", "number", "integer", "boolean".
+	Type        string   `json:"type"`
+	Enum        []any    `json:"enum,omitempty"`
+	MaxLength   *int64   `json:"maxLength,omitempty"`
+	Minimum     *float64 `json:"minimum,omitempty"`
+	Maximum     *float64 `json:"maximum,omitempty"`
+	Description *string  `json:"description,omitempty"`
+}
+
+// CreateLiveActivityTypeDtoContentStateSchema: CreateLiveActivityTypeDtoContentStateSchema şeması.
+type CreateLiveActivityTypeDtoContentStateSchema struct {
+	// Zorunlu. Değerler: "object".
+	Type string `json:"type"`
+	// Zorunlu.
+	Properties map[string]CreateLiveActivityTypeDtoContentStateSchemaPropertiesValue `json:"properties"`
+	Required   []string                                                              `json:"required,omitempty"`
+}
+
+// CreateLiveActivityTypeDtoContentStateSchemaPropertiesValue: CreateLiveActivityTypeDtoContentStateSchemaPropertiesValue şeması.
+type CreateLiveActivityTypeDtoContentStateSchemaPropertiesValue struct {
+	// Zorunlu. Değerler: "string", "number", "integer", "boolean".
+	Type        string   `json:"type"`
+	Enum        []any    `json:"enum,omitempty"`
+	MaxLength   *int64   `json:"maxLength,omitempty"`
+	Minimum     *float64 `json:"minimum,omitempty"`
+	Maximum     *float64 `json:"maximum,omitempty"`
+	Description *string  `json:"description,omitempty"`
+}
+
 // CreateNotificationDto: CreateNotificationDto şeması.
 type CreateNotificationDto struct {
 	AppID          *string `json:"app_id,omitempty"`
@@ -1574,6 +1624,27 @@ type DeliveryList struct {
 	NextCursor *string `json:"next_cursor"`
 	// Zorunlu.
 	HasMore bool `json:"has_more"`
+}
+
+// EndLiveActivityDto: EndLiveActivityDto şeması.
+type EndLiveActivityDto struct {
+	// Zorunlu.
+	ActivityID     string                   `json:"activity_id"`
+	ContentState   map[string]any           `json:"content_state,omitempty"`
+	Alert          *EndLiveActivityDtoAlert `json:"alert,omitempty"`
+	StaleDate      *int64                   `json:"stale_date,omitempty"`
+	DismissalDate  *int64                   `json:"dismissal_date,omitempty"`
+	RelevanceScore *float64                 `json:"relevance_score,omitempty"`
+	// Değerler: 5, 10.
+	Priority *int64  `json:"priority,omitempty"`
+	Name     *string `json:"name,omitempty"`
+}
+
+// EndLiveActivityDtoAlert: EndLiveActivityDtoAlert şeması.
+type EndLiveActivityDtoAlert struct {
+	Title map[string]string `json:"title,omitempty"`
+	Body  map[string]string `json:"body,omitempty"`
+	Sound *string           `json:"sound,omitempty"`
 }
 
 // EngagementReport: EngagementReport şeması.
@@ -2627,6 +2698,90 @@ type JourneyVersionListDataItem struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+// LiveActivitySendResult: LiveActivitySendResult şeması.
+type LiveActivitySendResult struct {
+	// Zorunlu.
+	MessageID string `json:"message_id"`
+	// Zorunlu.
+	ActivityID string `json:"activity_id"`
+	// Zorunlu. Değerler: "start", "update", "end".
+	Event string `json:"event"`
+	// Zorunlu.
+	RecipientsEstimate int64 `json:"recipients_estimate"`
+}
+
+// LiveActivityTokenResult: LiveActivityTokenResult şeması.
+type LiveActivityTokenResult struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+}
+
+// LiveActivityType: LiveActivityType şeması.
+type LiveActivityType struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	ContentStateSchema LiveActivityTypeContentStateSchema `json:"content_state_schema"`
+	// Zorunlu.
+	AttributesSchema LiveActivityTypeAttributesSchema `json:"attributes_schema"`
+	// Zorunlu.
+	PushToStartTokens int64 `json:"push_to_start_tokens"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// LiveActivityTypeAttributesSchema: LiveActivityTypeAttributesSchema şeması.
+type LiveActivityTypeAttributesSchema struct {
+	// Zorunlu. Değerler: "object".
+	Type string `json:"type"`
+	// Zorunlu.
+	Properties map[string]LiveActivityTypeAttributesSchemaPropertiesValue `json:"properties"`
+	Required   []string                                                   `json:"required,omitempty"`
+}
+
+// LiveActivityTypeAttributesSchemaPropertiesValue: LiveActivityTypeAttributesSchemaPropertiesValue şeması.
+type LiveActivityTypeAttributesSchemaPropertiesValue struct {
+	// Zorunlu. Değerler: "string", "number", "integer", "boolean".
+	Type        string   `json:"type"`
+	Enum        []any    `json:"enum,omitempty"`
+	MaxLength   *int64   `json:"maxLength,omitempty"`
+	Minimum     *float64 `json:"minimum,omitempty"`
+	Maximum     *float64 `json:"maximum,omitempty"`
+	Description *string  `json:"description,omitempty"`
+}
+
+// LiveActivityTypeContentStateSchema: LiveActivityTypeContentStateSchema şeması.
+type LiveActivityTypeContentStateSchema struct {
+	// Zorunlu. Değerler: "object".
+	Type string `json:"type"`
+	// Zorunlu.
+	Properties map[string]LiveActivityTypeContentStateSchemaPropertiesValue `json:"properties"`
+	Required   []string                                                     `json:"required,omitempty"`
+}
+
+// LiveActivityTypeContentStateSchemaPropertiesValue: LiveActivityTypeContentStateSchemaPropertiesValue şeması.
+type LiveActivityTypeContentStateSchemaPropertiesValue struct {
+	// Zorunlu. Değerler: "string", "number", "integer", "boolean".
+	Type        string   `json:"type"`
+	Enum        []any    `json:"enum,omitempty"`
+	MaxLength   *int64   `json:"maxLength,omitempty"`
+	Minimum     *float64 `json:"minimum,omitempty"`
+	Maximum     *float64 `json:"maximum,omitempty"`
+	Description *string  `json:"description,omitempty"`
+}
+
+// LiveActivityTypeList: LiveActivityTypeList şeması.
+type LiveActivityTypeList struct {
+	// Zorunlu.
+	Data []LiveActivityType `json:"data"`
+}
+
 // Member: Member şeması.
 type Member struct {
 	// Zorunlu.
@@ -3492,6 +3647,38 @@ type SetPreferencesDtoPreferencesItem struct {
 	OptedIn bool `json:"opted_in"`
 }
 
+// StartLiveActivityDto: StartLiveActivityDto şeması.
+type StartLiveActivityDto struct {
+	ActivityID *string        `json:"activity_id,omitempty"`
+	Attributes map[string]any `json:"attributes,omitempty"`
+	// Zorunlu.
+	Target StartLiveActivityDtoTarget `json:"target"`
+	// Zorunlu.
+	ContentState   map[string]any             `json:"content_state"`
+	Alert          *StartLiveActivityDtoAlert `json:"alert,omitempty"`
+	StaleDate      *int64                     `json:"stale_date,omitempty"`
+	DismissalDate  *int64                     `json:"dismissal_date,omitempty"`
+	RelevanceScore *float64                   `json:"relevance_score,omitempty"`
+	// Değerler: 5, 10.
+	Priority *int64  `json:"priority,omitempty"`
+	Name     *string `json:"name,omitempty"`
+}
+
+// StartLiveActivityDtoAlert: StartLiveActivityDtoAlert şeması.
+type StartLiveActivityDtoAlert struct {
+	Title map[string]string `json:"title,omitempty"`
+	Body  map[string]string `json:"body,omitempty"`
+	Sound *string           `json:"sound,omitempty"`
+}
+
+// StartLiveActivityDtoTarget: StartLiveActivityDtoTarget şeması.
+type StartLiveActivityDtoTarget struct {
+	IncludeExternalIds     []string `json:"include_external_ids,omitempty"`
+	IncludeSubscriptionIds []string `json:"include_subscription_ids,omitempty"`
+	IncludedSegments       []string `json:"included_segments,omitempty"`
+	All                    *bool    `json:"all,omitempty"`
+}
+
 // Subscription: Subscription şeması.
 type Subscription struct {
 	// Zorunlu.
@@ -4083,6 +4270,75 @@ type UpdateInAppDtoVariantsItemDisplay struct {
 type UpdateJourneyDto struct {
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
+}
+
+// UpdateLiveActivityDto: UpdateLiveActivityDto şeması.
+type UpdateLiveActivityDto struct {
+	// Zorunlu.
+	ActivityID string `json:"activity_id"`
+	// Zorunlu.
+	ContentState   map[string]any              `json:"content_state"`
+	Alert          *UpdateLiveActivityDtoAlert `json:"alert,omitempty"`
+	StaleDate      *int64                      `json:"stale_date,omitempty"`
+	DismissalDate  *int64                      `json:"dismissal_date,omitempty"`
+	RelevanceScore *float64                    `json:"relevance_score,omitempty"`
+	// Değerler: 5, 10.
+	Priority *int64  `json:"priority,omitempty"`
+	Name     *string `json:"name,omitempty"`
+}
+
+// UpdateLiveActivityDtoAlert: UpdateLiveActivityDtoAlert şeması.
+type UpdateLiveActivityDtoAlert struct {
+	Title map[string]string `json:"title,omitempty"`
+	Body  map[string]string `json:"body,omitempty"`
+	Sound *string           `json:"sound,omitempty"`
+}
+
+// UpdateLiveActivityTypeDto: UpdateLiveActivityTypeDto şeması.
+type UpdateLiveActivityTypeDto struct {
+	Description        *string                                      `json:"description,omitempty"`
+	ContentStateSchema *UpdateLiveActivityTypeDtoContentStateSchema `json:"content_state_schema,omitempty"`
+	AttributesSchema   *UpdateLiveActivityTypeDtoAttributesSchema   `json:"attributes_schema,omitempty"`
+}
+
+// UpdateLiveActivityTypeDtoAttributesSchema: UpdateLiveActivityTypeDtoAttributesSchema şeması.
+type UpdateLiveActivityTypeDtoAttributesSchema struct {
+	// Zorunlu. Değerler: "object".
+	Type string `json:"type"`
+	// Zorunlu.
+	Properties map[string]UpdateLiveActivityTypeDtoAttributesSchemaPropertiesValue `json:"properties"`
+	Required   []string                                                            `json:"required,omitempty"`
+}
+
+// UpdateLiveActivityTypeDtoAttributesSchemaPropertiesValue: UpdateLiveActivityTypeDtoAttributesSchemaPropertiesValue şeması.
+type UpdateLiveActivityTypeDtoAttributesSchemaPropertiesValue struct {
+	// Zorunlu. Değerler: "string", "number", "integer", "boolean".
+	Type        string   `json:"type"`
+	Enum        []any    `json:"enum,omitempty"`
+	MaxLength   *int64   `json:"maxLength,omitempty"`
+	Minimum     *float64 `json:"minimum,omitempty"`
+	Maximum     *float64 `json:"maximum,omitempty"`
+	Description *string  `json:"description,omitempty"`
+}
+
+// UpdateLiveActivityTypeDtoContentStateSchema: UpdateLiveActivityTypeDtoContentStateSchema şeması.
+type UpdateLiveActivityTypeDtoContentStateSchema struct {
+	// Zorunlu. Değerler: "object".
+	Type string `json:"type"`
+	// Zorunlu.
+	Properties map[string]UpdateLiveActivityTypeDtoContentStateSchemaPropertiesValue `json:"properties"`
+	Required   []string                                                              `json:"required,omitempty"`
+}
+
+// UpdateLiveActivityTypeDtoContentStateSchemaPropertiesValue: UpdateLiveActivityTypeDtoContentStateSchemaPropertiesValue şeması.
+type UpdateLiveActivityTypeDtoContentStateSchemaPropertiesValue struct {
+	// Zorunlu. Değerler: "string", "number", "integer", "boolean".
+	Type        string   `json:"type"`
+	Enum        []any    `json:"enum,omitempty"`
+	MaxLength   *int64   `json:"maxLength,omitempty"`
+	Minimum     *float64 `json:"minimum,omitempty"`
+	Maximum     *float64 `json:"maximum,omitempty"`
+	Description *string  `json:"description,omitempty"`
 }
 
 // UpdateNodeDto: UpdateNodeDto şeması.
