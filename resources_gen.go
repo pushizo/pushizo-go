@@ -33,6 +33,7 @@ type services struct {
 	APIKeys       *APIKeysService
 	Organization  *OrganizationService
 	Categories    *CategoriesService
+	IdentityKeys  *IdentityKeysService
 	Journeys      *JourneysService
 	Preferences   *PreferencesService
 }
@@ -58,6 +59,7 @@ func (c *Client) initServices() {
 	c.APIKeys = &APIKeysService{client: c}
 	c.Organization = &OrganizationService{client: c}
 	c.Categories = &CategoriesService{client: c}
+	c.IdentityKeys = &IdentityKeysService{client: c}
 	c.Journeys = &JourneysService{client: c}
 	c.Preferences = &PreferencesService{client: c}
 }
@@ -3074,6 +3076,63 @@ func (s *CategoriesService) Delete(ctx context.Context, categoryID string, opts 
 	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/categories/{categoryId}"}
 	op.pathParams = map[string]string{"categoryId": categoryID}
 	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// IdentityKeysService: identityKeys kaynağı.
+type IdentityKeysService struct {
+	client *Client
+}
+
+// List: SDK kimlik doğrulama (JWT) genel anahtarları
+//
+// GET /v1/apps/{appId}/identity-keys
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *IdentityKeysService) List(ctx context.Context, opts ...RequestOption) (*IdentityKeyList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/identity-keys"}
+	var out IdentityKeyList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Genel anahtar ekle (ES256)
+//
+// POST /v1/apps/{appId}/identity-keys
+//
+// SDK JWT identity verification için ES256 (EC P-256) genel anahtarı ekler; özel anahtar gönderilmez. Belirteç sunucunuzda imzalanır (`sub` = external_id, `aud` = app_id, `exp` ≤ 24 saat) ve SDK isteklerinde `Authorization: Bearer <jwt>` başlığıyla taşınır. Kip app ayarında `identity_verification_mode` ile seçilir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *IdentityKeysService) Create(ctx context.Context, body *CreateIdentityKeyDto, opts ...RequestOption) (*IdentityKey, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/identity-keys"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out IdentityKey
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Revoke: Genel anahtarı iptal et
+//
+// DELETE /v1/apps/{appId}/identity-keys/{keyId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *IdentityKeysService) Revoke(ctx context.Context, keyID string, opts ...RequestOption) (*IdentityKey, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/identity-keys/{keyId}"}
+	op.pathParams = map[string]string{"keyId": keyID}
+	var out IdentityKey
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

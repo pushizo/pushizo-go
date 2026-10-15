@@ -108,6 +108,8 @@ type App struct {
 	Timezone string `json:"timezone"`
 	// Zorunlu.
 	Settings AppSettings `json:"settings"`
+	// Zorunlu. Değerler: "hmac", "jwt", "both".
+	IdentityVerificationMode string `json:"identity_verification_mode"`
 	// Zorunlu. Değerler: "active", "suspended", "deleted".
 	Status string `json:"status"`
 	// Zorunlu.
@@ -1198,6 +1200,14 @@ type CreateExportDtoFilters struct {
 	SegmentID *string `json:"segment_id,omitempty"`
 }
 
+// CreateIdentityKeyDto: CreateIdentityKeyDto şeması.
+type CreateIdentityKeyDto struct {
+	Kid          *string        `json:"kid,omitempty"`
+	Label        *string        `json:"label,omitempty"`
+	PublicJwk    map[string]any `json:"public_jwk,omitempty"`
+	PublicKeyPem *string        `json:"public_key_pem,omitempty"`
+}
+
 // CreateInAppDto: CreateInAppDto şeması.
 type CreateInAppDto struct {
 	// Zorunlu.
@@ -1502,7 +1512,7 @@ type CreateWebhookDto struct {
 	// Zorunlu.
 	URL         string  `json:"url"`
 	Description *string `json:"description,omitempty"`
-	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited".
+	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "audit.created".
 	Events       []string                      `json:"events"`
 	EventFilters *CreateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -1677,6 +1687,8 @@ type EventDefinition struct {
 	// Zorunlu.
 	OutcomeUnattributed bool `json:"outcome_unattributed"`
 	// Zorunlu.
+	RetentionDays *int64 `json:"retention_days"`
+	// Zorunlu.
 	FirstSeenAt string `json:"first_seen_at"`
 	// Zorunlu.
 	LastSeenAt string `json:"last_seen_at"`
@@ -1706,6 +1718,8 @@ type EventDefinitionDetail struct {
 	OutcomeUnique bool `json:"outcome_unique"`
 	// Zorunlu.
 	OutcomeUnattributed bool `json:"outcome_unattributed"`
+	// Zorunlu.
+	RetentionDays *int64 `json:"retention_days"`
 	// Zorunlu.
 	FirstSeenAt string `json:"first_seen_at"`
 	// Zorunlu.
@@ -1922,6 +1936,30 @@ type FunnelReportStepsItem struct {
 	ConversionRate *float64 `json:"conversion_rate"`
 	// Zorunlu.
 	DropOff int64 `json:"drop_off"`
+}
+
+// IdentityKey: IdentityKey şeması.
+type IdentityKey struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Kid string `json:"kid"`
+	// Zorunlu. Değerler: "ES256".
+	Alg string `json:"alg"`
+	// Zorunlu.
+	PublicJwk map[string]string `json:"public_jwk"`
+	// Zorunlu.
+	Label *string `json:"label"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	RevokedAt *string `json:"revoked_at"`
+}
+
+// IdentityKeyList: IdentityKeyList şeması.
+type IdentityKeyList struct {
+	// Zorunlu.
+	Data []IdentityKey `json:"data"`
 }
 
 // Import: Import şeması.
@@ -2850,10 +2888,17 @@ type Org struct {
 
 // OrgSettings: OrgSettings şeması.
 type OrgSettings struct {
-	MfaRequired     *bool    `json:"mfaRequired,omitempty"`
-	IPAllowlist     []string `json:"ipAllowlist,omitempty"`
-	RetentionDays   *int64   `json:"retentionDays,omitempty"`
-	SessionMaxHours *int64   `json:"sessionMaxHours,omitempty"`
+	MfaRequired     *bool                   `json:"mfaRequired,omitempty"`
+	IPAllowlist     []string                `json:"ipAllowlist,omitempty"`
+	RetentionDays   *int64                  `json:"retentionDays,omitempty"`
+	SessionMaxHours *int64                  `json:"sessionMaxHours,omitempty"`
+	AuditStream     *OrgSettingsAuditStream `json:"auditStream,omitempty"`
+}
+
+// OrgSettingsAuditStream: OrgSettingsAuditStream şeması.
+type OrgSettingsAuditStream struct {
+	S3           *bool   `json:"s3,omitempty"`
+	WebhookAppID *string `json:"webhookAppId,omitempty"`
 }
 
 // OverviewStats: OverviewStats şeması.
@@ -2966,6 +3011,7 @@ type PatchEventDefinitionDto struct {
 	IsConversion        *bool   `json:"is_conversion,omitempty"`
 	OutcomeUnique       *bool   `json:"outcome_unique,omitempty"`
 	OutcomeUnattributed *bool   `json:"outcome_unattributed,omitempty"`
+	RetentionDays       *int64  `json:"retention_days,omitempty"`
 }
 
 // PatchSubscriptionDto: PatchSubscriptionDto şeması.
@@ -3719,6 +3765,8 @@ type UpdateAppDto struct {
 	DefaultLanguage *string                    `json:"default_language,omitempty"`
 	Timezone        *string                    `json:"timezone,omitempty"`
 	Settings        *UpdateAppDtoSettings      `json:"settings,omitempty"`
+	// Değerler: "hmac", "jwt", "both".
+	IdentityVerificationMode *string `json:"identity_verification_mode,omitempty"`
 }
 
 // UpdateAppDtoPlatformFlags: UpdateAppDtoPlatformFlags şeması.
@@ -4137,7 +4185,7 @@ type UpdateTemplateDtoContentWebButtonsItem struct {
 type UpdateWebhookDto struct {
 	URL         *string `json:"url,omitempty"`
 	Description *string `json:"description,omitempty"`
-	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited".
+	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "audit.created".
 	Events       []string                      `json:"events,omitempty"`
 	EventFilters *UpdateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
