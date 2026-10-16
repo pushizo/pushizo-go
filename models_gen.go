@@ -211,6 +211,13 @@ type AppSettingsOnboarding struct {
 	Step        int64   `json:"step"`
 	Simulation  *bool   `json:"simulation,omitempty"`
 	CompletedAt *string `json:"completed_at,omitempty"`
+	Version     *int64  `json:"version,omitempty"`
+	// Değerler: "ios", "android", "huawei", "web".
+	Platforms []string `json:"platforms,omitempty"`
+	// Değerler: "native", "flutter", "react-native", "unity", "capacitor", "cordova", "maui".
+	Framework *string `json:"framework,omitempty"`
+	// Değerler: "code", "wordpress".
+	WebIntegration *string `json:"web_integration,omitempty"`
 }
 
 // AppSettingsPreferenceCenter: AppSettingsPreferenceCenter şeması.
@@ -5090,6 +5097,13 @@ type UpdateAppDtoSettingsOnboarding struct {
 	Step        int64   `json:"step"`
 	Simulation  *bool   `json:"simulation,omitempty"`
 	CompletedAt *string `json:"completed_at,omitempty"`
+	Version     *int64  `json:"version,omitempty"`
+	// Değerler: "ios", "android", "huawei", "web".
+	Platforms []string `json:"platforms,omitempty"`
+	// Değerler: "native", "flutter", "react-native", "unity", "capacitor", "cordova", "maui".
+	Framework *string `json:"framework,omitempty"`
+	// Değerler: "code", "wordpress".
+	WebIntegration *string `json:"web_integration,omitempty"`
 }
 
 // UpdateAppDtoSettingsPreferenceCenter: UpdateAppDtoSettingsPreferenceCenter şeması.
