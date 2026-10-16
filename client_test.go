@@ -1,4 +1,4 @@
-package herosignal
+package pushizo
 
 import (
 	"context"
@@ -125,7 +125,7 @@ func TestCreateNotificationAuthAppAndIdempotency(t *testing.T) {
 	if got := c.Header.Get("Authorization"); got != "Bearer hs_live_test" {
 		t.Fatalf("authorization = %q", got)
 	}
-	if !strings.HasPrefix(c.Header.Get("User-Agent"), "herosignal-go/") {
+	if !strings.HasPrefix(c.Header.Get("User-Agent"), "pushizo-go/") {
 		t.Fatal("user-agent")
 	}
 	if !uuidRe.MatchString(c.Header.Get("Idempotency-Key")) {

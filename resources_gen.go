@@ -1,6 +1,6 @@
 // Bu dosya api/openapi.yaml'dan sdk/scripts/generate-server-sdks.mjs ile üretilmiştir; elle düzenlemeyin.
 
-package herosignal
+package pushizo
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 )
 
 // APIVersion, SDK'nın üretildiği OpenAPI sözleşmesinin sürümüdür.
-const APIVersion = "0.1.0"
+const APIVersion = "1.0.0"
 
 // services, istemciye eklenen üretilmiş kaynak alanlarıdır.
 type services struct {

@@ -1,14 +1,14 @@
-// Package herosignal, HeroSignal public API'si için Go sunucu SDK'sıdır.
+// Package pushizo, Pushizo public API'si için Go sunucu SDK'sıdır.
 //
-//	hs, err := herosignal.NewClient(os.Getenv("HS_API_KEY"), herosignal.WithAppID("app_…"))
-//	res, err := hs.Notifications.Create(ctx, &herosignal.CreateNotificationDto{
-//		Target:   &herosignal.CreateNotificationDtoTarget{IncludeAliases: map[string][]string{"external_id": {userID}}},
+//	hs, err := pushizo.NewClient(os.Getenv("HS_API_KEY"), pushizo.WithAppID("app_…"))
+//	res, err := hs.Notifications.Create(ctx, &pushizo.CreateNotificationDto{
+//		Target:   &pushizo.CreateNotificationDtoTarget{IncludeAliases: map[string][]string{"external_id": {userID}}},
 //		Contents: map[string]string{"en": "Shipped"},
-//	}, herosignal.WithIdempotencyKey("order-"+orderID))
+//	}, pushizo.WithIdempotencyKey("order-"+orderID))
 //
 // Modeller ve servisler api/openapi.yaml'dan üretilir (models_gen.go, resources_gen.go); HTTP katmanı,
 // yeniden deneme, hatalar, sayfalama ve webhook doğrulaması el yazımıdır.
-package herosignal
+package pushizo
 
 import (
 	"bytes"
@@ -33,7 +33,7 @@ import (
 const Version = "0.1.0"
 
 // DefaultBaseURL, varsayılan API adresidir; yerel geliştirmede WithBaseURL("http://localhost:4000").
-const DefaultBaseURL = "https://api.herosignal.dev"
+const DefaultBaseURL = "https://api.pushizo.com"
 
 const (
 	defaultTimeout    = 30 * time.Second
@@ -42,9 +42,9 @@ const (
 
 var backoff = []time.Duration{300 * time.Millisecond, time.Second, 3 * time.Second}
 
-var errNilBody = errors.New("herosignal: istek gövdesi nil olamaz")
+var errNilBody = errors.New("pushizo: istek gövdesi nil olamaz")
 
-// Client, HeroSignal API istemcisidir; eşzamanlı kullanım için güvenlidir.
+// Client, Pushizo API istemcisidir; eşzamanlı kullanım için güvenlidir.
 // Kaynak servisleri (Notifications, Users, Segments …) gömülü services yapısından gelir.
 type Client struct {
 	services
@@ -93,7 +93,7 @@ func WithAutoIdempotencyKey(enabled bool) ClientOption {
 // NewClient, API anahtarıyla (hs_live_…) istemci oluşturur.
 func NewClient(apiKey string, opts ...ClientOption) (*Client, error) {
 	if apiKey == "" {
-		return nil, errors.New("herosignal: apiKey gerekli")
+		return nil, errors.New("pushizo: apiKey gerekli")
 	}
 	c := &Client{
 		apiKey:             apiKey,
@@ -101,7 +101,7 @@ func NewClient(apiKey string, opts ...ClientOption) (*Client, error) {
 		httpClient:         http.DefaultClient,
 		timeout:            defaultTimeout,
 		maxRetries:         defaultMaxRetries,
-		userAgent:          "herosignal-go/" + Version,
+		userAgent:          "pushizo-go/" + Version,
 		autoIdempotencyKey: true,
 		sleep:              sleepContext,
 	}
@@ -114,7 +114,7 @@ func NewClient(apiKey string, opts ...ClientOption) (*Client, error) {
 
 // String, istemciyi API anahtarını göstermeden biçimlendirir (log'larda gizli bilgi sızmasın).
 func (c *Client) String() string {
-	return fmt.Sprintf("herosignal.Client{baseURL: %q, appID: %q}", c.baseURL, c.appID)
+	return fmt.Sprintf("pushizo.Client{baseURL: %q, appID: %q}", c.baseURL, c.appID)
 }
 
 // GoString, %#v biçiminde de API anahtarını gizler.
@@ -176,7 +176,7 @@ func (c *Client) requestConfig(opts []RequestOption) *requestConfig {
 
 func (r *requestConfig) resolveAppID() (string, error) {
 	if r.appID == "" {
-		return "", errors.New("herosignal: app kimliği verilmedi (WithAppID veya ForApp)")
+		return "", errors.New("pushizo: app kimliği verilmedi (WithAppID veya ForApp)")
 	}
 	return r.appID, nil
 }
@@ -212,7 +212,7 @@ func (c *Client) do(ctx context.Context, op *operation, ro *requestConfig, out a
 	}
 	for name, value := range op.pathParams {
 		if value == "" {
-			return fmt.Errorf("herosignal: %q yol parametresi boş olamaz", name)
+			return fmt.Errorf("pushizo: %q yol parametresi boş olamaz", name)
 		}
 		path = strings.ReplaceAll(path, "{"+name+"}", url.PathEscape(value))
 	}
@@ -244,7 +244,7 @@ func (c *Client) do(ctx context.Context, op *operation, ro *requestConfig, out a
 	case op.body != nil:
 		data, err := json.Marshal(op.body)
 		if err != nil {
-			return fmt.Errorf("herosignal: gövde serileştirilemedi: %w", err)
+			return fmt.Errorf("pushizo: gövde serileştirilemedi: %w", err)
 		}
 		payload, contentType = data, "application/json"
 	}
@@ -429,7 +429,7 @@ func parseRetryAfter(v string) time.Duration {
 func newUUID() string {
 	var b [16]byte
 	if _, err := rand.Read(b[:]); err != nil {
-		panic("herosignal: rastgele sayı üretilemedi: " + err.Error())
+		panic("pushizo: rastgele sayı üretilemedi: " + err.Error())
 	}
 	b[6] = (b[6] & 0x0f) | 0x40
 	b[8] = (b[8] & 0x3f) | 0x80

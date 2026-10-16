@@ -1,4 +1,4 @@
-package herosignal
+package pushizo
 
 import (
 	"errors"
@@ -34,16 +34,16 @@ const (
 
 // HTTP durum sınıflarına karşılık gelen hata kategorileri; errors.Is ile kullanılır:
 //
-//	if errors.Is(err, herosignal.ErrNotFound) { ... }
+//	if errors.Is(err, pushizo.ErrNotFound) { ... }
 var (
-	ErrNetwork          = errors.New("herosignal: ağ hatası")
-	ErrInvalidRequest   = errors.New("herosignal: geçersiz istek (400/422)")
-	ErrAuthentication   = errors.New("herosignal: kimlik doğrulama (401)")
-	ErrPermissionDenied = errors.New("herosignal: yetki yok (403)")
-	ErrNotFound         = errors.New("herosignal: bulunamadı (404)")
-	ErrConflict         = errors.New("herosignal: çakışma (409)")
-	ErrRateLimited      = errors.New("herosignal: hız sınırı (429)")
-	ErrServer           = errors.New("herosignal: sunucu hatası (5xx)")
+	ErrNetwork          = errors.New("pushizo: ağ hatası")
+	ErrInvalidRequest   = errors.New("pushizo: geçersiz istek (400/422)")
+	ErrAuthentication   = errors.New("pushizo: kimlik doğrulama (401)")
+	ErrPermissionDenied = errors.New("pushizo: yetki yok (403)")
+	ErrNotFound         = errors.New("pushizo: bulunamadı (404)")
+	ErrConflict         = errors.New("pushizo: çakışma (409)")
+	ErrRateLimited      = errors.New("pushizo: hız sınırı (429)")
+	ErrServer           = errors.New("pushizo: sunucu hatası (5xx)")
 )
 
 // Error, API hata zarfından ({"error": {"code", "message", "request_id", "details"}}) türetilir.
@@ -60,7 +60,7 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
-	s := fmt.Sprintf("herosignal: [%d %s] %s", e.StatusCode, e.Code, e.Message)
+	s := fmt.Sprintf("pushizo: [%d %s] %s", e.StatusCode, e.Code, e.Message)
 	if e.RequestID != "" {
 		s += " (request_id=" + e.RequestID + ")"
 	}
