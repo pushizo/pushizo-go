@@ -1,6 +1,6 @@
 // Bu dosya api/openapi.yaml'dan sdk/scripts/generate-server-sdks.mjs ile üretilmiştir; elle düzenlemeyin.
 
-package herosignal
+package pushizo
 
 // AddAliasDto: AddAliasDto şeması.
 type AddAliasDto struct {

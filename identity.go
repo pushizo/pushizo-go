@@ -1,4 +1,4 @@
-package herosignal
+package pushizo
 
 import (
 	"crypto/ecdsa"
@@ -38,7 +38,7 @@ func IdentityToken(opts IdentityTokenOptions) (string, error) {
 		ttl = time.Hour
 	}
 	if ttl < time.Second || ttl > IdentityTokenMaxLifetime {
-		return "", errors.New("herosignal: TTL 1 sn … 24 saat aralığında olmalı")
+		return "", errors.New("pushizo: TTL 1 sn … 24 saat aralığında olmalı")
 	}
 	key, err := parseECPrivateKey(opts.PrivateKeyPEM)
 	if err != nil {
@@ -67,18 +67,18 @@ func IdentityToken(opts IdentityTokenOptions) (string, error) {
 func parseECPrivateKey(pemBytes []byte) (*ecdsa.PrivateKey, error) {
 	block, _ := pem.Decode(pemBytes)
 	if block == nil {
-		return nil, errors.New("herosignal: PEM özel anahtarı okunamadı")
+		return nil, errors.New("pushizo: PEM özel anahtarı okunamadı")
 	}
 	if k, err := x509.ParsePKCS8PrivateKey(block.Bytes); err == nil {
 		ec, ok := k.(*ecdsa.PrivateKey)
 		if !ok || ec.Curve != elliptic.P256() {
-			return nil, errors.New("herosignal: ES256 için P-256 EC özel anahtarı gerekli")
+			return nil, errors.New("pushizo: ES256 için P-256 EC özel anahtarı gerekli")
 		}
 		return ec, nil
 	}
 	ec, err := x509.ParseECPrivateKey(block.Bytes)
 	if err != nil || ec.Curve != elliptic.P256() {
-		return nil, errors.New("herosignal: ES256 için P-256 EC özel anahtarı gerekli")
+		return nil, errors.New("pushizo: ES256 için P-256 EC özel anahtarı gerekli")
 	}
 	return ec, nil
 }

@@ -1,4 +1,4 @@
-package herosignal
+package pushizo
 
 import (
 	"crypto/hmac"
@@ -12,9 +12,9 @@ import (
 
 const (
 	// WebhookSignatureHeader, imza başlığıdır: "t=<unix>,v1=<hex>".
-	WebhookSignatureHeader = "HeroSignal-Signature"
+	WebhookSignatureHeader = "Pushizo-Signature"
 	// WebhookEventIDHeader, olay kimliği başlığıdır; tekrar gönderimleri ayıklamak için kullanın.
-	WebhookEventIDHeader = "HeroSignal-Event-Id"
+	WebhookEventIDHeader = "Pushizo-Event-Id"
 	// WebhookDefaultTolerance, varsayılan zaman damgası toleransıdır; daha eski t tekrar (replay) sayılır.
 	WebhookDefaultTolerance = 300 * time.Second
 )
@@ -47,7 +47,7 @@ type WebhookVerifyResult struct {
 type WebhookSignatureError struct{ Reason string }
 
 func (e *WebhookSignatureError) Error() string {
-	return "herosignal: webhook imzası geçersiz: " + e.Reason
+	return "pushizo: webhook imzası geçersiz: " + e.Reason
 }
 
 // WebhookEvent, webhook olayıdır (tekil gövde). Batch gövdesi {"events": [...]} biçimindedir.
@@ -59,12 +59,12 @@ type WebhookEvent struct {
 	Data      json.RawMessage `json:"data"`
 }
 
-// VerifyWebhookSignature, HeroSignal-Signature başlığını doğrular: v1 = HMAC-SHA256(secret, t + "." + ham gövde).
+// VerifyWebhookSignature, Pushizo-Signature başlığını doğrular: v1 = HMAC-SHA256(secret, t + "." + ham gövde).
 // payload HAM istek gövdesidir (JSON'u ayrıştırıp yeniden serileştirmeyin). Rotasyon sırasında eski ve yeni
 // secret birlikte verilebilir; herhangi biri eşleşirse imza geçerlidir. Karşılaştırma sabit zamanlıdır.
 //
 //	body, _ := io.ReadAll(r.Body)
-//	res := herosignal.VerifyWebhookSignature(body, r.Header.Get(herosignal.WebhookSignatureHeader), []string{secret}, nil)
+//	res := pushizo.VerifyWebhookSignature(body, r.Header.Get(pushizo.WebhookSignatureHeader), []string{secret}, nil)
 //	if !res.OK { http.Error(w, res.Reason, http.StatusBadRequest); return }
 func VerifyWebhookSignature(payload []byte, header string, secrets []string, opts *WebhookVerifyOptions) WebhookVerifyResult {
 	if header == "" {

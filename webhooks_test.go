@@ -1,4 +1,4 @@
-package herosignal
+package pushizo
 
 import (
 	"encoding/json"
