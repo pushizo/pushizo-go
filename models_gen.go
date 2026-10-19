@@ -5755,7 +5755,8 @@ type UsageReport struct {
 	// Zorunlu.
 	Trialing bool `json:"trialing"`
 	// Zorunlu.
-	TrialEndsAt *string `json:"trial_ends_at"`
+	TrialEndsAt *string             `json:"trial_ends_at"`
+	Overage     *UsageReportOverage `json:"overage,omitempty"`
 }
 
 // UsageReportAppsItem: UsageReportAppsItem şeması.
@@ -5796,6 +5797,44 @@ type UsageReportMetricsItem struct {
 	Percent *float64 `json:"percent"`
 	// Zorunlu.
 	Hard bool `json:"hard"`
+}
+
+// UsageReportOverage: UsageReportOverage şeması.
+type UsageReportOverage struct {
+	// Zorunlu.
+	Lines []UsageReportOverageLinesItem `json:"lines"`
+	// Zorunlu.
+	Totals UsageReportOverageTotals `json:"totals"`
+}
+
+// UsageReportOverageLinesItem: UsageReportOverageLinesItem şeması.
+type UsageReportOverageLinesItem struct {
+	// Zorunlu.
+	Metric string `json:"metric"`
+	// Zorunlu.
+	Included float64 `json:"included"`
+	// Zorunlu.
+	Used float64 `json:"used"`
+	// Zorunlu.
+	Billable float64 `json:"billable"`
+	// Zorunlu.
+	Amounts UsageReportOverageLinesItemAmounts `json:"amounts"`
+}
+
+// UsageReportOverageLinesItemAmounts: UsageReportOverageLinesItemAmounts şeması.
+type UsageReportOverageLinesItemAmounts struct {
+	// Zorunlu.
+	Usd float64 `json:"USD"`
+	// Zorunlu.
+	Try float64 `json:"TRY"`
+}
+
+// UsageReportOverageTotals: UsageReportOverageTotals şeması.
+type UsageReportOverageTotals struct {
+	// Zorunlu.
+	Usd float64 `json:"USD"`
+	// Zorunlu.
+	Try float64 `json:"TRY"`
 }
 
 // UsageReportPeriod: UsageReportPeriod şeması.
