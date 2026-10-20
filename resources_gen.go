@@ -3361,6 +3361,367 @@ func (s *AdsService) Lookalike(ctx context.Context, audienceID string, body *Cre
 	return &out, nil
 }
 
+// AdsListParams: AdsService.List için isteğe bağlı sorgu parametreleri.
+type AdsListParams struct {
+	AdAccountID *string
+	// Değerler: "campaign", "ad_set", "ad".
+	Level    *string
+	ParentID *string
+	// Değerler: "active", "paused", "pending", "rejected", "archived", "deleted", "unknown".
+	Status *string
+	Q      *string
+	From   *string
+	To     *string
+	Limit  *int64
+}
+
+func (p *AdsListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "ad_account_id", p.AdAccountID)
+	addQuery(q, "level", p.Level)
+	addQuery(q, "parent_id", p.ParentID)
+	addQuery(q, "status", p.Status)
+	addQuery(q, "q", p.Q)
+	addQuery(q, "from", p.From)
+	addQuery(q, "to", p.To)
+	addQuery(q, "limit", p.Limit)
+}
+
+// List: Kampanya / reklam seti / reklam listesi ve metrikler
+//
+// GET /v1/apps/{appId}/ads/campaigns
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) List(ctx context.Context, params *AdsListParams, opts ...RequestOption) (*AdEntityList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/campaigns"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdEntityList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Kampanya / reklam seti / reklam ayrıntısı
+//
+// GET /v1/apps/{appId}/ads/campaigns/{entityId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Get(ctx context.Context, entityID string, opts ...RequestOption) (*AdEntity, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/campaigns/{entityId}"}
+	op.pathParams = map[string]string{"entityId": entityID}
+	var out AdEntity
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Durum ve günlük bütçe değişikliği
+//
+// PATCH /v1/apps/{appId}/ads/campaigns/{entityId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Update(ctx context.Context, entityID string, body *UpdateAdCampaignDto, opts ...RequestOption) (*AdEntity, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/ads/campaigns/{entityId}"}
+	op.pathParams = map[string]string{"entityId": entityID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdEntity
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Refresh: Kampanyaları ve metrikleri şimdi yenile
+//
+// POST /v1/apps/{appId}/ads/accounts/{accountId}/refresh
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Refresh(ctx context.Context, accountID string, opts ...RequestOption) (*AdRefreshQueued, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/ads/accounts/{accountId}/refresh"}
+	op.pathParams = map[string]string{"accountId": accountID}
+	var out AdRefreshQueued
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsSpendParams: AdsService.Spend için isteğe bağlı sorgu parametreleri.
+type AdsSpendParams struct {
+	Currency *string
+	// Değerler: "day", "platform", "account", "campaign", "ad_set".
+	GroupBy     *string
+	AdAccountID *string
+	CampaignID  *string
+}
+
+func (p *AdsSpendParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "currency", p.Currency)
+	addQuery(q, "group_by", p.GroupBy)
+	addQuery(q, "ad_account_id", p.AdAccountID)
+	addQuery(q, "campaign_id", p.CampaignID)
+}
+
+// Spend: Harcama ve performans raporu
+//
+// GET /v1/apps/{appId}/ads/reports/spend
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Spend(ctx context.Context, from string, to string, params *AdsSpendParams, opts ...RequestOption) (*AdSpendReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/reports/spend"}
+	op.query = url.Values{}
+	addQuery(op.query, "from", &from)
+	addQuery(op.query, "to", &to)
+	params.appendQuery(op.query)
+	var out AdSpendReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsAttributionParams: AdsService.Attribution için isteğe bağlı sorgu parametreleri.
+type AdsAttributionParams struct {
+	// Değerler: "last_click", "first_click", "linear", "time_decay".
+	Model        *string
+	WindowDays   *int64
+	HalfLifeDays *int64
+	Currency     *string
+	// Değerler: "channel", "campaign", "ad_set".
+	GroupBy          *string
+	ConversionEvents *string
+}
+
+func (p *AdsAttributionParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "model", p.Model)
+	addQuery(q, "window_days", p.WindowDays)
+	addQuery(q, "half_life_days", p.HalfLifeDays)
+	addQuery(q, "currency", p.Currency)
+	addQuery(q, "group_by", p.GroupBy)
+	addQuery(q, "conversion_events", p.ConversionEvents)
+}
+
+// Attribution: Birleşik atribüsyon raporu (ROAS, CAC)
+//
+// GET /v1/apps/{appId}/ads/reports/attribution
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Attribution(ctx context.Context, from string, to string, params *AdsAttributionParams, opts ...RequestOption) (*AdAttributionReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/reports/attribution"}
+	op.query = url.Values{}
+	addQuery(op.query, "from", &from)
+	addQuery(op.query, "to", &to)
+	params.appendQuery(op.query)
+	var out AdAttributionReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsLtvParams: AdsService.Ltv için isteğe bağlı sorgu parametreleri.
+type AdsLtvParams struct {
+	Months   *int64
+	Cohorts  *int64
+	Currency *string
+}
+
+func (p *AdsLtvParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "months", p.Months)
+	addQuery(q, "cohorts", p.Cohorts)
+	addQuery(q, "currency", p.Currency)
+}
+
+// Ltv: Kohort LTV raporu
+//
+// GET /v1/apps/{appId}/ads/reports/ltv
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Ltv(ctx context.Context, params *AdsLtvParams, opts ...RequestOption) (*AdLtvReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/reports/ltv"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdLtvReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CapiConfigs: Conversions API yapılandırmaları
+//
+// GET /v1/apps/{appId}/ads/conversions-api/configs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) CapiConfigs(ctx context.Context, opts ...RequestOption) (*AdCapiConfigList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/conversions-api/configs"}
+	var out AdCapiConfigList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsCapiDeliveriesParams: AdsService.CapiDeliveries için isteğe bağlı sorgu parametreleri.
+type AdsCapiDeliveriesParams struct {
+	ConfigID *string
+	// Değerler: "pending", "sent", "failed", "skipped".
+	Status *string
+	Limit  *int64
+}
+
+func (p *AdsCapiDeliveriesParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "config_id", p.ConfigID)
+	addQuery(q, "status", p.Status)
+	addQuery(q, "limit", p.Limit)
+}
+
+// CapiDeliveries: Conversions API teslim geçmişi
+//
+// GET /v1/apps/{appId}/ads/conversions-api/deliveries
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) CapiDeliveries(ctx context.Context, params *AdsCapiDeliveriesParams, opts ...RequestOption) (*AdCapiDeliveryList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/conversions-api/deliveries"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdCapiDeliveryList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Rules: Bütçe uyarı kuralları
+//
+// GET /v1/apps/{appId}/ads/alert-rules
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Rules(ctx context.Context, opts ...RequestOption) (*AdBudgetAlertRuleList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/alert-rules"}
+	var out AdBudgetAlertRuleList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateRule: Bütçe uyarı kuralı oluştur
+//
+// POST /v1/apps/{appId}/ads/alert-rules
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) CreateRule(ctx context.Context, body *CreateBudgetAlertRuleDto, opts ...RequestOption) (*AdBudgetAlertRule, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/ads/alert-rules"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdBudgetAlertRule
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateRule: Bütçe uyarı kuralını güncelle
+//
+// PATCH /v1/apps/{appId}/ads/alert-rules/{ruleId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) UpdateRule(ctx context.Context, ruleID string, body *UpdateBudgetAlertRuleDto, opts ...RequestOption) (*AdBudgetAlertRule, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/ads/alert-rules/{ruleId}"}
+	op.pathParams = map[string]string{"ruleId": ruleID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdBudgetAlertRule
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RemoveRule: Bütçe uyarı kuralını sil
+//
+// DELETE /v1/apps/{appId}/ads/alert-rules/{ruleId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) RemoveRule(ctx context.Context, ruleID string, opts ...RequestOption) (*AdOk, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/ads/alert-rules/{ruleId}"}
+	op.pathParams = map[string]string{"ruleId": ruleID}
+	var out AdOk
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsAlertHistoryParams: AdsService.AlertHistory için isteğe bağlı sorgu parametreleri.
+type AdsAlertHistoryParams struct {
+	RuleID *string
+	Limit  *int64
+}
+
+func (p *AdsAlertHistoryParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "rule_id", p.RuleID)
+	addQuery(q, "limit", p.Limit)
+}
+
+// AlertHistory: Tetiklenen bütçe uyarıları
+//
+// GET /v1/apps/{appId}/ads/alerts
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) AlertHistory(ctx context.Context, params *AdsAlertHistoryParams, opts ...RequestOption) (*AdBudgetAlertList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/alerts"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdBudgetAlertList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // CannedResponsesService: cannedResponses kaynağı.
 type CannedResponsesService struct {
 	client *Client
