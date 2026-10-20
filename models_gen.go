@@ -33,6 +33,10 @@ type AdAccount struct {
 	// Zorunlu.
 	LastErrorAt *string `json:"last_error_at"`
 	// Zorunlu.
+	TermsAcceptedAt *string `json:"terms_accepted_at"`
+	// Zorunlu.
+	TermsVersion *string `json:"terms_version"`
+	// Zorunlu.
 	Audiences int64 `json:"audiences"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
