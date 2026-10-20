@@ -2,6 +2,176 @@
 
 package pushizo
 
+// AdAccount: AdAccount şeması.
+type AdAccount struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu. Değerler: "meta", "google", "tiktok", "linkedin".
+	Platform string `json:"platform"`
+	// Zorunlu.
+	ExternalID string `json:"external_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Currency *string `json:"currency"`
+	// Zorunlu.
+	Timezone *string `json:"timezone"`
+	// Zorunlu. Değerler: "active", "error", "revoked".
+	Status string `json:"status"`
+	// Zorunlu.
+	Scopes []string `json:"scopes"`
+	// Zorunlu.
+	LoginCustomerID *string `json:"login_customer_id"`
+	// Zorunlu.
+	TokenExpiresAt *string `json:"token_expires_at"`
+	// Zorunlu.
+	LastRefreshedAt *string `json:"last_refreshed_at"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	LastErrorAt *string `json:"last_error_at"`
+	// Zorunlu.
+	Audiences int64 `json:"audiences"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// AdAccountList: AdAccountList şeması.
+type AdAccountList struct {
+	// Zorunlu.
+	Data []AdAccount `json:"data"`
+}
+
+// AdAudience: AdAudience şeması.
+type AdAudience struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	AdAccountID string `json:"ad_account_id"`
+	// Zorunlu. Değerler: "meta", "google", "tiktok", "linkedin".
+	Platform string `json:"platform"`
+	// Zorunlu. Değerler: "segment", "journey", "lookalike".
+	Source string `json:"source"`
+	// Zorunlu.
+	SegmentID *string `json:"segment_id"`
+	// Zorunlu.
+	SegmentName *string `json:"segment_name"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu. Değerler: "pending", "active", "paused", "error".
+	Status string `json:"status"`
+	// Zorunlu. Değerler: "email", "phone", "maid".
+	Identifiers []string `json:"identifiers"`
+	// Zorunlu.
+	SyncIntervalMinutes int64 `json:"sync_interval_minutes"`
+	// Zorunlu.
+	NextSyncAt *string `json:"next_sync_at"`
+	// Zorunlu.
+	LastSyncedAt *string `json:"last_synced_at"`
+	// Zorunlu. Değerler: "succeeded", "partial", "failed".
+	LastSyncStatus *string `json:"last_sync_status"`
+	// Zorunlu.
+	FullReloadRequested bool `json:"full_reload_requested"`
+	// Zorunlu.
+	MemberCount int64 `json:"member_count"`
+	// Zorunlu.
+	EstimatedSize *int64 `json:"estimated_size"`
+	// Zorunlu.
+	MatchRate *float64 `json:"match_rate"`
+	// Zorunlu.
+	SizeUpdatedAt *string `json:"size_updated_at"`
+	// Zorunlu.
+	LookalikeSourceID *string `json:"lookalike_source_id"`
+	// Zorunlu.
+	LookalikeSpec *AdAudienceLookalikeSpec `json:"lookalike_spec"`
+	// Zorunlu.
+	ConsecutiveFailures int64 `json:"consecutive_failures"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	LastErrorAt *string `json:"last_error_at"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// AdAudienceList: AdAudienceList şeması.
+type AdAudienceList struct {
+	// Zorunlu.
+	Data []AdAudience `json:"data"`
+}
+
+// AdAudienceLookalikeSpec: AdAudienceLookalikeSpec şeması.
+type AdAudienceLookalikeSpec struct {
+	// Zorunlu.
+	Country string `json:"country"`
+	// Zorunlu.
+	Ratio float64 `json:"ratio"`
+}
+
+// AdAudienceSyncList: AdAudienceSyncList şeması.
+type AdAudienceSyncList struct {
+	// Zorunlu.
+	Data []AdAudienceSyncListDataItem `json:"data"`
+}
+
+// AdAudienceSyncListDataItem: AdAudienceSyncListDataItem şeması.
+type AdAudienceSyncListDataItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AudienceID string `json:"audience_id"`
+	// Zorunlu. Değerler: "schedule", "manual", "journey".
+	Trigger string `json:"trigger"`
+	// Zorunlu. Değerler: "incremental", "full".
+	Mode string `json:"mode"`
+	// Zorunlu. Değerler: "running", "succeeded", "partial", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	Added int64 `json:"added"`
+	// Zorunlu.
+	Removed int64 `json:"removed"`
+	// Zorunlu.
+	Failed int64 `json:"failed"`
+	// Zorunlu.
+	SkippedNoConsent int64 `json:"skipped_no_consent"`
+	// Zorunlu.
+	SkippedNoIdentifier int64 `json:"skipped_no_identifier"`
+	// Zorunlu.
+	Batches int64 `json:"batches"`
+	// Zorunlu.
+	Retries int64 `json:"retries"`
+	// Zorunlu.
+	Error *string `json:"error"`
+	// Zorunlu.
+	StartedAt string `json:"started_at"`
+	// Zorunlu.
+	FinishedAt *string `json:"finished_at"`
+	// Zorunlu.
+	DurationMs *int64 `json:"duration_ms"`
+}
+
+// AdAudienceSyncQueued: AdAudienceSyncQueued şeması.
+type AdAudienceSyncQueued struct {
+	// Zorunlu.
+	Queued bool `json:"queued"`
+	// Zorunlu.
+	NextSyncAt string `json:"next_sync_at"`
+	// Zorunlu. Değerler: "incremental", "full".
+	Mode string `json:"mode"`
+}
+
 // AddAliasDto: AddAliasDto şeması.
 type AddAliasDto struct {
 	// Zorunlu.
@@ -41,6 +211,12 @@ type AddSubscriptionDtoOptIn struct {
 	// Zorunlu.
 	Source string  `json:"source"`
 	At     *string `json:"at,omitempty"`
+}
+
+// AdOk: AdOk şeması.
+type AdOk struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
 }
 
 // APIEventsDto: ApiEventsDto şeması.
@@ -904,6 +1080,49 @@ type CampaignVariantStatsVariantsItem struct {
 	ConversionRate float64 `json:"conversion_rate"`
 }
 
+// CannedInputDto: CannedInputDto şeması.
+type CannedInputDto struct {
+	// Zorunlu.
+	Shortcut string `json:"shortcut"`
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Body     string  `json:"body"`
+	Language *string `json:"language,omitempty"`
+}
+
+// CannedResponse: CannedResponse şeması.
+type CannedResponse struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Shortcut string `json:"shortcut"`
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Body string `json:"body"`
+	// Zorunlu.
+	Language *string `json:"language"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// CannedResponseList: CannedResponseList şeması.
+type CannedResponseList struct {
+	// Zorunlu.
+	Data []CannedResponse `json:"data"`
+}
+
+// CannedUpdateDto: CannedUpdateDto şeması.
+type CannedUpdateDto struct {
+	Shortcut *string `json:"shortcut,omitempty"`
+	Title    *string `json:"title,omitempty"`
+	Body     *string `json:"body,omitempty"`
+	Language *string `json:"language,omitempty"`
+}
+
 // ChannelConfig: ChannelConfig şeması.
 type ChannelConfig struct {
 	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms", "whatsapp", "rcs".
@@ -1099,14 +1318,14 @@ type ContentTableRows struct {
 type Conversation struct {
 	// Zorunlu.
 	ID string `json:"id"`
-	// Zorunlu. Değerler: "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "sms", "whatsapp", "rcs", "email", "chat".
 	Channel string `json:"channel"`
-	// Zorunlu. Değerler: "open", "closed".
+	// Zorunlu. Değerler: "open", "pending", "resolved", "closed".
 	Status string `json:"status"`
 	// Zorunlu.
-	SubscriptionID string `json:"subscription_id"`
+	SubscriptionID *string `json:"subscription_id"`
 	// Zorunlu.
-	SubscriptionStatus string `json:"subscription_status"`
+	SubscriptionStatus *string `json:"subscription_status"`
 	// Zorunlu.
 	UserID *string `json:"user_id"`
 	// Zorunlu.
@@ -1129,6 +1348,62 @@ type Conversation struct {
 	Window *ConversationWindow `json:"window"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	AssigneeID *string `json:"assignee_id"`
+	// Zorunlu.
+	TeamID *string `json:"team_id"`
+	// Zorunlu.
+	AssignedAt *string `json:"assigned_at"`
+	// Zorunlu.
+	Language *string `json:"language"`
+	// Zorunlu.
+	BotActive bool `json:"bot_active"`
+	// Zorunlu.
+	LastSeq int64 `json:"last_seq"`
+	// Zorunlu.
+	VisitorLastReadSeq int64 `json:"visitor_last_read_seq"`
+	// Zorunlu.
+	VisitorLastDeliveredSeq int64 `json:"visitor_last_delivered_seq"`
+	// Zorunlu.
+	AgentLastReadSeq int64 `json:"agent_last_read_seq"`
+	// Zorunlu.
+	WaitingSince *string `json:"waiting_since"`
+	// Zorunlu.
+	FirstResponseAt *string `json:"first_response_at"`
+	// Zorunlu.
+	SlaDueAt *string `json:"sla_due_at"`
+	// Zorunlu.
+	ResolvedAt *string `json:"resolved_at"`
+	// Zorunlu.
+	Visitor *ConversationVisitor `json:"visitor"`
+}
+
+// ConversationActivity: ConversationActivity şeması.
+type ConversationActivity struct {
+	// Zorunlu.
+	Data []ConversationActivityDataItem `json:"data"`
+}
+
+// ConversationActivityDataItem: ConversationActivityDataItem şeması.
+type ConversationActivityDataItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Type string `json:"type"`
+	// Zorunlu.
+	ActorType string `json:"actor_type"`
+	// Zorunlu.
+	ActorID *string `json:"actor_id"`
+	// Zorunlu.
+	Data map[string]any `json:"data"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// ConversationAssignDto: ConversationAssignDto şeması.
+type ConversationAssignDto struct {
+	AssigneeID *string `json:"assignee_id,omitempty"`
+	TeamID     *string `json:"team_id,omitempty"`
 }
 
 // ConversationMessagePage: ConversationMessagePage şeması.
@@ -1165,6 +1440,36 @@ type ConversationMessagePageDataItem struct {
 	ReadAt *string `json:"read_at"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	Seq int64 `json:"seq"`
+	// Zorunlu.
+	SenderType string `json:"sender_type"`
+	// Zorunlu.
+	ClientMessageID *string `json:"client_message_id"`
+	// Zorunlu.
+	Attachments []ConversationMessagePageDataItemAttachmentsItem `json:"attachments"`
+	// Zorunlu.
+	QuickReplies []ConversationMessagePageDataItemQuickRepliesItem `json:"quick_replies"`
+}
+
+// ConversationMessagePageDataItemAttachmentsItem: ConversationMessagePageDataItemAttachmentsItem şeması.
+type ConversationMessagePageDataItemAttachmentsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Type string `json:"type"`
+	// Zorunlu.
+	Size int64 `json:"size"`
+}
+
+// ConversationMessagePageDataItemQuickRepliesItem: ConversationMessagePageDataItemQuickRepliesItem şeması.
+type ConversationMessagePageDataItemQuickRepliesItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Label string `json:"label"`
 }
 
 // ConversationPage: ConversationPage şeması.
@@ -1179,10 +1484,13 @@ type ConversationPage struct {
 
 // ConversationReplyDto: ConversationReplyDto şeması.
 type ConversationReplyDto struct {
-	Text        *string                          `json:"text,omitempty"`
-	Template    *ConversationReplyDtoTemplate    `json:"template,omitempty"`
-	Media       *ConversationReplyDtoMedia       `json:"media,omitempty"`
-	Interactive *ConversationReplyDtoInteractive `json:"interactive,omitempty"`
+	Text            *string                          `json:"text,omitempty"`
+	Template        *ConversationReplyDtoTemplate    `json:"template,omitempty"`
+	Media           *ConversationReplyDtoMedia       `json:"media,omitempty"`
+	Interactive     *ConversationReplyDtoInteractive `json:"interactive,omitempty"`
+	ClientMessageID *string                          `json:"client_message_id,omitempty"`
+	// Değerler: "manual", "canned", "ai_suggestion".
+	Source *string `json:"source,omitempty"`
 }
 
 // ConversationReplyDtoInteractive: ConversationReplyDtoInteractive şeması.
@@ -1260,7 +1568,7 @@ type ConversationReplyDtoTemplateButtonParamsItem struct {
 // ConversationReplyResult: ConversationReplyResult şeması.
 type ConversationReplyResult struct {
 	// Zorunlu.
-	MessageID string `json:"message_id"`
+	MessageID *string `json:"message_id"`
 	// Zorunlu.
 	ConversationMessage ConversationReplyResultConversationMessage `json:"conversation_message"`
 }
@@ -1289,6 +1597,64 @@ type ConversationReplyResultConversationMessage struct {
 	ReadAt *string `json:"read_at"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	Seq int64 `json:"seq"`
+	// Zorunlu.
+	SenderType string `json:"sender_type"`
+	// Zorunlu.
+	ClientMessageID *string `json:"client_message_id"`
+	// Zorunlu.
+	Attachments []ConversationReplyResultConversationMessageAttachmentsItem `json:"attachments"`
+	// Zorunlu.
+	QuickReplies []ConversationReplyResultConversationMessageQuickRepliesItem `json:"quick_replies"`
+}
+
+// ConversationReplyResultConversationMessageAttachmentsItem: ConversationReplyResultConversationMessageAttachmentsItem şeması.
+type ConversationReplyResultConversationMessageAttachmentsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Type string `json:"type"`
+	// Zorunlu.
+	Size int64 `json:"size"`
+}
+
+// ConversationReplyResultConversationMessageQuickRepliesItem: ConversationReplyResultConversationMessageQuickRepliesItem şeması.
+type ConversationReplyResultConversationMessageQuickRepliesItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Label string `json:"label"`
+}
+
+// ConversationTagsDto: ConversationTagsDto şeması.
+type ConversationTagsDto struct {
+	Add    map[string]string `json:"add,omitempty"`
+	Remove []string          `json:"remove,omitempty"`
+}
+
+// ConversationTagsResult: ConversationTagsResult şeması.
+type ConversationTagsResult struct {
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	Tags map[string]any `json:"tags"`
+}
+
+// ConversationUpdateDto: ConversationUpdateDto şeması.
+type ConversationUpdateDto struct {
+	// Zorunlu. Değerler: "open", "pending", "resolved", "closed".
+	Status string `json:"status"`
+}
+
+// ConversationVisitor: ConversationVisitor şeması.
+type ConversationVisitor struct {
+	// Zorunlu.
+	Name *string `json:"name"`
+	// Zorunlu.
+	Email *string `json:"email"`
 }
 
 // ConversationWindow: ConversationWindow şeması.
@@ -1380,6 +1746,21 @@ type CopyTemplateDto struct {
 	// Zorunlu.
 	TargetAppID string  `json:"target_app_id"`
 	Name        *string `json:"name,omitempty"`
+}
+
+// CreateAdAudienceDto: CreateAdAudienceDto şeması.
+type CreateAdAudienceDto struct {
+	// Zorunlu.
+	AdAccountID string `json:"ad_account_id"`
+	// Zorunlu. Değerler: "segment", "journey".
+	Source    string  `json:"source"`
+	SegmentID *string `json:"segment_id,omitempty"`
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	// Değerler: "email", "phone", "maid".
+	Identifiers         []string `json:"identifiers,omitempty"`
+	SyncIntervalMinutes *int64   `json:"sync_interval_minutes,omitempty"`
 }
 
 // CreateAppAPIKeyDto: CreateAppApiKeyDto şeması.
@@ -1493,6 +1874,68 @@ type CreateExportDtoFilters struct {
 	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms", "whatsapp", "rcs".
 	Channel   *string `json:"channel,omitempty"`
 	SegmentID *string `json:"segment_id,omitempty"`
+}
+
+// CreateFormDto: CreateFormDto şeması.
+type CreateFormDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Fields   []CreateFormDtoFieldsItem `json:"fields"`
+	Settings *CreateFormDtoSettings    `json:"settings,omitempty"`
+	// Değerler: "active", "archived".
+	Status *string `json:"status,omitempty"`
+}
+
+// CreateFormDtoFieldsItem: CreateFormDtoFieldsItem şeması.
+type CreateFormDtoFieldsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "email", "phone", "first_name", "last_name", "full_name", "text", "textarea", "select", "radio", "checkbox", "consent".
+	Type string `json:"type"`
+	// Zorunlu.
+	Label       map[string]string                    `json:"label"`
+	Placeholder map[string]string                    `json:"placeholder,omitempty"`
+	Required    *bool                                `json:"required,omitempty"`
+	Options     []CreateFormDtoFieldsItemOptionsItem `json:"options,omitempty"`
+	MapsTo      *string                              `json:"maps_to,omitempty"`
+	MaxLength   *int64                               `json:"max_length,omitempty"`
+	PolicyURL   *string                              `json:"policy_url,omitempty"`
+}
+
+// CreateFormDtoFieldsItemOptionsItem: CreateFormDtoFieldsItemOptionsItem şeması.
+type CreateFormDtoFieldsItemOptionsItem struct {
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu.
+	Label map[string]string `json:"label"`
+}
+
+// CreateFormDtoSettings: CreateFormDtoSettings şeması.
+type CreateFormDtoSettings struct {
+	SubmitLabel     map[string]string                 `json:"submit_label,omitempty"`
+	SuccessMessage  map[string]string                 `json:"success_message,omitempty"`
+	RedirectURL     *string                           `json:"redirect_url,omitempty"`
+	Tags            map[string]string                 `json:"tags,omitempty"`
+	Subscribe       *CreateFormDtoSettingsSubscribe   `json:"subscribe,omitempty"`
+	DoubleOptIn     *CreateFormDtoSettingsDoubleOptIn `json:"double_opt_in,omitempty"`
+	EventName       *string                           `json:"event_name,omitempty"`
+	Captcha         *bool                             `json:"captcha,omitempty"`
+	DefaultLanguage *string                           `json:"default_language,omitempty"`
+}
+
+// CreateFormDtoSettingsDoubleOptIn: CreateFormDtoSettingsDoubleOptIn şeması.
+type CreateFormDtoSettingsDoubleOptIn struct {
+	// Zorunlu.
+	Enabled bool              `json:"enabled"`
+	Subject map[string]string `json:"subject,omitempty"`
+	Body    map[string]string `json:"body,omitempty"`
+}
+
+// CreateFormDtoSettingsSubscribe: CreateFormDtoSettingsSubscribe şeması.
+type CreateFormDtoSettingsSubscribe struct {
+	Email *bool `json:"email,omitempty"`
+	SMS   *bool `json:"sms,omitempty"`
 }
 
 // CreateIdentityKeyDto: CreateIdentityKeyDto şeması.
@@ -1676,6 +2119,15 @@ type CreateLiveActivityTypeDtoContentStateSchemaPropertiesValue struct {
 	Minimum     *float64 `json:"minimum,omitempty"`
 	Maximum     *float64 `json:"maximum,omitempty"`
 	Description *string  `json:"description,omitempty"`
+}
+
+// CreateLookalikeDto: CreateLookalikeDto şeması.
+type CreateLookalikeDto struct {
+	Name *string `json:"name,omitempty"`
+	// Zorunlu.
+	Country string `json:"country"`
+	// Zorunlu.
+	Ratio float64 `json:"ratio"`
 }
 
 // CreateNotificationDto: CreateNotificationDto şeması.
@@ -1903,6 +2355,47 @@ type CreateSuppressionDto struct {
 	Note      *string `json:"note,omitempty"`
 }
 
+// CreateSurveyDto: CreateSurveyDto şeması.
+type CreateSurveyDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Questions []CreateSurveyDtoQuestionsItem `json:"questions"`
+	Settings  *CreateSurveyDtoSettings       `json:"settings,omitempty"`
+}
+
+// CreateSurveyDtoQuestionsItem: CreateSurveyDtoQuestionsItem şeması.
+type CreateSurveyDtoQuestionsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "nps", "csat", "single_choice", "multiple_choice", "text".
+	Type string `json:"type"`
+	// Zorunlu.
+	Text        map[string]string                         `json:"text"`
+	Required    *bool                                     `json:"required,omitempty"`
+	Options     []CreateSurveyDtoQuestionsItemOptionsItem `json:"options,omitempty"`
+	LowLabel    map[string]string                         `json:"low_label,omitempty"`
+	HighLabel   map[string]string                         `json:"high_label,omitempty"`
+	Placeholder map[string]string                         `json:"placeholder,omitempty"`
+}
+
+// CreateSurveyDtoQuestionsItemOptionsItem: CreateSurveyDtoQuestionsItemOptionsItem şeması.
+type CreateSurveyDtoQuestionsItemOptionsItem struct {
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu.
+	Label map[string]string `json:"label"`
+}
+
+// CreateSurveyDtoSettings: CreateSurveyDtoSettings şeması.
+type CreateSurveyDtoSettings struct {
+	ThankYou        map[string]string `json:"thank_you,omitempty"`
+	SubmitLabel     map[string]string `json:"submit_label,omitempty"`
+	WriteProperties *bool             `json:"write_properties,omitempty"`
+	AllowMultiple   *bool             `json:"allow_multiple,omitempty"`
+	DefaultLanguage *string           `json:"default_language,omitempty"`
+}
+
 // CreateTemplateDto: CreateTemplateDto şeması.
 type CreateTemplateDto struct {
 	// Zorunlu.
@@ -2115,12 +2608,126 @@ type CreateWarmupPlanDtoProviderShares struct {
 	Other float64 `json:"other"`
 }
 
+// CreateWebCampaignDto: CreateWebCampaignDto şeması.
+type CreateWebCampaignDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Display  CreateWebCampaignDtoDisplay        `json:"display"`
+	Variants []CreateWebCampaignDtoVariantsItem `json:"variants,omitempty"`
+	// Zorunlu.
+	Trigger    any                             `json:"trigger"`
+	Conditions *CreateWebCampaignDtoConditions `json:"conditions,omitempty"`
+	Targeting  *CreateWebCampaignDtoTargeting  `json:"targeting,omitempty"`
+	Frequency  *CreateWebCampaignDtoFrequency  `json:"frequency,omitempty"`
+	Priority   *int64                          `json:"priority,omitempty"`
+	StartAt    *string                         `json:"start_at,omitempty"`
+	EndAt      *string                         `json:"end_at,omitempty"`
+}
+
+// CreateWebCampaignDtoConditions: CreateWebCampaignDtoConditions şeması.
+type CreateWebCampaignDtoConditions struct {
+	URLRules []CreateWebCampaignDtoConditionsURLRulesItem `json:"url_rules,omitempty"`
+	UtmRules []CreateWebCampaignDtoConditionsUtmRulesItem `json:"utm_rules,omitempty"`
+	Visits   *CreateWebCampaignDtoConditionsVisits        `json:"visits,omitempty"`
+}
+
+// CreateWebCampaignDtoConditionsURLRulesItem: CreateWebCampaignDtoConditionsUrlRulesItem şeması.
+type CreateWebCampaignDtoConditionsURLRulesItem struct {
+	// Zorunlu. Değerler: "equals", "contains", "starts_with", "not_contains", "matches".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
+// CreateWebCampaignDtoConditionsUtmRulesItem: CreateWebCampaignDtoConditionsUtmRulesItem şeması.
+type CreateWebCampaignDtoConditionsUtmRulesItem struct {
+	// Zorunlu. Değerler: "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content".
+	Param string `json:"param"`
+	// Zorunlu. Değerler: "equals", "contains", "exists".
+	Op    string  `json:"op"`
+	Value *string `json:"value,omitempty"`
+}
+
+// CreateWebCampaignDtoConditionsVisits: CreateWebCampaignDtoConditionsVisits şeması.
+type CreateWebCampaignDtoConditionsVisits struct {
+	// Zorunlu. Değerler: "gte", "lte", "eq".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value int64 `json:"value"`
+}
+
+// CreateWebCampaignDtoDisplay: CreateWebCampaignDtoDisplay şeması.
+type CreateWebCampaignDtoDisplay struct {
+	// Zorunlu. Değerler: "popup", "banner_top", "banner_bottom", "slide_in", "fullscreen".
+	Layout string `json:"layout"`
+	// Değerler: "left", "right".
+	Position           *string `json:"position,omitempty"`
+	BackgroundColor    *string `json:"background_color,omitempty"`
+	TextColor          *string `json:"text_color,omitempty"`
+	Dismissible        *bool   `json:"dismissible,omitempty"`
+	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
+	MaxWidth           *int64  `json:"max_width,omitempty"`
+	// Zorunlu.
+	Blocks   []any   `json:"blocks"`
+	FormID   *string `json:"form_id,omitempty"`
+	SurveyID *string `json:"survey_id,omitempty"`
+}
+
+// CreateWebCampaignDtoFrequency: CreateWebCampaignDtoFrequency şeması.
+type CreateWebCampaignDtoFrequency struct {
+	MaxPerSession       *int64 `json:"max_per_session,omitempty"`
+	MaxPerDay           *int64 `json:"max_per_day,omitempty"`
+	MaxTotal            *int64 `json:"max_total,omitempty"`
+	HideAfterCloseDays  *int64 `json:"hide_after_close_days,omitempty"`
+	StopAfterConversion *bool  `json:"stop_after_conversion,omitempty"`
+}
+
+// CreateWebCampaignDtoTargeting: CreateWebCampaignDtoTargeting şeması.
+type CreateWebCampaignDtoTargeting struct {
+	IncludedSegments []string `json:"included_segments,omitempty"`
+	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	// Değerler: "all", "new", "returning".
+	Visitor *string `json:"visitor,omitempty"`
+	// Değerler: "desktop", "mobile", "tablet".
+	Devices []string `json:"devices,omitempty"`
+}
+
+// CreateWebCampaignDtoVariantsItem: CreateWebCampaignDtoVariantsItem şeması.
+type CreateWebCampaignDtoVariantsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	WeightPercent int64 `json:"weight_percent"`
+	// Zorunlu.
+	Display CreateWebCampaignDtoVariantsItemDisplay `json:"display"`
+}
+
+// CreateWebCampaignDtoVariantsItemDisplay: CreateWebCampaignDtoVariantsItemDisplay şeması.
+type CreateWebCampaignDtoVariantsItemDisplay struct {
+	// Zorunlu. Değerler: "popup", "banner_top", "banner_bottom", "slide_in", "fullscreen".
+	Layout string `json:"layout"`
+	// Değerler: "left", "right".
+	Position           *string `json:"position,omitempty"`
+	BackgroundColor    *string `json:"background_color,omitempty"`
+	TextColor          *string `json:"text_color,omitempty"`
+	Dismissible        *bool   `json:"dismissible,omitempty"`
+	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
+	MaxWidth           *int64  `json:"max_width,omitempty"`
+	// Zorunlu.
+	Blocks   []any   `json:"blocks"`
+	FormID   *string `json:"form_id,omitempty"`
+	SurveyID *string `json:"survey_id,omitempty"`
+}
+
 // CreateWebhookDto: CreateWebhookDto şeması.
 type CreateWebhookDto struct {
 	// Zorunlu.
 	URL         string  `json:"url"`
 	Description *string `json:"description,omitempty"`
-	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "audit.created".
+	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked".
 	Events       []string                      `json:"events"`
 	EventFilters *CreateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -2736,6 +3343,169 @@ type ExportList struct {
 	HasMore bool `json:"has_more"`
 }
 
+// Form: Form şeması.
+type Form struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "active", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	Fields []FormFieldsItem `json:"fields"`
+	// Zorunlu.
+	Settings FormSettings `json:"settings"`
+	// Zorunlu.
+	Stats FormStats `json:"stats"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// FormFieldsItem: FormFieldsItem şeması.
+type FormFieldsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "email", "phone", "first_name", "last_name", "full_name", "text", "textarea", "select", "radio", "checkbox", "consent".
+	Type string `json:"type"`
+	// Zorunlu.
+	Label       map[string]string           `json:"label"`
+	Placeholder map[string]string           `json:"placeholder,omitempty"`
+	Required    *bool                       `json:"required,omitempty"`
+	Options     []FormFieldsItemOptionsItem `json:"options,omitempty"`
+	MapsTo      *string                     `json:"maps_to,omitempty"`
+	MaxLength   *int64                      `json:"max_length,omitempty"`
+	PolicyURL   *string                     `json:"policy_url,omitempty"`
+}
+
+// FormFieldsItemOptionsItem: FormFieldsItemOptionsItem şeması.
+type FormFieldsItemOptionsItem struct {
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu.
+	Label map[string]string `json:"label"`
+}
+
+// FormPage: FormPage şeması.
+type FormPage struct {
+	// Zorunlu.
+	Data []Form `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// FormSettings: FormSettings şeması.
+type FormSettings struct {
+	SubmitLabel     map[string]string        `json:"submit_label,omitempty"`
+	SuccessMessage  map[string]string        `json:"success_message,omitempty"`
+	RedirectURL     *string                  `json:"redirect_url,omitempty"`
+	Tags            map[string]string        `json:"tags,omitempty"`
+	Subscribe       *FormSettingsSubscribe   `json:"subscribe,omitempty"`
+	DoubleOptIn     *FormSettingsDoubleOptIn `json:"double_opt_in,omitempty"`
+	EventName       *string                  `json:"event_name,omitempty"`
+	Captcha         *bool                    `json:"captcha,omitempty"`
+	DefaultLanguage *string                  `json:"default_language,omitempty"`
+}
+
+// FormSettingsDoubleOptIn: FormSettingsDoubleOptIn şeması.
+type FormSettingsDoubleOptIn struct {
+	// Zorunlu.
+	Enabled bool              `json:"enabled"`
+	Subject map[string]string `json:"subject,omitempty"`
+	Body    map[string]string `json:"body,omitempty"`
+}
+
+// FormSettingsSubscribe: FormSettingsSubscribe şeması.
+type FormSettingsSubscribe struct {
+	Email *bool `json:"email,omitempty"`
+	SMS   *bool `json:"sms,omitempty"`
+}
+
+// FormStats: FormStats şeması.
+type FormStats struct {
+	// Zorunlu.
+	Submissions int64 `json:"submissions"`
+	// Zorunlu.
+	LastSubmissionAt *string `json:"last_submission_at"`
+}
+
+// FormSubmission: FormSubmission şeması.
+type FormSubmission struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	FormID string `json:"form_id"`
+	// Zorunlu.
+	UserID *string `json:"user_id"`
+	// Zorunlu.
+	SubscriptionIds []string `json:"subscription_ids"`
+	// Zorunlu. Değerler: "web_campaign", "landing_page", "sdk", "api".
+	Source string `json:"source"`
+	// Zorunlu.
+	SourceID *string `json:"source_id"`
+	// Zorunlu. Değerler: "accepted", "pending_confirmation", "confirmed".
+	Status string `json:"status"`
+	// Zorunlu.
+	Data map[string]any `json:"data"`
+	// Zorunlu.
+	Consent []FormSubmissionConsentItem `json:"consent"`
+	// Zorunlu.
+	PageURL *string `json:"page_url"`
+	// Zorunlu.
+	Language *string `json:"language"`
+	// Zorunlu.
+	ConfirmedAt *string `json:"confirmed_at"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// FormSubmissionConsentItem: FormSubmissionConsentItem şeması.
+type FormSubmissionConsentItem struct {
+	// Zorunlu.
+	FieldID string `json:"field_id"`
+	// Zorunlu.
+	Given bool `json:"given"`
+	// Zorunlu.
+	Text string `json:"text"`
+	// Zorunlu.
+	TextHash string `json:"text_hash"`
+	// Zorunlu.
+	PolicyURL *string `json:"policy_url"`
+	// Zorunlu.
+	Language string `json:"language"`
+	// Zorunlu.
+	At string `json:"at"`
+}
+
+// FormSubmissionPage: FormSubmissionPage şeması.
+type FormSubmissionPage struct {
+	// Zorunlu.
+	Data []FormSubmission `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// FormSubmitResult: FormSubmitResult şeması.
+type FormSubmitResult struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+	// Zorunlu. Değerler: "accepted", "pending_confirmation".
+	Status string `json:"status"`
+	// Zorunlu.
+	SubmissionID *string `json:"submission_id"`
+	// Zorunlu.
+	SuccessMessage string `json:"success_message"`
+	// Zorunlu.
+	RedirectURL *string `json:"redirect_url"`
+}
+
 // FunnelBodyDto: FunnelBodyDto şeması.
 type FunnelBodyDto struct {
 	// Zorunlu.
@@ -3047,6 +3817,36 @@ type InAppWinnerDto struct {
 	VariantID string `json:"variant_id"`
 }
 
+// InboxAgent: InboxAgent şeması.
+type InboxAgent struct {
+	// Zorunlu.
+	AccountID string `json:"account_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Email string `json:"email"`
+	// Zorunlu.
+	Role string `json:"role"`
+	// Zorunlu. Değerler: "online", "busy", "offline".
+	Status string `json:"status"`
+	// Zorunlu.
+	LastHeartbeatAt *string `json:"last_heartbeat_at"`
+	// Zorunlu.
+	MaxConcurrent *int64 `json:"max_concurrent"`
+	// Zorunlu.
+	Languages []string `json:"languages"`
+	// Zorunlu.
+	OpenConversations int64 `json:"open_conversations"`
+	// Zorunlu.
+	TeamIds []string `json:"team_ids"`
+}
+
+// InboxAgentList: InboxAgentList şeması.
+type InboxAgentList struct {
+	// Zorunlu.
+	Data []InboxAgent `json:"data"`
+}
+
 // InboxItem: InboxItem şeması.
 type InboxItem struct {
 	// Zorunlu.
@@ -3075,6 +3875,120 @@ type InboxItem struct {
 	CreatedAt string `json:"created_at"`
 }
 
+// InboxMetrics: InboxMetrics şeması.
+type InboxMetrics struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	FirstResponse InboxMetricsFirstResponse `json:"first_response"`
+	// Zorunlu.
+	Resolution InboxMetricsResolution `json:"resolution"`
+	// Zorunlu.
+	Sla InboxMetricsSla `json:"sla"`
+	// Zorunlu.
+	Volume InboxMetricsVolume `json:"volume"`
+	// Zorunlu.
+	Agents []InboxMetricsAgentsItem `json:"agents"`
+	// Zorunlu.
+	Daily []InboxMetricsDailyItem `json:"daily"`
+}
+
+// InboxMetricsAgentsItem: InboxMetricsAgentsItem şeması.
+type InboxMetricsAgentsItem struct {
+	// Zorunlu.
+	AccountID string `json:"account_id"`
+	// Zorunlu.
+	Name *string `json:"name"`
+	// Zorunlu.
+	FirstResponse InboxMetricsAgentsItemFirstResponse `json:"first_response"`
+	// Zorunlu.
+	Resolution InboxMetricsAgentsItemResolution `json:"resolution"`
+	// Zorunlu.
+	Resolved int64 `json:"resolved"`
+	// Zorunlu.
+	OpenNow int64 `json:"open_now"`
+}
+
+// InboxMetricsAgentsItemFirstResponse: InboxMetricsAgentsItemFirstResponse şeması.
+type InboxMetricsAgentsItemFirstResponse struct {
+	// Zorunlu.
+	Count int64 `json:"count"`
+	// Zorunlu.
+	AvgSeconds *float64 `json:"avg_seconds"`
+	// Zorunlu.
+	P90Seconds *float64 `json:"p90_seconds"`
+}
+
+// InboxMetricsAgentsItemResolution: InboxMetricsAgentsItemResolution şeması.
+type InboxMetricsAgentsItemResolution struct {
+	// Zorunlu.
+	Count int64 `json:"count"`
+	// Zorunlu.
+	AvgSeconds *float64 `json:"avg_seconds"`
+	// Zorunlu.
+	P90Seconds *float64 `json:"p90_seconds"`
+}
+
+// InboxMetricsDailyItem: InboxMetricsDailyItem şeması.
+type InboxMetricsDailyItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	Created int64 `json:"created"`
+	// Zorunlu.
+	Resolved int64 `json:"resolved"`
+	// Zorunlu.
+	FirstResponseAvgSeconds *float64 `json:"first_response_avg_seconds"`
+}
+
+// InboxMetricsFirstResponse: InboxMetricsFirstResponse şeması.
+type InboxMetricsFirstResponse struct {
+	// Zorunlu.
+	Count int64 `json:"count"`
+	// Zorunlu.
+	AvgSeconds *float64 `json:"avg_seconds"`
+	// Zorunlu.
+	P90Seconds *float64 `json:"p90_seconds"`
+}
+
+// InboxMetricsResolution: InboxMetricsResolution şeması.
+type InboxMetricsResolution struct {
+	// Zorunlu.
+	Count int64 `json:"count"`
+	// Zorunlu.
+	AvgSeconds *float64 `json:"avg_seconds"`
+	// Zorunlu.
+	P90Seconds *float64 `json:"p90_seconds"`
+}
+
+// InboxMetricsSla: InboxMetricsSla şeması.
+type InboxMetricsSla struct {
+	// Zorunlu.
+	TargetSeconds int64 `json:"target_seconds"`
+	// Zorunlu.
+	Met int64 `json:"met"`
+	// Zorunlu.
+	Breached int64 `json:"breached"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
+// InboxMetricsVolume: InboxMetricsVolume şeması.
+type InboxMetricsVolume struct {
+	// Zorunlu.
+	Created int64 `json:"created"`
+	// Zorunlu.
+	Resolved int64 `json:"resolved"`
+	// Zorunlu.
+	OpenNow int64 `json:"open_now"`
+	// Zorunlu.
+	UnassignedNow int64 `json:"unassigned_now"`
+	// Zorunlu.
+	ByChannel map[string]int64 `json:"by_channel"`
+}
+
 // InboxPage: InboxPage şeması.
 type InboxPage struct {
 	// Zorunlu.
@@ -3093,6 +4007,171 @@ type InboxReadAllResult struct {
 	Updated int64 `json:"updated"`
 	// Zorunlu.
 	UnreadCount int64 `json:"unread_count"`
+}
+
+// InboxSettings: InboxSettings şeması.
+type InboxSettings struct {
+	// Zorunlu.
+	Widget InboxSettingsWidget `json:"widget"`
+	// Zorunlu.
+	BusinessHours InboxSettingsBusinessHours `json:"business_hours"`
+	// Zorunlu.
+	Routing InboxSettingsRouting `json:"routing"`
+	// Zorunlu.
+	Email InboxSettingsEmail `json:"email"`
+	// Zorunlu.
+	Timezone string `json:"timezone"`
+	// Zorunlu.
+	WithinBusinessHours bool `json:"within_business_hours"`
+	// Zorunlu.
+	Install InboxSettingsInstall `json:"install"`
+}
+
+// InboxSettingsBusinessHours: InboxSettingsBusinessHours şeması.
+type InboxSettingsBusinessHours struct {
+	Enabled  *bool                                `json:"enabled,omitempty"`
+	Timezone *string                              `json:"timezone,omitempty"`
+	Days     []InboxSettingsBusinessHoursDaysItem `json:"days,omitempty"`
+	Holidays []string                             `json:"holidays,omitempty"`
+}
+
+// InboxSettingsBusinessHoursDaysItem: InboxSettingsBusinessHoursDaysItem şeması.
+type InboxSettingsBusinessHoursDaysItem struct {
+	// Zorunlu.
+	Day int64 `json:"day"`
+	// Zorunlu.
+	Start string `json:"start"`
+	// Zorunlu.
+	End string `json:"end"`
+}
+
+// InboxSettingsEmail: InboxSettingsEmail şeması.
+type InboxSettingsEmail struct {
+	// Zorunlu.
+	CaptureReplies bool `json:"capture_replies"`
+	// Zorunlu.
+	ReplyDomain *string `json:"reply_domain"`
+}
+
+// InboxSettingsInstall: InboxSettingsInstall şeması.
+type InboxSettingsInstall struct {
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	SDKURL string `json:"sdk_url"`
+	// Zorunlu.
+	APIURL string `json:"api_url"`
+}
+
+// InboxSettingsRouting: InboxSettingsRouting şeması.
+type InboxSettingsRouting struct {
+	// Zorunlu.
+	AutoAssign bool `json:"auto_assign"`
+	// Zorunlu. Değerler: "all", "team", "assigned".
+	Visibility string `json:"visibility"`
+	// Zorunlu.
+	ShowUnassigned bool `json:"show_unassigned"`
+	// Zorunlu.
+	FirstResponseSlaSeconds int64 `json:"first_response_sla_seconds"`
+	// Zorunlu.
+	MaxConcurrentDefault *int64 `json:"max_concurrent_default"`
+}
+
+// InboxSettingsUpdateDto: InboxSettingsUpdateDto şeması.
+type InboxSettingsUpdateDto struct {
+	Widget        *InboxSettingsUpdateDtoWidget        `json:"widget,omitempty"`
+	BusinessHours *InboxSettingsUpdateDtoBusinessHours `json:"business_hours,omitempty"`
+	Routing       *InboxSettingsUpdateDtoRouting       `json:"routing,omitempty"`
+	Email         *InboxSettingsUpdateDtoEmail         `json:"email,omitempty"`
+}
+
+// InboxSettingsUpdateDtoBusinessHours: InboxSettingsUpdateDtoBusinessHours şeması.
+type InboxSettingsUpdateDtoBusinessHours struct {
+	Enabled  *bool                                         `json:"enabled,omitempty"`
+	Timezone *string                                       `json:"timezone,omitempty"`
+	Days     []InboxSettingsUpdateDtoBusinessHoursDaysItem `json:"days,omitempty"`
+	Holidays []string                                      `json:"holidays,omitempty"`
+}
+
+// InboxSettingsUpdateDtoBusinessHoursDaysItem: InboxSettingsUpdateDtoBusinessHoursDaysItem şeması.
+type InboxSettingsUpdateDtoBusinessHoursDaysItem struct {
+	// Zorunlu.
+	Day int64 `json:"day"`
+	// Zorunlu.
+	Start string `json:"start"`
+	// Zorunlu.
+	End string `json:"end"`
+}
+
+// InboxSettingsUpdateDtoEmail: InboxSettingsUpdateDtoEmail şeması.
+type InboxSettingsUpdateDtoEmail struct {
+	CaptureReplies *bool `json:"capture_replies,omitempty"`
+}
+
+// InboxSettingsUpdateDtoRouting: InboxSettingsUpdateDtoRouting şeması.
+type InboxSettingsUpdateDtoRouting struct {
+	AutoAssign *bool `json:"auto_assign,omitempty"`
+	// Değerler: "all", "team", "assigned".
+	Visibility              *string `json:"visibility,omitempty"`
+	ShowUnassigned          *bool   `json:"show_unassigned,omitempty"`
+	FirstResponseSlaSeconds *int64  `json:"first_response_sla_seconds,omitempty"`
+	MaxConcurrentDefault    *int64  `json:"max_concurrent_default,omitempty"`
+}
+
+// InboxSettingsUpdateDtoWidget: InboxSettingsUpdateDtoWidget şeması.
+type InboxSettingsUpdateDtoWidget struct {
+	Enabled   *bool   `json:"enabled,omitempty"`
+	Color     *string `json:"color,omitempty"`
+	TextColor *string `json:"text_color,omitempty"`
+	// Değerler: "right", "left".
+	Position *string `json:"position,omitempty"`
+	// Değerler: "light", "dark", "auto".
+	Theme               *string           `json:"theme,omitempty"`
+	Title               map[string]string `json:"title,omitempty"`
+	Greeting            map[string]string `json:"greeting,omitempty"`
+	OfflineMessage      map[string]string `json:"offline_message,omitempty"`
+	CollectEmailOffline *bool             `json:"collect_email_offline,omitempty"`
+	Attachments         *bool             `json:"attachments,omitempty"`
+	RequireEmail        *bool             `json:"require_email,omitempty"`
+}
+
+// InboxSettingsWidget: InboxSettingsWidget şeması.
+type InboxSettingsWidget struct {
+	Enabled   *bool   `json:"enabled,omitempty"`
+	Color     *string `json:"color,omitempty"`
+	TextColor *string `json:"text_color,omitempty"`
+	// Değerler: "right", "left".
+	Position *string `json:"position,omitempty"`
+	// Değerler: "light", "dark", "auto".
+	Theme               *string           `json:"theme,omitempty"`
+	Title               map[string]string `json:"title,omitempty"`
+	Greeting            map[string]string `json:"greeting,omitempty"`
+	OfflineMessage      map[string]string `json:"offline_message,omitempty"`
+	CollectEmailOffline *bool             `json:"collect_email_offline,omitempty"`
+	Attachments         *bool             `json:"attachments,omitempty"`
+	RequireEmail        *bool             `json:"require_email,omitempty"`
+}
+
+// InboxTeam: InboxTeam şeması.
+type InboxTeam struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	MemberIds []string `json:"member_ids"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// InboxTeamList: InboxTeamList şeması.
+type InboxTeamList struct {
+	// Zorunlu.
+	Data []InboxTeam `json:"data"`
 }
 
 // IntegrationOk: IntegrationOk şeması.
@@ -3502,6 +4581,245 @@ type JourneyVersionListDataItem struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+// LandingPage: LandingPage şeması.
+type LandingPage struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu. Değerler: "draft", "published", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	Seo LandingPageSeo `json:"seo"`
+	// Zorunlu.
+	Settings LandingPageSettings `json:"settings"`
+	// Zorunlu.
+	CustomDomainID *string `json:"custom_domain_id"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	PublishedVersion *int64 `json:"published_version"`
+	// Zorunlu.
+	PublishedAt *string `json:"published_at"`
+	// Zorunlu.
+	HasUnpublishedChanges bool `json:"has_unpublished_changes"`
+	// Zorunlu.
+	URL string `json:"url"`
+	// Zorunlu.
+	DomainURL *string `json:"domain_url"`
+	// Zorunlu.
+	Stats LandingPageStats `json:"stats"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+	// Zorunlu.
+	Document LandingPageDocument `json:"document"`
+}
+
+// LandingPageDocument: LandingPageDocument şeması.
+type LandingPageDocument struct {
+	// Zorunlu. Değerler: 1.
+	Version float64 `json:"version"`
+	// Zorunlu.
+	Settings LandingPageDocumentSettings `json:"settings"`
+	// Zorunlu.
+	Sections []LandingPageDocumentSectionsItem `json:"sections"`
+}
+
+// LandingPageDocumentSectionsItem: LandingPageDocumentSectionsItem şeması.
+type LandingPageDocumentSectionsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "section".
+	Type            string                                  `json:"type"`
+	BackgroundColor *string                                 `json:"background_color,omitempty"`
+	BackgroundImage *string                                 `json:"background_image,omitempty"`
+	Padding         *LandingPageDocumentSectionsItemPadding `json:"padding,omitempty"`
+	StackOnMobile   *bool                                   `json:"stack_on_mobile,omitempty"`
+	// Zorunlu.
+	Columns []LandingPageDocumentSectionsItemColumnsItem `json:"columns"`
+}
+
+// LandingPageDocumentSectionsItemColumnsItem: LandingPageDocumentSectionsItemColumnsItem şeması.
+type LandingPageDocumentSectionsItemColumnsItem struct {
+	// Zorunlu.
+	ID              string  `json:"id"`
+	WidthPercent    *int64  `json:"width_percent,omitempty"`
+	BackgroundColor *string `json:"background_color,omitempty"`
+	// Değerler: "top", "middle", "bottom".
+	VerticalAlign *string                                            `json:"vertical_align,omitempty"`
+	Padding       *LandingPageDocumentSectionsItemColumnsItemPadding `json:"padding,omitempty"`
+	// Zorunlu.
+	Blocks []any `json:"blocks"`
+}
+
+// LandingPageDocumentSectionsItemColumnsItemPadding: LandingPageDocumentSectionsItemColumnsItemPadding şeması.
+type LandingPageDocumentSectionsItemColumnsItemPadding struct {
+	// Zorunlu.
+	Top int64 `json:"top"`
+	// Zorunlu.
+	Right int64 `json:"right"`
+	// Zorunlu.
+	Bottom int64 `json:"bottom"`
+	// Zorunlu.
+	Left int64 `json:"left"`
+}
+
+// LandingPageDocumentSectionsItemPadding: LandingPageDocumentSectionsItemPadding şeması.
+type LandingPageDocumentSectionsItemPadding struct {
+	// Zorunlu.
+	Top int64 `json:"top"`
+	// Zorunlu.
+	Right int64 `json:"right"`
+	// Zorunlu.
+	Bottom int64 `json:"bottom"`
+	// Zorunlu.
+	Left int64 `json:"left"`
+}
+
+// LandingPageDocumentSettings: LandingPageDocumentSettings şeması.
+type LandingPageDocumentSettings struct {
+	Width                  *int64  `json:"width,omitempty"`
+	BackgroundColor        *string `json:"background_color,omitempty"`
+	ContentBackgroundColor *string `json:"content_background_color,omitempty"`
+	TextColor              *string `json:"text_color,omitempty"`
+	LinkColor              *string `json:"link_color,omitempty"`
+	// Değerler: "system", "arial", "georgia", "verdana", "trebuchet", "courier".
+	FontFamily *string                              `json:"font_family,omitempty"`
+	DarkMode   *LandingPageDocumentSettingsDarkMode `json:"dark_mode,omitempty"`
+}
+
+// LandingPageDocumentSettingsDarkMode: LandingPageDocumentSettingsDarkMode şeması.
+type LandingPageDocumentSettingsDarkMode struct {
+	BackgroundColor        *string `json:"background_color,omitempty"`
+	ContentBackgroundColor *string `json:"content_background_color,omitempty"`
+	TextColor              *string `json:"text_color,omitempty"`
+	LinkColor              *string `json:"link_color,omitempty"`
+}
+
+// LandingPageList: LandingPageList şeması.
+type LandingPageList struct {
+	// Zorunlu.
+	Data []LandingPageListDataItem `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// LandingPageListDataItem: LandingPageListDataItem şeması.
+type LandingPageListDataItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu. Değerler: "draft", "published", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	Seo LandingPageListDataItemSeo `json:"seo"`
+	// Zorunlu.
+	Settings LandingPageListDataItemSettings `json:"settings"`
+	// Zorunlu.
+	CustomDomainID *string `json:"custom_domain_id"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	PublishedVersion *int64 `json:"published_version"`
+	// Zorunlu.
+	PublishedAt *string `json:"published_at"`
+	// Zorunlu.
+	HasUnpublishedChanges bool `json:"has_unpublished_changes"`
+	// Zorunlu.
+	URL string `json:"url"`
+	// Zorunlu.
+	DomainURL *string `json:"domain_url"`
+	// Zorunlu.
+	Stats LandingPageListDataItemStats `json:"stats"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// LandingPageListDataItemSeo: LandingPageListDataItemSeo şeması.
+type LandingPageListDataItemSeo struct {
+	Title        *string `json:"title,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	OgImage      *string `json:"og_image,omitempty"`
+	CanonicalURL *string `json:"canonical_url,omitempty"`
+	Noindex      *bool   `json:"noindex,omitempty"`
+}
+
+// LandingPageListDataItemSettings: LandingPageListDataItemSettings şeması.
+type LandingPageListDataItemSettings struct {
+	Language      *string                                       `json:"language,omitempty"`
+	FormID        *string                                       `json:"form_id,omitempty"`
+	FormSectionID *string                                       `json:"form_section_id,omitempty"`
+	CookieConsent *LandingPageListDataItemSettingsCookieConsent `json:"cookie_consent,omitempty"`
+	WebSDK        *bool                                         `json:"web_sdk,omitempty"`
+	FaviconURL    *string                                       `json:"favicon_url,omitempty"`
+}
+
+// LandingPageListDataItemSettingsCookieConsent: LandingPageListDataItemSettingsCookieConsent şeması.
+type LandingPageListDataItemSettingsCookieConsent struct {
+	// Zorunlu.
+	Enabled     bool    `json:"enabled"`
+	Text        *string `json:"text,omitempty"`
+	AcceptLabel *string `json:"accept_label,omitempty"`
+	RejectLabel *string `json:"reject_label,omitempty"`
+	PolicyURL   *string `json:"policy_url,omitempty"`
+}
+
+// LandingPageListDataItemStats: LandingPageListDataItemStats şeması.
+type LandingPageListDataItemStats struct {
+	// Zorunlu.
+	Submissions int64 `json:"submissions"`
+}
+
+// LandingPageSeo: LandingPageSeo şeması.
+type LandingPageSeo struct {
+	Title        *string `json:"title,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	OgImage      *string `json:"og_image,omitempty"`
+	CanonicalURL *string `json:"canonical_url,omitempty"`
+	Noindex      *bool   `json:"noindex,omitempty"`
+}
+
+// LandingPageSettings: LandingPageSettings şeması.
+type LandingPageSettings struct {
+	Language      *string                           `json:"language,omitempty"`
+	FormID        *string                           `json:"form_id,omitempty"`
+	FormSectionID *string                           `json:"form_section_id,omitempty"`
+	CookieConsent *LandingPageSettingsCookieConsent `json:"cookie_consent,omitempty"`
+	WebSDK        *bool                             `json:"web_sdk,omitempty"`
+	FaviconURL    *string                           `json:"favicon_url,omitempty"`
+}
+
+// LandingPageSettingsCookieConsent: LandingPageSettingsCookieConsent şeması.
+type LandingPageSettingsCookieConsent struct {
+	// Zorunlu.
+	Enabled     bool    `json:"enabled"`
+	Text        *string `json:"text,omitempty"`
+	AcceptLabel *string `json:"accept_label,omitempty"`
+	RejectLabel *string `json:"reject_label,omitempty"`
+	PolicyURL   *string `json:"policy_url,omitempty"`
+}
+
+// LandingPageStats: LandingPageStats şeması.
+type LandingPageStats struct {
+	// Zorunlu.
+	Submissions int64 `json:"submissions"`
+}
+
 // LiveActivitySendResult: LiveActivitySendResult şeması.
 type LiveActivitySendResult struct {
 	// Zorunlu.
@@ -3702,7 +5020,7 @@ type Member struct {
 	Email string `json:"email"`
 	// Zorunlu.
 	Name string `json:"name"`
-	// Zorunlu. Değerler: "owner", "admin", "developer", "marketer", "analyst", "billing", "viewer", "composer".
+	// Zorunlu. Değerler: "owner", "admin", "developer", "marketer", "analyst", "billing", "viewer", "composer", "agent".
 	Role string `json:"role"`
 	// Zorunlu.
 	AppScopes []string `json:"app_scopes"`
@@ -4193,6 +5511,22 @@ type ProvidersReportTotals struct {
 	Failed int64 `json:"failed"`
 	// Zorunlu.
 	FailureRate *float64 `json:"failure_rate"`
+}
+
+// PublicFormSubmitDto: PublicFormSubmitDto şeması.
+type PublicFormSubmitDto struct {
+	// Zorunlu.
+	Values     map[string]any `json:"values"`
+	ExternalID *string        `json:"external_id,omitempty"`
+	PageURL    *string        `json:"page_url,omitempty"`
+	Language   *string        `json:"language,omitempty"`
+}
+
+// PublicSurveyResponseDto: PublicSurveyResponseDto şeması.
+type PublicSurveyResponseDto struct {
+	// Zorunlu.
+	Answers    map[string]any `json:"answers"`
+	ExternalID *string        `json:"external_id,omitempty"`
 }
 
 // RenderPreview: RenderPreview şeması.
@@ -4892,6 +6226,209 @@ type SuppressionPage struct {
 	HasMore bool `json:"has_more"`
 }
 
+// Survey: Survey şeması.
+type Survey struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "draft", "active", "closed".
+	Status string `json:"status"`
+	// Zorunlu.
+	Questions []SurveyQuestionsItem `json:"questions"`
+	// Zorunlu.
+	Settings SurveySettings `json:"settings"`
+	// Zorunlu.
+	InAppMessageID *string `json:"in_app_message_id"`
+	// Zorunlu.
+	Stats SurveyStats `json:"stats"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// SurveyPage: SurveyPage şeması.
+type SurveyPage struct {
+	// Zorunlu.
+	Data []Survey `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// SurveyQuestionsItem: SurveyQuestionsItem şeması.
+type SurveyQuestionsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "nps", "csat", "single_choice", "multiple_choice", "text".
+	Type string `json:"type"`
+	// Zorunlu.
+	Text        map[string]string                `json:"text"`
+	Required    *bool                            `json:"required,omitempty"`
+	Options     []SurveyQuestionsItemOptionsItem `json:"options,omitempty"`
+	LowLabel    map[string]string                `json:"low_label,omitempty"`
+	HighLabel   map[string]string                `json:"high_label,omitempty"`
+	Placeholder map[string]string                `json:"placeholder,omitempty"`
+}
+
+// SurveyQuestionsItemOptionsItem: SurveyQuestionsItemOptionsItem şeması.
+type SurveyQuestionsItemOptionsItem struct {
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu.
+	Label map[string]string `json:"label"`
+}
+
+// SurveyReport: SurveyReport şeması.
+type SurveyReport struct {
+	// Zorunlu.
+	SurveyID string `json:"survey_id"`
+	// Zorunlu.
+	Days int64 `json:"days"`
+	// Zorunlu.
+	Responses int64 `json:"responses"`
+	// Zorunlu.
+	Nps SurveyReportNps `json:"nps"`
+	// Zorunlu.
+	Csat SurveyReportCsat `json:"csat"`
+	// Zorunlu.
+	Trend []SurveyReportTrendItem `json:"trend"`
+	// Zorunlu.
+	Channels map[string]int64 `json:"channels"`
+	// Zorunlu.
+	Questions []SurveyReportQuestionsItem `json:"questions"`
+}
+
+// SurveyReportCsat: SurveyReportCsat şeması.
+type SurveyReportCsat struct {
+	// Zorunlu.
+	Responses int64 `json:"responses"`
+	// Zorunlu.
+	Average *float64 `json:"average"`
+	// Zorunlu.
+	Distribution map[string]int64 `json:"distribution"`
+}
+
+// SurveyReportNps: SurveyReportNps şeması.
+type SurveyReportNps struct {
+	// Zorunlu.
+	Responses int64 `json:"responses"`
+	// Zorunlu.
+	Promoters int64 `json:"promoters"`
+	// Zorunlu.
+	Passives int64 `json:"passives"`
+	// Zorunlu.
+	Detractors int64 `json:"detractors"`
+	// Zorunlu.
+	Nps *float64 `json:"nps"`
+}
+
+// SurveyReportQuestionsItem: SurveyReportQuestionsItem şeması.
+type SurveyReportQuestionsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "nps", "csat", "single_choice", "multiple_choice", "text".
+	Type string `json:"type"`
+	// Zorunlu.
+	Counts map[string]int64 `json:"counts"`
+}
+
+// SurveyReportTrendItem: SurveyReportTrendItem şeması.
+type SurveyReportTrendItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	Responses int64 `json:"responses"`
+	// Zorunlu.
+	Promoters int64 `json:"promoters"`
+	// Zorunlu.
+	Passives int64 `json:"passives"`
+	// Zorunlu.
+	Detractors int64 `json:"detractors"`
+	// Zorunlu.
+	Nps *float64 `json:"nps"`
+}
+
+// SurveyResponse: SurveyResponse şeması.
+type SurveyResponse struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	SurveyID string `json:"survey_id"`
+	// Zorunlu.
+	UserID *string `json:"user_id"`
+	// Zorunlu.
+	VisitorID *string `json:"visitor_id"`
+	// Zorunlu. Değerler: "in_app", "web", "email", "api", "sdk".
+	Channel string `json:"channel"`
+	// Zorunlu.
+	Answers map[string]any `json:"answers"`
+	// Zorunlu.
+	NpsScore *int64 `json:"nps_score"`
+	// Zorunlu. Değerler: "promoter", "passive", "detractor".
+	NpsCategory *string `json:"nps_category"`
+	// Zorunlu.
+	CsatScore *int64 `json:"csat_score"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// SurveyResponsePage: SurveyResponsePage şeması.
+type SurveyResponsePage struct {
+	// Zorunlu.
+	Data []SurveyResponse `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// SurveyResponseResult: SurveyResponseResult şeması.
+type SurveyResponseResult struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+	// Zorunlu.
+	ResponseID *string `json:"response_id"`
+	// Zorunlu.
+	Duplicate bool `json:"duplicate"`
+	// Zorunlu.
+	ThankYou string `json:"thank_you"`
+}
+
+// SurveySettings: SurveySettings şeması.
+type SurveySettings struct {
+	ThankYou        map[string]string `json:"thank_you,omitempty"`
+	SubmitLabel     map[string]string `json:"submit_label,omitempty"`
+	WriteProperties *bool             `json:"write_properties,omitempty"`
+	AllowMultiple   *bool             `json:"allow_multiple,omitempty"`
+	DefaultLanguage *string           `json:"default_language,omitempty"`
+}
+
+// SurveyStats: SurveyStats şeması.
+type SurveyStats struct {
+	// Zorunlu.
+	Responses int64 `json:"responses"`
+	// Zorunlu.
+	Nps *float64 `json:"nps"`
+	// Zorunlu.
+	LastResponseAt *string `json:"last_response_at"`
+}
+
+// SurveyStatusDto: SurveyStatusDto şeması.
+type SurveyStatusDto struct {
+	// Zorunlu. Değerler: "draft", "active", "closed".
+	Status string `json:"status"`
+}
+
+// SyncAdAudienceDto: SyncAdAudienceDto şeması.
+type SyncAdAudienceDto struct {
+	Full *bool `json:"full,omitempty"`
+}
+
 // Template: Template şeması.
 type Template struct {
 	// Zorunlu.
@@ -4996,6 +6533,18 @@ type TriggerRunDtoAlias struct {
 	Label string `json:"label"`
 	// Zorunlu.
 	Value string `json:"value"`
+}
+
+// UpdateAdAudienceDto: UpdateAdAudienceDto şeması.
+type UpdateAdAudienceDto struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	SegmentID   *string `json:"segment_id,omitempty"`
+	// Değerler: "email", "phone", "maid".
+	Identifiers         []string `json:"identifiers,omitempty"`
+	SyncIntervalMinutes *int64   `json:"sync_interval_minutes,omitempty"`
+	// Değerler: "active", "paused".
+	Status *string `json:"status,omitempty"`
 }
 
 // UpdateAPIKeyDto: UpdateApiKeyDto şeması.
@@ -5690,11 +7239,122 @@ type UpdateWarmupPlanDtoProviderShares struct {
 	Other float64 `json:"other"`
 }
 
+// UpdateWebCampaignDto: UpdateWebCampaignDto şeması.
+type UpdateWebCampaignDto struct {
+	Name       *string                            `json:"name,omitempty"`
+	Display    *UpdateWebCampaignDtoDisplay       `json:"display,omitempty"`
+	Variants   []UpdateWebCampaignDtoVariantsItem `json:"variants,omitempty"`
+	Trigger    any                                `json:"trigger,omitempty"`
+	Conditions *UpdateWebCampaignDtoConditions    `json:"conditions,omitempty"`
+	Targeting  *UpdateWebCampaignDtoTargeting     `json:"targeting,omitempty"`
+	Frequency  *UpdateWebCampaignDtoFrequency     `json:"frequency,omitempty"`
+	Priority   *int64                             `json:"priority,omitempty"`
+	StartAt    *string                            `json:"start_at,omitempty"`
+	EndAt      *string                            `json:"end_at,omitempty"`
+}
+
+// UpdateWebCampaignDtoConditions: UpdateWebCampaignDtoConditions şeması.
+type UpdateWebCampaignDtoConditions struct {
+	URLRules []UpdateWebCampaignDtoConditionsURLRulesItem `json:"url_rules,omitempty"`
+	UtmRules []UpdateWebCampaignDtoConditionsUtmRulesItem `json:"utm_rules,omitempty"`
+	Visits   *UpdateWebCampaignDtoConditionsVisits        `json:"visits,omitempty"`
+}
+
+// UpdateWebCampaignDtoConditionsURLRulesItem: UpdateWebCampaignDtoConditionsUrlRulesItem şeması.
+type UpdateWebCampaignDtoConditionsURLRulesItem struct {
+	// Zorunlu. Değerler: "equals", "contains", "starts_with", "not_contains", "matches".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
+// UpdateWebCampaignDtoConditionsUtmRulesItem: UpdateWebCampaignDtoConditionsUtmRulesItem şeması.
+type UpdateWebCampaignDtoConditionsUtmRulesItem struct {
+	// Zorunlu. Değerler: "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content".
+	Param string `json:"param"`
+	// Zorunlu. Değerler: "equals", "contains", "exists".
+	Op    string  `json:"op"`
+	Value *string `json:"value,omitempty"`
+}
+
+// UpdateWebCampaignDtoConditionsVisits: UpdateWebCampaignDtoConditionsVisits şeması.
+type UpdateWebCampaignDtoConditionsVisits struct {
+	// Zorunlu. Değerler: "gte", "lte", "eq".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value int64 `json:"value"`
+}
+
+// UpdateWebCampaignDtoDisplay: UpdateWebCampaignDtoDisplay şeması.
+type UpdateWebCampaignDtoDisplay struct {
+	// Zorunlu. Değerler: "popup", "banner_top", "banner_bottom", "slide_in", "fullscreen".
+	Layout string `json:"layout"`
+	// Değerler: "left", "right".
+	Position           *string `json:"position,omitempty"`
+	BackgroundColor    *string `json:"background_color,omitempty"`
+	TextColor          *string `json:"text_color,omitempty"`
+	Dismissible        *bool   `json:"dismissible,omitempty"`
+	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
+	MaxWidth           *int64  `json:"max_width,omitempty"`
+	// Zorunlu.
+	Blocks   []any   `json:"blocks"`
+	FormID   *string `json:"form_id,omitempty"`
+	SurveyID *string `json:"survey_id,omitempty"`
+}
+
+// UpdateWebCampaignDtoFrequency: UpdateWebCampaignDtoFrequency şeması.
+type UpdateWebCampaignDtoFrequency struct {
+	MaxPerSession       *int64 `json:"max_per_session,omitempty"`
+	MaxPerDay           *int64 `json:"max_per_day,omitempty"`
+	MaxTotal            *int64 `json:"max_total,omitempty"`
+	HideAfterCloseDays  *int64 `json:"hide_after_close_days,omitempty"`
+	StopAfterConversion *bool  `json:"stop_after_conversion,omitempty"`
+}
+
+// UpdateWebCampaignDtoTargeting: UpdateWebCampaignDtoTargeting şeması.
+type UpdateWebCampaignDtoTargeting struct {
+	IncludedSegments []string `json:"included_segments,omitempty"`
+	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	// Değerler: "all", "new", "returning".
+	Visitor *string `json:"visitor,omitempty"`
+	// Değerler: "desktop", "mobile", "tablet".
+	Devices []string `json:"devices,omitempty"`
+}
+
+// UpdateWebCampaignDtoVariantsItem: UpdateWebCampaignDtoVariantsItem şeması.
+type UpdateWebCampaignDtoVariantsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	WeightPercent int64 `json:"weight_percent"`
+	// Zorunlu.
+	Display UpdateWebCampaignDtoVariantsItemDisplay `json:"display"`
+}
+
+// UpdateWebCampaignDtoVariantsItemDisplay: UpdateWebCampaignDtoVariantsItemDisplay şeması.
+type UpdateWebCampaignDtoVariantsItemDisplay struct {
+	// Zorunlu. Değerler: "popup", "banner_top", "banner_bottom", "slide_in", "fullscreen".
+	Layout string `json:"layout"`
+	// Değerler: "left", "right".
+	Position           *string `json:"position,omitempty"`
+	BackgroundColor    *string `json:"background_color,omitempty"`
+	TextColor          *string `json:"text_color,omitempty"`
+	Dismissible        *bool   `json:"dismissible,omitempty"`
+	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
+	MaxWidth           *int64  `json:"max_width,omitempty"`
+	// Zorunlu.
+	Blocks   []any   `json:"blocks"`
+	FormID   *string `json:"form_id,omitempty"`
+	SurveyID *string `json:"survey_id,omitempty"`
+}
+
 // UpdateWebhookDto: UpdateWebhookDto şeması.
 type UpdateWebhookDto struct {
 	URL         *string `json:"url,omitempty"`
 	Description *string `json:"description,omitempty"`
-	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "audit.created".
+	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked".
 	Events       []string                      `json:"events,omitempty"`
 	EventFilters *UpdateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -6015,6 +7675,20 @@ type UserPreferences struct {
 	Data []UserPreferencesDataItem `json:"data"`
 	// Zorunlu.
 	Categories []MessageCategory `json:"categories"`
+	// Zorunlu.
+	Consents []UserPreferencesConsentsItem `json:"consents"`
+}
+
+// UserPreferencesConsentsItem: UserPreferencesConsentsItem şeması.
+type UserPreferencesConsentsItem struct {
+	// Zorunlu. Değerler: "ads_personalization".
+	Purpose string `json:"purpose"`
+	// Zorunlu.
+	Granted bool `json:"granted"`
+	// Zorunlu.
+	Source *string `json:"source"`
+	// Zorunlu.
+	UpdatedAt *string `json:"updated_at"`
 }
 
 // UserPreferencesDataItem: UserPreferencesDataItem şeması.
@@ -6226,6 +7900,259 @@ type WarehouseTablesDataItemColumnsItem struct {
 	Nullable bool `json:"nullable"`
 }
 
+// WebCampaign: WebCampaign şeması.
+type WebCampaign struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	Priority int64 `json:"priority"`
+	// Zorunlu.
+	Display WebCampaignDisplay `json:"display"`
+	// Zorunlu.
+	Variants []WebCampaignVariantsItem `json:"variants"`
+	// Zorunlu.
+	AbTest WebCampaignAbTest `json:"ab_test"`
+	// Zorunlu.
+	Trigger any `json:"trigger"`
+	// Zorunlu.
+	Conditions WebCampaignConditions `json:"conditions"`
+	// Zorunlu.
+	Targeting WebCampaignTargeting `json:"targeting"`
+	// Zorunlu.
+	Frequency WebCampaignFrequency `json:"frequency"`
+	// Zorunlu.
+	StartAt *string `json:"start_at"`
+	// Zorunlu.
+	EndAt *string `json:"end_at"`
+	// Zorunlu.
+	Stats WebCampaignStats `json:"stats"`
+	// Zorunlu.
+	VariantStats []WebCampaignVariantStatsItem `json:"variant_stats"`
+	// Zorunlu.
+	VariantSignificance *WebCampaignVariantSignificance `json:"variant_significance"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// WebCampaignAbTest: WebCampaignAbTest şeması.
+type WebCampaignAbTest struct {
+	// Zorunlu.
+	WinnerVariantID *string `json:"winner_variant_id"`
+	// Zorunlu.
+	DecidedAt *string `json:"decided_at"`
+	// Zorunlu.
+	DecidedBy *string `json:"decided_by"`
+}
+
+// WebCampaignConditions: WebCampaignConditions şeması.
+type WebCampaignConditions struct {
+	URLRules []WebCampaignConditionsURLRulesItem `json:"url_rules,omitempty"`
+	UtmRules []WebCampaignConditionsUtmRulesItem `json:"utm_rules,omitempty"`
+	Visits   *WebCampaignConditionsVisits        `json:"visits,omitempty"`
+}
+
+// WebCampaignConditionsURLRulesItem: WebCampaignConditionsUrlRulesItem şeması.
+type WebCampaignConditionsURLRulesItem struct {
+	// Zorunlu. Değerler: "equals", "contains", "starts_with", "not_contains", "matches".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
+// WebCampaignConditionsUtmRulesItem: WebCampaignConditionsUtmRulesItem şeması.
+type WebCampaignConditionsUtmRulesItem struct {
+	// Zorunlu. Değerler: "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content".
+	Param string `json:"param"`
+	// Zorunlu. Değerler: "equals", "contains", "exists".
+	Op    string  `json:"op"`
+	Value *string `json:"value,omitempty"`
+}
+
+// WebCampaignConditionsVisits: WebCampaignConditionsVisits şeması.
+type WebCampaignConditionsVisits struct {
+	// Zorunlu. Değerler: "gte", "lte", "eq".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value int64 `json:"value"`
+}
+
+// WebCampaignDisplay: WebCampaignDisplay şeması.
+type WebCampaignDisplay struct {
+	// Zorunlu. Değerler: "popup", "banner_top", "banner_bottom", "slide_in", "fullscreen".
+	Layout string `json:"layout"`
+	// Değerler: "left", "right".
+	Position           *string `json:"position,omitempty"`
+	BackgroundColor    *string `json:"background_color,omitempty"`
+	TextColor          *string `json:"text_color,omitempty"`
+	Dismissible        *bool   `json:"dismissible,omitempty"`
+	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
+	MaxWidth           *int64  `json:"max_width,omitempty"`
+	// Zorunlu.
+	Blocks   []any   `json:"blocks"`
+	FormID   *string `json:"form_id,omitempty"`
+	SurveyID *string `json:"survey_id,omitempty"`
+}
+
+// WebCampaignFrequency: WebCampaignFrequency şeması.
+type WebCampaignFrequency struct {
+	MaxPerSession       *int64 `json:"max_per_session,omitempty"`
+	MaxPerDay           *int64 `json:"max_per_day,omitempty"`
+	MaxTotal            *int64 `json:"max_total,omitempty"`
+	HideAfterCloseDays  *int64 `json:"hide_after_close_days,omitempty"`
+	StopAfterConversion *bool  `json:"stop_after_conversion,omitempty"`
+}
+
+// WebCampaignPage: WebCampaignPage şeması.
+type WebCampaignPage struct {
+	// Zorunlu.
+	Data []WebCampaign `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// WebCampaignReport: WebCampaignReport şeması.
+type WebCampaignReport struct {
+	// Zorunlu.
+	CampaignID string `json:"campaign_id"`
+	// Zorunlu.
+	Days int64 `json:"days"`
+	// Zorunlu.
+	Daily []WebCampaignReportDailyItem `json:"daily"`
+	// Zorunlu.
+	Totals WebCampaignReportTotals `json:"totals"`
+}
+
+// WebCampaignReportDailyItem: WebCampaignReportDailyItem şeması.
+type WebCampaignReportDailyItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	Impressions int64 `json:"impressions"`
+	// Zorunlu.
+	Clicks int64 `json:"clicks"`
+	// Zorunlu.
+	Closes int64 `json:"closes"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+}
+
+// WebCampaignReportTotals: WebCampaignReportTotals şeması.
+type WebCampaignReportTotals struct {
+	// Zorunlu.
+	Impressions int64 `json:"impressions"`
+	// Zorunlu.
+	Clicks int64 `json:"clicks"`
+	// Zorunlu.
+	Closes int64 `json:"closes"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+	// Zorunlu.
+	UniqueVisitors int64 `json:"unique_visitors"`
+	// Zorunlu.
+	Ctr float64 `json:"ctr"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
+// WebCampaignStats: WebCampaignStats şeması.
+type WebCampaignStats struct {
+	// Zorunlu.
+	Impressions int64 `json:"impressions"`
+	// Zorunlu.
+	Clicks int64 `json:"clicks"`
+	// Zorunlu.
+	Closes int64 `json:"closes"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+	// Zorunlu.
+	UniqueVisitors int64 `json:"unique_visitors"`
+	// Zorunlu.
+	Ctr float64 `json:"ctr"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
+// WebCampaignStatusDto: WebCampaignStatusDto şeması.
+type WebCampaignStatusDto struct {
+	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
+	Status string `json:"status"`
+}
+
+// WebCampaignTargeting: WebCampaignTargeting şeması.
+type WebCampaignTargeting struct {
+	IncludedSegments []string `json:"included_segments,omitempty"`
+	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	// Değerler: "all", "new", "returning".
+	Visitor *string `json:"visitor,omitempty"`
+	// Değerler: "desktop", "mobile", "tablet".
+	Devices []string `json:"devices,omitempty"`
+}
+
+// WebCampaignVariantSignificance: WebCampaignVariantSignificance şeması.
+type WebCampaignVariantSignificance struct {
+	// Zorunlu.
+	Leader *string `json:"leader"`
+	// Zorunlu.
+	PValue float64 `json:"p_value"`
+	// Zorunlu.
+	Significant bool `json:"significant"`
+}
+
+// WebCampaignVariantsItem: WebCampaignVariantsItem şeması.
+type WebCampaignVariantsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	WeightPercent int64 `json:"weight_percent"`
+	// Zorunlu.
+	Display WebCampaignVariantsItemDisplay `json:"display"`
+}
+
+// WebCampaignVariantsItemDisplay: WebCampaignVariantsItemDisplay şeması.
+type WebCampaignVariantsItemDisplay struct {
+	// Zorunlu. Değerler: "popup", "banner_top", "banner_bottom", "slide_in", "fullscreen".
+	Layout string `json:"layout"`
+	// Değerler: "left", "right".
+	Position           *string `json:"position,omitempty"`
+	BackgroundColor    *string `json:"background_color,omitempty"`
+	TextColor          *string `json:"text_color,omitempty"`
+	Dismissible        *bool   `json:"dismissible,omitempty"`
+	AutoDismissSeconds *int64  `json:"auto_dismiss_seconds,omitempty"`
+	MaxWidth           *int64  `json:"max_width,omitempty"`
+	// Zorunlu.
+	Blocks   []any   `json:"blocks"`
+	FormID   *string `json:"form_id,omitempty"`
+	SurveyID *string `json:"survey_id,omitempty"`
+}
+
+// WebCampaignVariantStatsItem: WebCampaignVariantStatsItem şeması.
+type WebCampaignVariantStatsItem struct {
+	// Zorunlu.
+	VariantID string `json:"variant_id"`
+	// Zorunlu.
+	Impressions int64 `json:"impressions"`
+	// Zorunlu.
+	Clicks int64 `json:"clicks"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+	// Zorunlu.
+	Ctr float64 `json:"ctr"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
 // Webhook: Webhook şeması.
 type Webhook struct {
 	// Zorunlu.
@@ -6380,7 +8307,7 @@ type WebhookList struct {
 
 // WebhookPreviewDto: WebhookPreviewDto şeması.
 type WebhookPreviewDto struct {
-	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "audit.created", "webhook.test".
+	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked", "webhook.test".
 	EventType    string         `json:"event_type"`
 	Data         map[string]any `json:"data,omitempty"`
 	BodyTemplate *string        `json:"body_template,omitempty"`
