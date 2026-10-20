@@ -46,6 +46,78 @@ type AdAccountList struct {
 	Data []AdAccount `json:"data"`
 }
 
+// AdAttributionReport: AdAttributionReport şeması.
+type AdAttributionReport struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu. Değerler: "last_click", "first_click", "linear", "time_decay".
+	Model string `json:"model"`
+	// Zorunlu.
+	WindowDays int64 `json:"window_days"`
+	// Zorunlu.
+	HalfLifeDays int64 `json:"half_life_days"`
+	// Zorunlu.
+	Currency string `json:"currency"`
+	// Zorunlu.
+	GroupBy string `json:"group_by"`
+	// Zorunlu.
+	ConversionEvents []string `json:"conversion_events"`
+	// Zorunlu.
+	Rows []AdAttributionReportRowsItem `json:"rows"`
+	// Zorunlu.
+	Totals AdAttributionReportTotals `json:"totals"`
+	// Zorunlu.
+	Truncated bool `json:"truncated"`
+	// Zorunlu.
+	FxMissing []string `json:"fx_missing"`
+}
+
+// AdAttributionReportRowsItem: AdAttributionReportRowsItem şeması.
+type AdAttributionReportRowsItem struct {
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu. Değerler: "meta", "google", "tiktok", "linkedin", "microsoft", "other_paid", "utm", "push", "email", "sms", "whatsapp", "rcs", "direct".
+	Channel string `json:"channel"`
+	// Zorunlu.
+	Label string `json:"label"`
+	// Zorunlu.
+	Paid bool `json:"paid"`
+	// Zorunlu.
+	Conversions float64 `json:"conversions"`
+	// Zorunlu.
+	Revenue float64 `json:"revenue"`
+	// Zorunlu.
+	NewCustomers float64 `json:"new_customers"`
+	// Zorunlu.
+	Spend *float64 `json:"spend"`
+	// Zorunlu.
+	Roas *float64 `json:"roas"`
+	// Zorunlu.
+	Cac *float64 `json:"cac"`
+}
+
+// AdAttributionReportTotals: AdAttributionReportTotals şeması.
+type AdAttributionReportTotals struct {
+	// Zorunlu.
+	Conversions float64 `json:"conversions"`
+	// Zorunlu.
+	Revenue float64 `json:"revenue"`
+	// Zorunlu.
+	Spend float64 `json:"spend"`
+	// Zorunlu.
+	NewCustomers float64 `json:"new_customers"`
+	// Zorunlu.
+	Roas *float64 `json:"roas"`
+	// Zorunlu.
+	PlatformRoas *float64 `json:"platform_roas"`
+	// Zorunlu.
+	Cac *float64 `json:"cac"`
+	// Zorunlu.
+	PaidCac *float64 `json:"paid_cac"`
+}
+
 // AdAudience: AdAudience şeması.
 type AdAudience struct {
 	// Zorunlu.
@@ -172,6 +244,208 @@ type AdAudienceSyncQueued struct {
 	Mode string `json:"mode"`
 }
 
+// AdBudgetAlertList: AdBudgetAlertList şeması.
+type AdBudgetAlertList struct {
+	// Zorunlu.
+	Data []AdBudgetAlertListDataItem `json:"data"`
+}
+
+// AdBudgetAlertListDataItem: AdBudgetAlertListDataItem şeması.
+type AdBudgetAlertListDataItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	RuleID string `json:"rule_id"`
+	// Zorunlu.
+	RuleName string `json:"rule_name"`
+	// Zorunlu. Değerler: "daily_spend", "roas_drop", "budget_depletion".
+	Kind string `json:"kind"`
+	// Zorunlu.
+	Day string `json:"day"`
+	// Zorunlu.
+	Value float64 `json:"value"`
+	// Zorunlu.
+	Threshold float64 `json:"threshold"`
+	// Zorunlu.
+	Details map[string]any `json:"details"`
+	// Zorunlu.
+	Emailed int64 `json:"emailed"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// AdBudgetAlertRule: AdBudgetAlertRule şeması.
+type AdBudgetAlertRule struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "daily_spend", "roas_drop", "budget_depletion".
+	Kind string `json:"kind"`
+	// Zorunlu.
+	AdAccountID *string `json:"ad_account_id"`
+	// Zorunlu.
+	CampaignExternalID *string `json:"campaign_external_id"`
+	// Zorunlu.
+	Threshold float64 `json:"threshold"`
+	// Zorunlu.
+	WindowDays int64 `json:"window_days"`
+	// Zorunlu.
+	Recipients []string `json:"recipients"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	LastValue *float64 `json:"last_value"`
+	// Zorunlu.
+	LastEvaluatedAt *string `json:"last_evaluated_at"`
+	// Zorunlu.
+	LastTriggeredOn *string `json:"last_triggered_on"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// AdBudgetAlertRuleList: AdBudgetAlertRuleList şeması.
+type AdBudgetAlertRuleList struct {
+	// Zorunlu.
+	Data []AdBudgetAlertRule `json:"data"`
+}
+
+// AdCapiConfig: AdCapiConfig şeması.
+type AdCapiConfig struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu. Değerler: "meta", "google", "tiktok".
+	Platform string `json:"platform"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	AdAccountID *string `json:"ad_account_id"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Settings AdCapiConfigSettings `json:"settings"`
+	// Zorunlu.
+	EventMappings []AdCapiConfigEventMappingsItem `json:"event_mappings"`
+	// Zorunlu.
+	TestEventCode *string `json:"test_event_code"`
+	// Zorunlu.
+	TestMode bool `json:"test_mode"`
+	// Zorunlu. Değerler: "website", "app".
+	ActionSource string `json:"action_source"`
+	// Zorunlu.
+	DefaultCurrency string `json:"default_currency"`
+	// Zorunlu.
+	HasAccessToken bool `json:"has_access_token"`
+	// Zorunlu.
+	LastSentAt *string `json:"last_sent_at"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	LastErrorAt *string `json:"last_error_at"`
+	// Zorunlu.
+	Stats AdCapiConfigStats `json:"stats"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// AdCapiConfigEventMappingsItem: AdCapiConfigEventMappingsItem şeması.
+type AdCapiConfigEventMappingsItem struct {
+	// Zorunlu.
+	EventName string `json:"event_name"`
+	// Zorunlu.
+	PlatformEvent string `json:"platform_event"`
+	// Zorunlu.
+	ValueProperty *string `json:"value_property"`
+	// Zorunlu.
+	CurrencyProperty *string `json:"currency_property"`
+}
+
+// AdCapiConfigList: AdCapiConfigList şeması.
+type AdCapiConfigList struct {
+	// Zorunlu.
+	Data []AdCapiConfig `json:"data"`
+}
+
+// AdCapiConfigSettings: AdCapiConfigSettings şeması.
+type AdCapiConfigSettings struct {
+	// Zorunlu.
+	PixelID *string `json:"pixel_id"`
+	// Zorunlu.
+	CustomerID *string `json:"customer_id"`
+	// Zorunlu.
+	LoginCustomerID *string `json:"login_customer_id"`
+	// Zorunlu.
+	PixelCode *string `json:"pixel_code"`
+}
+
+// AdCapiConfigStats: AdCapiConfigStats şeması.
+type AdCapiConfigStats struct {
+	// Zorunlu.
+	Pending int64 `json:"pending"`
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Failed int64 `json:"failed"`
+	// Zorunlu.
+	Skipped int64 `json:"skipped"`
+}
+
+// AdCapiDelivery: AdCapiDelivery şeması.
+type AdCapiDelivery struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	ConfigID string `json:"config_id"`
+	// Zorunlu. Değerler: "meta", "google", "tiktok".
+	Platform string `json:"platform"`
+	// Zorunlu.
+	EventID string `json:"event_id"`
+	// Zorunlu.
+	EventName string `json:"event_name"`
+	// Zorunlu.
+	PlatformEvent string `json:"platform_event"`
+	// Zorunlu.
+	DedupID string `json:"dedup_id"`
+	// Zorunlu.
+	UserID *string `json:"user_id"`
+	// Zorunlu.
+	Value *float64 `json:"value"`
+	// Zorunlu.
+	Currency *string `json:"currency"`
+	// Zorunlu. Değerler: "pending", "sent", "failed", "skipped".
+	Status string `json:"status"`
+	// Zorunlu.
+	SkipReason *string `json:"skip_reason"`
+	// Zorunlu.
+	Attempts int64 `json:"attempts"`
+	// Zorunlu.
+	NextAttemptAt *string `json:"next_attempt_at"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	Test bool `json:"test"`
+	// Zorunlu.
+	EventOccurredAt string `json:"event_occurred_at"`
+	// Zorunlu.
+	SentAt *string `json:"sent_at"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// AdCapiDeliveryList: AdCapiDeliveryList şeması.
+type AdCapiDeliveryList struct {
+	// Zorunlu.
+	Data []AdCapiDelivery `json:"data"`
+}
+
 // AddAliasDto: AddAliasDto şeması.
 type AddAliasDto struct {
 	// Zorunlu.
@@ -213,10 +487,234 @@ type AddSubscriptionDtoOptIn struct {
 	At     *string `json:"at,omitempty"`
 }
 
+// AdEntity: AdEntity şeması.
+type AdEntity struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	AdAccountID string `json:"ad_account_id"`
+	// Zorunlu. Değerler: "meta", "google", "tiktok".
+	Platform string `json:"platform"`
+	// Zorunlu. Değerler: "campaign", "ad_set", "ad".
+	Level string `json:"level"`
+	// Zorunlu.
+	ExternalID string `json:"external_id"`
+	// Zorunlu.
+	CampaignExternalID string `json:"campaign_external_id"`
+	// Zorunlu.
+	AdSetExternalID *string `json:"ad_set_external_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "active", "paused", "pending", "rejected", "archived", "deleted", "unknown".
+	Status string `json:"status"`
+	// Zorunlu.
+	PlatformStatus *string `json:"platform_status"`
+	// Zorunlu.
+	Objective *string `json:"objective"`
+	// Zorunlu.
+	OptimizationGoal *string `json:"optimization_goal"`
+	// Zorunlu.
+	Currency *string `json:"currency"`
+	// Zorunlu.
+	DailyBudget *string `json:"daily_budget"`
+	// Zorunlu.
+	LifetimeBudget *string `json:"lifetime_budget"`
+	// Zorunlu.
+	StartAt *string `json:"start_at"`
+	// Zorunlu.
+	EndAt *string `json:"end_at"`
+	// Zorunlu.
+	AudienceExternalIds []string `json:"audience_external_ids"`
+	// Zorunlu.
+	Creative *AdEntityCreative `json:"creative"`
+	// Zorunlu.
+	BudgetEditable bool `json:"budget_editable"`
+	// Zorunlu.
+	CreatedByPushizo bool `json:"created_by_pushizo"`
+	// Zorunlu.
+	LastSeenAt *string `json:"last_seen_at"`
+	// Zorunlu.
+	PlatformURL string `json:"platform_url"`
+	// Zorunlu.
+	Metrics *AdEntityMetrics `json:"metrics"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// AdEntityCreative: AdEntityCreative şeması.
+type AdEntityCreative struct {
+	// Zorunlu.
+	Title *string `json:"title"`
+	// Zorunlu.
+	Body *string `json:"body"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	LinkURL *string `json:"link_url"`
+	// Zorunlu.
+	ImageURL *string `json:"image_url"`
+	// Zorunlu.
+	CallToAction *string `json:"call_to_action"`
+}
+
+// AdEntityList: AdEntityList şeması.
+type AdEntityList struct {
+	// Zorunlu.
+	Data []AdEntity `json:"data"`
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Accounts []AdEntityListAccountsItem `json:"accounts"`
+}
+
+// AdEntityListAccountsItem: AdEntityListAccountsItem şeması.
+type AdEntityListAccountsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	CampaignsSyncedAt *string `json:"campaigns_synced_at"`
+	// Zorunlu.
+	InsightsSyncedAt *string `json:"insights_synced_at"`
+	// Zorunlu.
+	CampaignsSyncError *string `json:"campaigns_sync_error"`
+	// Zorunlu.
+	InsightsSyncError *string `json:"insights_sync_error"`
+}
+
+// AdEntityMetrics: AdEntityMetrics şeması.
+type AdEntityMetrics struct {
+	// Zorunlu.
+	Impressions float64 `json:"impressions"`
+	// Zorunlu.
+	Clicks float64 `json:"clicks"`
+	// Zorunlu.
+	Spend float64 `json:"spend"`
+	// Zorunlu.
+	Conversions float64 `json:"conversions"`
+	// Zorunlu.
+	ConversionValue float64 `json:"conversion_value"`
+	// Zorunlu.
+	Ctr *float64 `json:"ctr"`
+	// Zorunlu.
+	Cpc *float64 `json:"cpc"`
+	// Zorunlu.
+	Roas *float64 `json:"roas"`
+}
+
+// AdLtvReport: AdLtvReport şeması.
+type AdLtvReport struct {
+	// Zorunlu.
+	Currency string `json:"currency"`
+	// Zorunlu.
+	Months int64 `json:"months"`
+	// Zorunlu.
+	ConversionEvents []string `json:"conversion_events"`
+	// Zorunlu.
+	Cohorts []AdLtvReportCohortsItem `json:"cohorts"`
+	// Zorunlu.
+	Average []float64 `json:"average"`
+	// Zorunlu.
+	FxMissing []string `json:"fx_missing"`
+}
+
+// AdLtvReportCohortsItem: AdLtvReportCohortsItem şeması.
+type AdLtvReportCohortsItem struct {
+	// Zorunlu.
+	Cohort string `json:"cohort"`
+	// Zorunlu.
+	Size int64 `json:"size"`
+	// Zorunlu.
+	Revenue []float64 `json:"revenue"`
+	// Zorunlu.
+	Ltv []float64 `json:"ltv"`
+}
+
 // AdOk: AdOk şeması.
 type AdOk struct {
 	// Zorunlu.
 	Ok bool `json:"ok"`
+}
+
+// AdRefreshQueued: AdRefreshQueued şeması.
+type AdRefreshQueued struct {
+	// Zorunlu.
+	Queued bool `json:"queued"`
+	// Zorunlu.
+	NextSyncAt string `json:"next_sync_at"`
+}
+
+// AdSpendReport: AdSpendReport şeması.
+type AdSpendReport struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Currency string `json:"currency"`
+	// Zorunlu.
+	GroupBy string `json:"group_by"`
+	// Zorunlu.
+	Rows []AdSpendReportRowsItem `json:"rows"`
+	// Zorunlu.
+	Totals AdSpendReportTotals `json:"totals"`
+	// Zorunlu.
+	FxMissing []string `json:"fx_missing"`
+	// Zorunlu. Değerler: "postgres", "clickhouse".
+	Store string `json:"store"`
+}
+
+// AdSpendReportRowsItem: AdSpendReportRowsItem şeması.
+type AdSpendReportRowsItem struct {
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu.
+	Label string `json:"label"`
+	// Zorunlu.
+	Platform *string `json:"platform"`
+	// Zorunlu.
+	Impressions float64 `json:"impressions"`
+	// Zorunlu.
+	Clicks float64 `json:"clicks"`
+	// Zorunlu.
+	Spend float64 `json:"spend"`
+	// Zorunlu.
+	Conversions float64 `json:"conversions"`
+	// Zorunlu.
+	ConversionValue float64 `json:"conversion_value"`
+	// Zorunlu.
+	Ctr *float64 `json:"ctr"`
+	// Zorunlu.
+	Cpc *float64 `json:"cpc"`
+	// Zorunlu.
+	Cpa *float64 `json:"cpa"`
+	// Zorunlu.
+	Roas *float64 `json:"roas"`
+}
+
+// AdSpendReportTotals: AdSpendReportTotals şeması.
+type AdSpendReportTotals struct {
+	// Zorunlu.
+	Impressions float64 `json:"impressions"`
+	// Zorunlu.
+	Clicks float64 `json:"clicks"`
+	// Zorunlu.
+	Spend float64 `json:"spend"`
+	// Zorunlu.
+	Conversions float64 `json:"conversions"`
+	// Zorunlu.
+	ConversionValue float64 `json:"conversion_value"`
+	// Zorunlu.
+	Ctr *float64 `json:"ctr"`
+	// Zorunlu.
+	Cpc *float64 `json:"cpc"`
+	// Zorunlu.
+	Cpa *float64 `json:"cpa"`
+	// Zorunlu.
+	Roas *float64 `json:"roas"`
 }
 
 // APIEventsDto: ApiEventsDto şeması.
@@ -1794,6 +2292,21 @@ type CreateAppDtoPlatformFlags struct {
 	SMS     *bool `json:"sms,omitempty"`
 }
 
+// CreateBudgetAlertRuleDto: CreateBudgetAlertRuleDto şeması.
+type CreateBudgetAlertRuleDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "daily_spend", "roas_drop", "budget_depletion".
+	Kind               string  `json:"kind"`
+	AdAccountID        *string `json:"ad_account_id,omitempty"`
+	CampaignExternalID *string `json:"campaign_external_id,omitempty"`
+	// Zorunlu.
+	Threshold  float64  `json:"threshold"`
+	WindowDays *int64   `json:"window_days,omitempty"`
+	Recipients []string `json:"recipients,omitempty"`
+	Enabled    *bool    `json:"enabled,omitempty"`
+}
+
 // CreateCategoryDto: CreateCategoryDto şeması.
 type CreateCategoryDto struct {
 	// Zorunlu.
@@ -2727,7 +3240,7 @@ type CreateWebhookDto struct {
 	// Zorunlu.
 	URL         string  `json:"url"`
 	Description *string `json:"description,omitempty"`
-	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked".
+	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked", "ad_budget.alert", "ad_insights.imported".
 	Events       []string                      `json:"events"`
 	EventFilters *CreateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -6547,6 +7060,13 @@ type UpdateAdAudienceDto struct {
 	Status *string `json:"status,omitempty"`
 }
 
+// UpdateAdCampaignDto: UpdateAdCampaignDto şeması.
+type UpdateAdCampaignDto struct {
+	// Değerler: "active", "paused".
+	Status      *string `json:"status,omitempty"`
+	DailyBudget any     `json:"daily_budget,omitempty"`
+}
+
 // UpdateAPIKeyDto: UpdateApiKeyDto şeması.
 type UpdateAPIKeyDto struct {
 	Name *string `json:"name,omitempty"`
@@ -6795,6 +7315,17 @@ type UpdateAppDtoSettingsWebPushWelcomeNotification struct {
 type UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue struct {
 	Title   *string `json:"title,omitempty"`
 	Message *string `json:"message,omitempty"`
+}
+
+// UpdateBudgetAlertRuleDto: UpdateBudgetAlertRuleDto şeması.
+type UpdateBudgetAlertRuleDto struct {
+	Name               *string  `json:"name,omitempty"`
+	AdAccountID        *string  `json:"ad_account_id,omitempty"`
+	CampaignExternalID *string  `json:"campaign_external_id,omitempty"`
+	Threshold          *float64 `json:"threshold,omitempty"`
+	WindowDays         *int64   `json:"window_days,omitempty"`
+	Recipients         []string `json:"recipients,omitempty"`
+	Enabled            *bool    `json:"enabled,omitempty"`
 }
 
 // UpdateCategoryDto: UpdateCategoryDto şeması.
@@ -7354,7 +7885,7 @@ type UpdateWebCampaignDtoVariantsItemDisplay struct {
 type UpdateWebhookDto struct {
 	URL         *string `json:"url,omitempty"`
 	Description *string `json:"description,omitempty"`
-	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked".
+	// Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked", "ad_budget.alert", "ad_insights.imported".
 	Events       []string                      `json:"events,omitempty"`
 	EventFilters *UpdateWebhookDtoEventFilters `json:"event_filters,omitempty"`
 	Batch        *bool                         `json:"batch,omitempty"`
@@ -8307,7 +8838,7 @@ type WebhookList struct {
 
 // WebhookPreviewDto: WebhookPreviewDto şeması.
 type WebhookPreviewDto struct {
-	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked", "webhook.test".
+	// Zorunlu. Değerler: "message.queued", "message.completed", "message.failed", "delivery.sent", "delivery.delivered", "delivery.failed", "delivery.opened", "delivery.clicked", "delivery.bounced", "delivery.complained", "delivery.unsubscribed", "in_app.impression", "in_app.clicked", "in_app.dismissed", "subscription.created", "subscription.unsubscribed", "subscription.invalidated", "user.created", "user.updated", "user.merged", "user.deleted", "event.received", "conversion.created", "campaign.scheduled", "campaign.started", "campaign.completed", "journey.entered", "journey.step_completed", "journey.completed", "journey.exited", "conversation.created", "conversation.message", "conversation.assigned", "conversation.resolved", "audit.created", "form.submitted", "survey.responded", "ad_audience.synced", "ad_account.revoked", "ad_budget.alert", "ad_insights.imported", "webhook.test".
 	EventType    string         `json:"event_type"`
 	Data         map[string]any `json:"data,omitempty"`
 	BodyTemplate *string        `json:"body_template,omitempty"`
