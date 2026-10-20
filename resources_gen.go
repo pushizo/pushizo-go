@@ -32,19 +32,25 @@ type services struct {
 	Apps                *AppsService
 	APIKeys             *APIKeysService
 	Organization        *OrganizationService
+	Ads                 *AdsService
+	CannedResponses     *CannedResponsesService
 	Categories          *CategoriesService
 	ContentTables       *ContentTablesService
 	Conversations       *ConversationsService
 	DataFeeds           *DataFeedsService
 	EmailDeliverability *EmailDeliverabilityService
+	Forms               *FormsService
 	IdentityKeys        *IdentityKeysService
 	Integrations        *IntegrationsService
 	Journeys            *JourneysService
+	LandingPages        *LandingPagesService
 	LiveActivities      *LiveActivitiesService
 	Mcp                 *McpService
 	Preferences         *PreferencesService
 	SMSKeywords         *SMSKeywordsService
+	Surveys             *SurveysService
 	WarehouseExports    *WarehouseExportsService
+	WebCampaigns        *WebCampaignsService
 	Whatsapp            *WhatsappService
 }
 
@@ -68,19 +74,25 @@ func (c *Client) initServices() {
 	c.Apps = &AppsService{client: c}
 	c.APIKeys = &APIKeysService{client: c}
 	c.Organization = &OrganizationService{client: c}
+	c.Ads = &AdsService{client: c}
+	c.CannedResponses = &CannedResponsesService{client: c}
 	c.Categories = &CategoriesService{client: c}
 	c.ContentTables = &ContentTablesService{client: c}
 	c.Conversations = &ConversationsService{client: c}
 	c.DataFeeds = &DataFeedsService{client: c}
 	c.EmailDeliverability = &EmailDeliverabilityService{client: c}
+	c.Forms = &FormsService{client: c}
 	c.IdentityKeys = &IdentityKeysService{client: c}
 	c.Integrations = &IntegrationsService{client: c}
 	c.Journeys = &JourneysService{client: c}
+	c.LandingPages = &LandingPagesService{client: c}
 	c.LiveActivities = &LiveActivitiesService{client: c}
 	c.Mcp = &McpService{client: c}
 	c.Preferences = &PreferencesService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
+	c.Surveys = &SurveysService{client: c}
 	c.WarehouseExports = &WarehouseExportsService{client: c}
+	c.WebCampaigns = &WebCampaignsService{client: c}
 	c.Whatsapp = &WhatsappService{client: c}
 }
 
@@ -1790,6 +1802,104 @@ type InboxService struct {
 	client *Client
 }
 
+// Teams: Takımlar
+//
+// GET /v1/apps/{appId}/inbox/teams
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InboxService) Teams(ctx context.Context, opts ...RequestOption) (*InboxTeamList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/inbox/teams"}
+	var out InboxTeamList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Agents: Temsilciler ve varlık durumu
+//
+// GET /v1/apps/{appId}/inbox/agents
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InboxService) Agents(ctx context.Context, opts ...RequestOption) (*InboxAgentList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/inbox/agents"}
+	var out InboxAgentList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Settings: Gelen kutusu ayarları
+//
+// GET /v1/apps/{appId}/inbox/settings
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InboxService) Settings(ctx context.Context, opts ...RequestOption) (*InboxSettings, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/inbox/settings"}
+	var out InboxSettings
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateSettings: Gelen kutusu ayarlarını güncelle
+//
+// PUT /v1/apps/{appId}/inbox/settings
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InboxService) UpdateSettings(ctx context.Context, body *InboxSettingsUpdateDto, opts ...RequestOption) (*InboxSettings, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/inbox/settings"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out InboxSettings
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// InboxMetricsParams: InboxService.Metrics için isteğe bağlı sorgu parametreleri.
+type InboxMetricsParams struct {
+	From *string
+	To   *string
+	// Değerler: "sms", "whatsapp", "rcs", "email", "chat".
+	Channel *string
+}
+
+func (p *InboxMetricsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "from", p.From)
+	addQuery(q, "to", p.To)
+	addQuery(q, "channel", p.Channel)
+}
+
+// Metrics: Gelen kutusu metrikleri (ilk yanıt/çözüm ort. ve p90, SLA, temsilci tablosu)
+//
+// GET /v1/apps/{appId}/inbox/metrics
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *InboxService) Metrics(ctx context.Context, params *InboxMetricsParams, opts ...RequestOption) (*InboxMetrics, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/inbox/metrics"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out InboxMetrics
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // InboxListParams: InboxService.List için isteğe bağlı sorgu parametreleri.
 type InboxListParams struct {
 	Limit  *int64
@@ -3046,6 +3156,300 @@ func (s *OrganizationService) Usage(ctx context.Context, params *OrganizationUsa
 	return &out, nil
 }
 
+// AdsService: ads kaynağı.
+type AdsService struct {
+	client *Client
+}
+
+// ListAccounts: Bağlı reklam hesapları
+//
+// GET /v1/apps/{appId}/ads/accounts
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) ListAccounts(ctx context.Context, opts ...RequestOption) (*AdAccountList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/accounts"}
+	var out AdAccountList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsListAudiencesParams: AdsService.ListAudiences için isteğe bağlı sorgu parametreleri.
+type AdsListAudiencesParams struct {
+	AdAccountID *string
+}
+
+func (p *AdsListAudiencesParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "ad_account_id", p.AdAccountID)
+}
+
+// ListAudiences: Reklam kitleleri
+//
+// GET /v1/apps/{appId}/ads/audiences
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) ListAudiences(ctx context.Context, params *AdsListAudiencesParams, opts ...RequestOption) (*AdAudienceList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/audiences"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdAudienceList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateAudience: Reklam kitlesi oluştur
+//
+// POST /v1/apps/{appId}/ads/audiences
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) CreateAudience(ctx context.Context, body *CreateAdAudienceDto, opts ...RequestOption) (*AdAudience, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/ads/audiences"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdAudience
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetAudience: Reklam kitlesi ayrıntısı
+//
+// GET /v1/apps/{appId}/ads/audiences/{audienceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) GetAudience(ctx context.Context, audienceID string, opts ...RequestOption) (*AdAudience, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/audiences/{audienceId}"}
+	op.pathParams = map[string]string{"audienceId": audienceID}
+	var out AdAudience
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateAudience: Reklam kitlesini güncelle
+//
+// PATCH /v1/apps/{appId}/ads/audiences/{audienceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) UpdateAudience(ctx context.Context, audienceID string, body *UpdateAdAudienceDto, opts ...RequestOption) (*AdAudience, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/ads/audiences/{audienceId}"}
+	op.pathParams = map[string]string{"audienceId": audienceID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdAudience
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsRemoveAudienceParams: AdsService.RemoveAudience için isteğe bağlı sorgu parametreleri.
+type AdsRemoveAudienceParams struct {
+	// Değerler: "true", "false".
+	DeleteOnPlatform *string
+}
+
+func (p *AdsRemoveAudienceParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "delete_on_platform", p.DeleteOnPlatform)
+}
+
+// RemoveAudience: Reklam kitlesini sil
+//
+// DELETE /v1/apps/{appId}/ads/audiences/{audienceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) RemoveAudience(ctx context.Context, audienceID string, params *AdsRemoveAudienceParams, opts ...RequestOption) (*AdOk, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/ads/audiences/{audienceId}"}
+	op.pathParams = map[string]string{"audienceId": audienceID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdOk
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Sync: Senkronu şimdi çalıştır
+//
+// POST /v1/apps/{appId}/ads/audiences/{audienceId}/sync
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Sync(ctx context.Context, audienceID string, body *SyncAdAudienceDto, opts ...RequestOption) (*AdAudienceSyncQueued, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/ads/audiences/{audienceId}/sync"}
+	op.pathParams = map[string]string{"audienceId": audienceID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdAudienceSyncQueued
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AdsSyncsParams: AdsService.Syncs için isteğe bağlı sorgu parametreleri.
+type AdsSyncsParams struct {
+	Limit *int64
+}
+
+func (p *AdsSyncsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+}
+
+// Syncs: Senkron geçmişi
+//
+// GET /v1/apps/{appId}/ads/audiences/{audienceId}/syncs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Syncs(ctx context.Context, audienceID string, params *AdsSyncsParams, opts ...RequestOption) (*AdAudienceSyncList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/ads/audiences/{audienceId}/syncs"}
+	op.pathParams = map[string]string{"audienceId": audienceID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AdAudienceSyncList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Lookalike: Benzer kitle (lookalike) oluştur
+//
+// POST /v1/apps/{appId}/ads/audiences/{audienceId}/lookalikes
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AdsService) Lookalike(ctx context.Context, audienceID string, body *CreateLookalikeDto, opts ...RequestOption) (*AdAudience, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/ads/audiences/{audienceId}/lookalikes"}
+	op.pathParams = map[string]string{"audienceId": audienceID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AdAudience
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CannedResponsesService: cannedResponses kaynağı.
+type CannedResponsesService struct {
+	client *Client
+}
+
+// CannedResponsesCannedParams: CannedResponsesService.Canned için isteğe bağlı sorgu parametreleri.
+type CannedResponsesCannedParams struct {
+	Q *string
+}
+
+func (p *CannedResponsesCannedParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "q", p.Q)
+}
+
+// Canned: Hazır yanıtlar
+//
+// GET /v1/apps/{appId}/canned-responses
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CannedResponsesService) Canned(ctx context.Context, params *CannedResponsesCannedParams, opts ...RequestOption) (*CannedResponseList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/canned-responses"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out CannedResponseList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateCanned: Hazır yanıt oluştur
+//
+// POST /v1/apps/{appId}/canned-responses
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CannedResponsesService) CreateCanned(ctx context.Context, body *CannedInputDto, opts ...RequestOption) (*CannedResponse, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/canned-responses"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out CannedResponse
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateCanned: Hazır yanıtı güncelle
+//
+// PATCH /v1/apps/{appId}/canned-responses/{cannedId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CannedResponsesService) UpdateCanned(ctx context.Context, cannedID string, body *CannedUpdateDto, opts ...RequestOption) (*CannedResponse, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/canned-responses/{cannedId}"}
+	op.pathParams = map[string]string{"cannedId": cannedID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out CannedResponse
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DeleteCanned: Hazır yanıtı sil
+//
+// DELETE /v1/apps/{appId}/canned-responses/{cannedId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CannedResponsesService) DeleteCanned(ctx context.Context, cannedID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/canned-responses/{cannedId}"}
+	op.pathParams = map[string]string{"cannedId": cannedID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // CategoriesService: categories kaynağı.
 type CategoriesService struct {
 	client *Client
@@ -3308,13 +3712,15 @@ type ConversationsService struct {
 type ConversationsListParams struct {
 	Limit  *int64
 	Cursor *string
-	// Değerler: "sms", "whatsapp", "rcs".
+	// Değerler: "sms", "whatsapp", "rcs", "email", "chat".
 	Channel *string
-	// Değerler: "open", "closed".
+	// Değerler: "open", "pending", "resolved", "closed".
 	Status *string
 	// Değerler: "true", "false".
-	Unread *string
-	Q      *string
+	Unread   *string
+	Q        *string
+	Assignee *string
+	TeamID   *string
 }
 
 func (p *ConversationsListParams) appendQuery(q url.Values) {
@@ -3327,9 +3733,11 @@ func (p *ConversationsListParams) appendQuery(q url.Values) {
 	addQuery(q, "status", p.Status)
 	addQuery(q, "unread", p.Unread)
 	addQuery(q, "q", p.Q)
+	addQuery(q, "assignee", p.Assignee)
+	addQuery(q, "team_id", p.TeamID)
 }
 
-// List: Konuşmalar (SMS, WhatsApp, RCS; son mesaja göre; kanal/durum/okunmamış/kişi filtresi)
+// List: Konuşmalar (SMS, WhatsApp, RCS, e-posta, canlı sohbet; son mesaja göre; kanal/durum/okunmamış/atanan/takım/kişi filtresi)
 //
 // GET /v1/apps/{appId}/conversations
 //
@@ -3365,7 +3773,7 @@ func (s *ConversationsService) ListAll(ctx context.Context, params *Conversation
 	})
 }
 
-// Get: Konuşma (WhatsApp oturum penceresi ve açık rıza durumu dahil)
+// Get: Konuşma (atama, SLA, bot durumu, WhatsApp oturum penceresi ve açık rıza dahil)
 //
 // GET /v1/apps/{appId}/conversations/{conversationId}
 //
@@ -3381,10 +3789,31 @@ func (s *ConversationsService) Get(ctx context.Context, conversationID string, o
 	return &out, nil
 }
 
+// SetStatus: Konuşma durumu: open / pending / resolved (closed = resolved)
+//
+// PATCH /v1/apps/{appId}/conversations/{conversationId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ConversationsService) SetStatus(ctx context.Context, conversationID string, body *ConversationUpdateDto, opts ...RequestOption) (*Conversation, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/conversations/{conversationId}"}
+	op.pathParams = map[string]string{"conversationId": conversationID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Conversation
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // ConversationsMessagesParams: ConversationsService.Messages için isteğe bağlı sorgu parametreleri.
 type ConversationsMessagesParams struct {
-	Limit  *int64
-	Cursor *string
+	Limit    *int64
+	Cursor   *string
+	AfterSeq *int64
 }
 
 func (p *ConversationsMessagesParams) appendQuery(q url.Values) {
@@ -3393,9 +3822,10 @@ func (p *ConversationsMessagesParams) appendQuery(q url.Values) {
 	}
 	addQuery(q, "limit", p.Limit)
 	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "after_seq", p.AfterSeq)
 }
 
-// Messages: Konuşma mesajları (yeniden eskiye; giden mesaj durumu teslimattan)
+// Messages: Konuşma mesajları (yeniden eskiye; `after_seq` ile eskiden yeniye; giden mesaj durumu teslimattan veya okundu işaretçisinden)
 //
 // GET /v1/apps/{appId}/conversations/{conversationId}/messages
 //
@@ -3432,7 +3862,7 @@ func (s *ConversationsService) MessagesAll(ctx context.Context, conversationID s
 	})
 }
 
-// Reply: Yanıt gönder. WhatsApp: açık rıza zorunlu; son gelen mesajdan 24 saat içinde metin/medya, pencere dışında yalnızca onaylı şablon (aksi 422 WHATSAPP_WINDOW_CLOSED).
+// Reply: Yanıt gönder (client_message_id ile tekilleşir). Sohbet: doğrudan; e-posta: yanıt adresli işlemsel e-posta; WhatsApp: açık rıza zorunlu, son gelen mesajdan 24 saat içinde metin/medya, pencere dışında yalnızca onaylı şablon (aksi 422 WHATSAPP_WINDOW_CLOSED).
 //
 // POST /v1/apps/{appId}/conversations/{conversationId}/messages
 //
@@ -3452,7 +3882,7 @@ func (s *ConversationsService) Reply(ctx context.Context, conversationID string,
 	return &out, nil
 }
 
-// Read: Gelen mesajları okundu işaretle
+// Read: Gelen mesajları okundu işaretle (sohbette ziyaretçiye okundu bilgisi gider)
 //
 // POST /v1/apps/{appId}/conversations/{conversationId}/read
 //
@@ -3462,6 +3892,62 @@ func (s *ConversationsService) Read(ctx context.Context, conversationID string, 
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/conversations/{conversationId}/read"}
 	op.pathParams = map[string]string{"conversationId": conversationID}
 	var out Conversation
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Assign: Konuşmayı temsilciye ve/veya takıma ata (inbox.manage olmadan yalnızca kendine)
+//
+// POST /v1/apps/{appId}/conversations/{conversationId}/assign
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ConversationsService) Assign(ctx context.Context, conversationID string, body *ConversationAssignDto, opts ...RequestOption) (*Conversation, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/conversations/{conversationId}/assign"}
+	op.pathParams = map[string]string{"conversationId": conversationID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Conversation
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Tags: Sohbetten kişiye etiket ekle/kaldır
+//
+// POST /v1/apps/{appId}/conversations/{conversationId}/tags
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ConversationsService) Tags(ctx context.Context, conversationID string, body *ConversationTagsDto, opts ...RequestOption) (*ConversationTagsResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/conversations/{conversationId}/tags"}
+	op.pathParams = map[string]string{"conversationId": conversationID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out ConversationTagsResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Activity: Konuşma zaman çizelgesi (atama, durum, ilk yanıt, bot devri)
+//
+// GET /v1/apps/{appId}/conversations/{conversationId}/activity
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ConversationsService) Activity(ctx context.Context, conversationID string, opts ...RequestOption) (*ConversationActivity, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/conversations/{conversationId}/activity"}
+	op.pathParams = map[string]string{"conversationId": conversationID}
+	var out ConversationActivity
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
@@ -3749,6 +4235,175 @@ func (s *EmailDeliverabilityService) Usage(ctx context.Context, planID string, p
 	op.query = url.Values{}
 	params.appendQuery(op.query)
 	var out EmailWarmupUsage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// FormsService: forms kaynağı.
+type FormsService struct {
+	client *Client
+}
+
+// FormsListParams: FormsService.List için isteğe bağlı sorgu parametreleri.
+type FormsListParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "active", "archived".
+	Status *string
+}
+
+func (p *FormsListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+}
+
+// List: Formlar
+//
+// GET /v1/apps/{appId}/forms
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FormsService) List(ctx context.Context, params *FormsListParams, opts ...RequestOption) (*FormPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/forms"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out FormPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAll: List sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *FormsService) ListAll(ctx context.Context, params *FormsListParams, opts ...RequestOption) iter.Seq2[Form, error] {
+	var p FormsListParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]Form, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.List(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Create: Form oluştur
+//
+// POST /v1/apps/{appId}/forms
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FormsService) Create(ctx context.Context, body *CreateFormDto, opts ...RequestOption) (*Form, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/forms"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Form
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Form detayı
+//
+// GET /v1/apps/{appId}/forms/{formId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FormsService) Get(ctx context.Context, formID string, opts ...RequestOption) (*Form, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/forms/{formId}"}
+	op.pathParams = map[string]string{"formId": formID}
+	var out Form
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// FormsSubmissionsParams: FormsService.Submissions için isteğe bağlı sorgu parametreleri.
+type FormsSubmissionsParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "accepted", "pending_confirmation", "confirmed".
+	Status *string
+	Since  *string
+}
+
+func (p *FormsSubmissionsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+	addQuery(q, "since", p.Since)
+}
+
+// Submissions: Form gönderimleri
+//
+// GET /v1/apps/{appId}/forms/{formId}/submissions
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FormsService) Submissions(ctx context.Context, formID string, params *FormsSubmissionsParams, opts ...RequestOption) (*FormSubmissionPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/forms/{formId}/submissions"}
+	op.pathParams = map[string]string{"formId": formID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out FormSubmissionPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SubmissionsAll: Submissions sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *FormsService) SubmissionsAll(ctx context.Context, formID string, params *FormsSubmissionsParams, opts ...RequestOption) iter.Seq2[FormSubmission, error] {
+	var p FormsSubmissionsParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]FormSubmission, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.Submissions(ctx, formID, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Submit: Sunucu tarafı form gönderimi (`external_id` verilirse o kullanıcının profili güncellenir)
+//
+// POST /v1/apps/{appId}/forms/{formId}/submissions
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FormsService) Submit(ctx context.Context, formID string, body *PublicFormSubmitDto, opts ...RequestOption) (*FormSubmitResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/forms/{formId}/submissions"}
+	op.pathParams = map[string]string{"formId": formID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out FormSubmitResult
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
@@ -4323,6 +4978,112 @@ func (s *JourneysService) ListForUser(ctx context.Context, label string, value s
 	return &out, nil
 }
 
+// LandingPagesService: landingPages kaynağı.
+type LandingPagesService struct {
+	client *Client
+}
+
+// LandingPagesListParams: LandingPagesService.List için isteğe bağlı sorgu parametreleri.
+type LandingPagesListParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "draft", "published", "archived".
+	Status *string
+}
+
+func (p *LandingPagesListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+}
+
+// List: Landing sayfaları
+//
+// GET /v1/apps/{appId}/landing-pages
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LandingPagesService) List(ctx context.Context, params *LandingPagesListParams, opts ...RequestOption) (*LandingPageList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/landing-pages"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out LandingPageList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAll: List sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *LandingPagesService) ListAll(ctx context.Context, params *LandingPagesListParams, opts ...RequestOption) iter.Seq2[LandingPageListDataItem, error] {
+	var p LandingPagesListParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]LandingPageListDataItem, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.List(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Get: Landing sayfası detayı
+//
+// GET /v1/apps/{appId}/landing-pages/{pageId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LandingPagesService) Get(ctx context.Context, pageID string, opts ...RequestOption) (*LandingPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/landing-pages/{pageId}"}
+	op.pathParams = map[string]string{"pageId": pageID}
+	var out LandingPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Publish: Taslağı yayınla
+//
+// POST /v1/apps/{appId}/landing-pages/{pageId}/publish
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LandingPagesService) Publish(ctx context.Context, pageID string, opts ...RequestOption) (*LandingPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/landing-pages/{pageId}/publish"}
+	op.pathParams = map[string]string{"pageId": pageID}
+	var out LandingPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Unpublish: Yayından kaldır
+//
+// POST /v1/apps/{appId}/landing-pages/{pageId}/unpublish
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *LandingPagesService) Unpublish(ctx context.Context, pageID string, opts ...RequestOption) (*LandingPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/landing-pages/{pageId}/unpublish"}
+	op.pathParams = map[string]string{"pageId": pageID}
+	var out LandingPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // LiveActivitiesService: liveActivities kaynağı.
 type LiveActivitiesService struct {
 	client *Client
@@ -4621,6 +5382,225 @@ func (s *SMSKeywordsService) DeleteKeyword(ctx context.Context, keywordID string
 	return &out, nil
 }
 
+// SurveysService: surveys kaynağı.
+type SurveysService struct {
+	client *Client
+}
+
+// SurveysListParams: SurveysService.List için isteğe bağlı sorgu parametreleri.
+type SurveysListParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "draft", "active", "closed".
+	Status *string
+}
+
+func (p *SurveysListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+}
+
+// List: Anketler
+//
+// GET /v1/apps/{appId}/surveys
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) List(ctx context.Context, params *SurveysListParams, opts ...RequestOption) (*SurveyPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/surveys"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out SurveyPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAll: List sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *SurveysService) ListAll(ctx context.Context, params *SurveysListParams, opts ...RequestOption) iter.Seq2[Survey, error] {
+	var p SurveysListParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]Survey, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.List(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Create: Anket oluştur (taslak)
+//
+// POST /v1/apps/{appId}/surveys
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) Create(ctx context.Context, body *CreateSurveyDto, opts ...RequestOption) (*Survey, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/surveys"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Survey
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Anket detayı
+//
+// GET /v1/apps/{appId}/surveys/{surveyId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) Get(ctx context.Context, surveyID string, opts ...RequestOption) (*Survey, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/surveys/{surveyId}"}
+	op.pathParams = map[string]string{"surveyId": surveyID}
+	var out Survey
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Status: Etkinleştir / kapat
+//
+// POST /v1/apps/{appId}/surveys/{surveyId}/status
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) Status(ctx context.Context, surveyID string, body *SurveyStatusDto, opts ...RequestOption) (*Survey, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/surveys/{surveyId}/status"}
+	op.pathParams = map[string]string{"surveyId": surveyID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Survey
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SurveysReportParams: SurveysService.Report için isteğe bağlı sorgu parametreleri.
+type SurveysReportParams struct {
+	Days *int64
+}
+
+func (p *SurveysReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "days", p.Days)
+}
+
+// Report: NPS / CSAT raporu
+//
+// GET /v1/apps/{appId}/surveys/{surveyId}/report
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) Report(ctx context.Context, surveyID string, params *SurveysReportParams, opts ...RequestOption) (*SurveyReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/surveys/{surveyId}/report"}
+	op.pathParams = map[string]string{"surveyId": surveyID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out SurveyReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SurveysResponsesParams: SurveysService.Responses için isteğe bağlı sorgu parametreleri.
+type SurveysResponsesParams struct {
+	Limit        *int64
+	Cursor       *string
+	TextQuestion *string
+	// Değerler: "promoter", "passive", "detractor".
+	NpsCategory *string
+}
+
+func (p *SurveysResponsesParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "text_question", p.TextQuestion)
+	addQuery(q, "nps_category", p.NpsCategory)
+}
+
+// Responses: Anket yanıtları
+//
+// GET /v1/apps/{appId}/surveys/{surveyId}/responses
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) Responses(ctx context.Context, surveyID string, params *SurveysResponsesParams, opts ...RequestOption) (*SurveyResponsePage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/surveys/{surveyId}/responses"}
+	op.pathParams = map[string]string{"surveyId": surveyID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out SurveyResponsePage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ResponsesAll: Responses sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *SurveysService) ResponsesAll(ctx context.Context, surveyID string, params *SurveysResponsesParams, opts ...RequestOption) iter.Seq2[SurveyResponse, error] {
+	var p SurveysResponsesParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]SurveyResponse, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.Responses(ctx, surveyID, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Respond: Sunucu tarafı anket yanıtı (`external_id` ile kullanıcıya bağlanır)
+//
+// POST /v1/apps/{appId}/surveys/{surveyId}/responses
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SurveysService) Respond(ctx context.Context, surveyID string, body *PublicSurveyResponseDto, opts ...RequestOption) (*SurveyResponseResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/surveys/{surveyId}/responses"}
+	op.pathParams = map[string]string{"surveyId": surveyID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SurveyResponseResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // WarehouseExportsService: warehouseExports kaynağı.
 type WarehouseExportsService struct {
 	client *Client
@@ -4821,6 +5801,169 @@ func (s *WarehouseExportsService) RunsAll(ctx context.Context, exportID string, 
 		}
 		return page.Data, page.NextCursor, page.HasMore, nil
 	})
+}
+
+// WebCampaignsService: webCampaigns kaynağı.
+type WebCampaignsService struct {
+	client *Client
+}
+
+// WebCampaignsListParams: WebCampaignsService.List için isteğe bağlı sorgu parametreleri.
+type WebCampaignsListParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "draft", "active", "paused", "archived".
+	Status *string
+}
+
+func (p *WebCampaignsListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+}
+
+// List: Web kampanyaları
+//
+// GET /v1/apps/{appId}/web-campaigns
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebCampaignsService) List(ctx context.Context, params *WebCampaignsListParams, opts ...RequestOption) (*WebCampaignPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/web-campaigns"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out WebCampaignPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAll: List sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *WebCampaignsService) ListAll(ctx context.Context, params *WebCampaignsListParams, opts ...RequestOption) iter.Seq2[WebCampaign, error] {
+	var p WebCampaignsListParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]WebCampaign, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.List(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Create: Web kampanyası oluştur (taslak)
+//
+// POST /v1/apps/{appId}/web-campaigns
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebCampaignsService) Create(ctx context.Context, body *CreateWebCampaignDto, opts ...RequestOption) (*WebCampaign, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/web-campaigns"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WebCampaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Web kampanyası detayı ve istatistikleri
+//
+// GET /v1/apps/{appId}/web-campaigns/{campaignId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebCampaignsService) Get(ctx context.Context, campaignID string, opts ...RequestOption) (*WebCampaign, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/web-campaigns/{campaignId}"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	var out WebCampaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Web kampanyasını düzenle
+//
+// PATCH /v1/apps/{appId}/web-campaigns/{campaignId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebCampaignsService) Update(ctx context.Context, campaignID string, body *UpdateWebCampaignDto, opts ...RequestOption) (*WebCampaign, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/web-campaigns/{campaignId}"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WebCampaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// WebCampaignsReportParams: WebCampaignsService.Report için isteğe bağlı sorgu parametreleri.
+type WebCampaignsReportParams struct {
+	Days *int64
+}
+
+func (p *WebCampaignsReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "days", p.Days)
+}
+
+// Report: Günlük seri
+//
+// GET /v1/apps/{appId}/web-campaigns/{campaignId}/report
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebCampaignsService) Report(ctx context.Context, campaignID string, params *WebCampaignsReportParams, opts ...RequestOption) (*WebCampaignReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/web-campaigns/{campaignId}/report"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out WebCampaignReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Status: Yayınla / duraklat / arşivle
+//
+// POST /v1/apps/{appId}/web-campaigns/{campaignId}/status
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebCampaignsService) Status(ctx context.Context, campaignID string, body *WebCampaignStatusDto, opts ...RequestOption) (*WebCampaign, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/web-campaigns/{campaignId}/status"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WebCampaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // WhatsappService: whatsapp kaynağı.
