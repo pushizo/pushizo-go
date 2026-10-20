@@ -7,7 +7,7 @@ yeniden deneme, idempotency, sayfalama ve webhook imza doğrulaması el yazımı
 ## Kurulum
 
 ```bash
-go get github.com/exec0de/pushizo/sdk/go
+go get github.com/exec0de/pushizo-go
 ```
 
 ## Kullanım
@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	pushizo "github.com/exec0de/pushizo/sdk/go"
+	pushizo "github.com/exec0de/pushizo-go"
 )
 
 func main() {
