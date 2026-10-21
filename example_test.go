@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"os"
 
-	pushizo "github.com/exec0de/pushizo-go"
+	pushizo "github.com/pushizo/pushizo-go"
 )
 
 // README'deki kullanım örneği (derlenir, çalıştırılmaz).

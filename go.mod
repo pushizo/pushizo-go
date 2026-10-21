@@ -1,3 +1,3 @@
-module github.com/exec0de/pushizo-go
+module github.com/pushizo/pushizo-go
 
 go 1.23
