@@ -1,13 +1,38 @@
+<!-- pushizo:header -->
+<p align="center">
+  <a href="https://pushizo.com"><img src="https://raw.githubusercontent.com/pushizo/.github/main/profile/assets/mark.svg" alt="Pushizo" width="56" height="56"></a>
+</p>
+<p align="center">
+  <a href="https://docs.pushizo.com/docs/sdk/go"><img src="https://img.shields.io/badge/docs-docs.pushizo.com-5b4bdb" alt="Docs"></a>
+  <a href="https://docs.pushizo.com/docs/api"><img src="https://img.shields.io/badge/API-reference-b44fc4" alt="API reference"></a>
+  <a href="https://github.com/pushizo/pushizo-go/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-16130f" alt="License: MIT"></a>
+</p>
+<p align="center"><a href="#english">English</a> · <a href="#türkçe">Türkçe</a></p>
+
+## English
+
+**Pushizo Go SDK** — Server-side SDK for Go 1.23+ using only the standard library (net/http). Models and services are generated from the Pushizo OpenAPI schema; authentication, retries, idempotency, pagination and webhook signature verification are hand-written.
+
+```bash
+go get github.com/pushizo/pushizo-go
+```
+
+The detailed guide below is in Turkish; code samples are language-neutral. Full documentation:
+[docs.pushizo.com/docs/sdk/go](https://docs.pushizo.com/docs/sdk/go) · API reference: [docs.pushizo.com/docs/api](https://docs.pushizo.com/docs/api).
+
+## Türkçe
+<!-- /pushizo:header -->
+
 # Pushizo Go SDK
 
 Pushizo public API'si için Go sunucu SDK'sı (Go 1.23+, yalnızca standart kütüphane: `net/http`).
-Modeller (`models_gen.go`) ve servisler (`resources_gen.go`) `api/openapi.yaml`'dan üretilir; kimlik doğrulama,
+Modeller (`models_gen.go`) ve servisler (`resources_gen.go`) [Pushizo OpenAPI şemasından](https://github.com/pushizo/pushizo-openapi) üretilir; kimlik doğrulama,
 yeniden deneme, idempotency, sayfalama ve webhook imza doğrulaması el yazımıdır.
 
 ## Kurulum
 
 ```bash
-go get github.com/exec0de/pushizo-go
+go get github.com/pushizo/pushizo-go
 ```
 
 ## Kullanım
@@ -19,7 +44,7 @@ import (
 	"log"
 	"os"
 
-	pushizo "github.com/exec0de/pushizo-go"
+	pushizo "github.com/pushizo/pushizo-go"
 )
 
 func main() {
@@ -138,3 +163,24 @@ node sdk/scripts/generate-server-sdks.mjs --lang go    # depo kökünde; *_gen.g
 
 `*_gen.go` dosyaları elle düzenlenmez (gofmt uyumlu üretilir). Webhook testleri
 `sdk/testdata/webhook-signature-vectors.json` ortak vektörlerini kullanır.
+
+<!-- pushizo:footer -->
+---
+
+## Support · Destek
+
+- **Guide · Rehber:** [docs.pushizo.com/docs/sdk/go](https://docs.pushizo.com/docs/sdk/go)
+- **API reference & OpenAPI · API referansı ve OpenAPI:** [docs.pushizo.com/docs/api](https://docs.pushizo.com/docs/api) ·
+  [pushizo-openapi](https://github.com/pushizo/pushizo-openapi)
+- **Bugs & ideas · Hata ve öneri:** [Issues](https://github.com/pushizo/pushizo-go/issues)
+- **Security · Güvenlik:** please do not open public issues; email [security@pushizo.com](mailto:security@pushizo.com) ·
+  herkese açık issue açmayın, bu adrese yazın.
+- **Help · Destek:** [support@pushizo.com](mailto:support@pushizo.com)
+
+This repository is mirrored automatically from the Pushizo main repository on every release. Please open an issue
+instead of a pull request; fixes land in the main repository and ship with the next release.
+Bu depo her sürümde Pushizo ana deposundan otomatik yansıtılır. Pull request yerine issue açın; düzeltmeler ana depoda
+yapılır ve bir sonraki sürümle buraya gelir.
+
+Released under the MIT License · MIT lisanslıdır — [LICENSE](https://github.com/pushizo/pushizo-go/blob/main/LICENSE).
+<!-- /pushizo:footer -->
