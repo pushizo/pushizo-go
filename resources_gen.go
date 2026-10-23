@@ -2197,7 +2197,7 @@ type ImportsService struct {
 
 // ImportsCreateForm: ImportsService.Create için multipart/form-data alanları.
 type ImportsCreateForm struct {
-	// Zorunlu. Değerler: "eski sağlayıcı_players", "csv_users".
+	// Zorunlu. Değerler: "legacy_players", "csv_users".
 	Type string
 	// Zorunlu. CSV dosyası (UTF-8, en fazla 50 MB)
 	File *FileUpload
@@ -5621,6 +5621,82 @@ func (s *McpService) CreateSegmentDraft(ctx context.Context, body *McpCreateSegm
 	}
 	op.body = body
 	var out Segment
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateTemplateDraft: Şablon oluştur (MCP onaylı mod; şablon tek başına gönderim yapmaz)
+//
+// POST /v1/apps/{appId}/mcp/template-drafts
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *McpService) CreateTemplateDraft(ctx context.Context, body *CreateTemplateDto, opts ...RequestOption) (*Template, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/mcp/template-drafts"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Template
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateJourneyDraft: Journey taslağı oluştur (MCP onaylı mod; yayımlanmaz)
+//
+// POST /v1/apps/{appId}/mcp/journey-drafts
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *McpService) CreateJourneyDraft(ctx context.Context, body *McpCreateJourneyDraftBody, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/mcp/journey-drafts"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateInAppDraft: In-app mesaj taslağı oluştur (MCP onaylı mod; etkinleştirilmez)
+//
+// POST /v1/apps/{appId}/mcp/in-app-drafts
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *McpService) CreateInAppDraft(ctx context.Context, body *CreateInAppDto, opts ...RequestOption) (*InAppMessage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/mcp/in-app-drafts"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out InAppMessage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// TestSend: Test gönderimi (yalnızca app’in test cihazlarına; MCP onaylı mod)
+//
+// POST /v1/apps/{appId}/mcp/test-sends
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *McpService) TestSend(ctx context.Context, body *TestPushDto, opts ...RequestOption) (*CreateNotificationResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/mcp/test-sends"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out CreateNotificationResult
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

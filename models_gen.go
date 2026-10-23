@@ -4116,7 +4116,7 @@ type Import struct {
 	ID string `json:"id"`
 	// Zorunlu.
 	AppID string `json:"app_id"`
-	// Zorunlu. Değerler: "eski sağlayıcı_players", "csv_users".
+	// Zorunlu. Değerler: "legacy_players", "csv_users".
 	Type string `json:"type"`
 	// Zorunlu.
 	FileName *string `json:"file_name"`
@@ -5508,6 +5508,25 @@ type McpCreateCampaignDraftBodyVariantsItem struct {
 	WeightPercent int64          `json:"weight_percent"`
 	Content       map[string]any `json:"content,omitempty"`
 	IsControl     *bool          `json:"is_control,omitempty"`
+}
+
+// McpCreateJourneyDraftBody: McpCreateJourneyDraftBody şeması.
+type McpCreateJourneyDraftBody struct {
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	// React Flow uyumlu journey grafı: { nodes: [{ id, type, position, data }], edges: [{ id, source, target, sourceHandle }] } (docs/journeys.md)
+	Graph *McpCreateJourneyDraftBodyGraph `json:"graph,omitempty"`
+	// Yeniden giriş, yalnızca yeni girenler, çıkış kuralları, çıkış tag'leri, hedefler, takvim (docs/journeys.md)
+	Settings map[string]any `json:"settings,omitempty"`
+}
+
+// McpCreateJourneyDraftBodyGraph: React Flow uyumlu journey grafı: { nodes: [{ id, type, position, data }], edges: [{ id, source, target, sourceHandle }] } (docs/journeys.md)
+type McpCreateJourneyDraftBodyGraph struct {
+	// Zorunlu.
+	Nodes []map[string]any `json:"nodes"`
+	// Zorunlu.
+	Edges []map[string]any `json:"edges"`
 }
 
 // McpCreateSegmentDraftBody: McpCreateSegmentDraftBody şeması.
@@ -7034,6 +7053,16 @@ type TemplateVersionListDataItem struct {
 type TestDataFeedDto struct {
 	ExternalID *string `json:"external_id,omitempty"`
 	UserID     *string `json:"user_id,omitempty"`
+}
+
+// TestPushDto: TestPushDto şeması.
+type TestPushDto struct {
+	SubscriptionIds []string          `json:"subscription_ids,omitempty"`
+	Headings        map[string]string `json:"headings,omitempty"`
+	// Zorunlu.
+	Contents map[string]string `json:"contents"`
+	URL      *string           `json:"url,omitempty"`
+	Data     map[string]string `json:"data,omitempty"`
 }
 
 // TriggerRunDto: TriggerRunDto şeması.
