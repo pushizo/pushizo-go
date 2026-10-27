@@ -6335,6 +6335,88 @@ type RetentionReportCohortsItem struct {
 	Retention []float64 `json:"retention"`
 }
 
+// ReverseEtlRun: ReverseEtlRun şeması.
+type ReverseEtlRun struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	SyncID string `json:"sync_id"`
+	// Zorunlu. Değerler: "schedule", "manual".
+	Trigger string `json:"trigger"`
+	// Zorunlu. Değerler: "queued", "running", "succeeded", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	RowCount int64 `json:"row_count"`
+	// Zorunlu.
+	Attempt int64 `json:"attempt"`
+	// Zorunlu.
+	Error *string `json:"error"`
+	// Zorunlu.
+	StartedAt *string `json:"started_at"`
+	// Zorunlu.
+	FinishedAt *string `json:"finished_at"`
+	// Zorunlu.
+	DurationMs *int64 `json:"duration_ms"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// ReverseEtlRunPage: ReverseEtlRunPage şeması.
+type ReverseEtlRunPage struct {
+	// Zorunlu.
+	Data []ReverseEtlRun `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// ReverseEtlSync: ReverseEtlSync şeması.
+type ReverseEtlSync struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "snowflake", "bigquery", "postgres", "mysql", "s3", "google_sheets".
+	Source string `json:"source"`
+	// Zorunlu. Değerler: "event", "user".
+	Target string `json:"target"`
+	// Zorunlu.
+	Config map[string]any `json:"config"`
+	// Zorunlu.
+	CredentialsHint string `json:"credentials_hint"`
+	// Zorunlu. Değerler: "hourly", "daily".
+	Schedule string `json:"schedule"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu. Değerler: "active", "paused", "failing".
+	Status string `json:"status"`
+	// Zorunlu.
+	Cursor *string `json:"cursor"`
+	// Zorunlu.
+	ConsecutiveFailures int64 `json:"consecutive_failures"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	LastRunAt *string `json:"last_run_at"`
+	// Zorunlu.
+	LastSuccessAt *string `json:"last_success_at"`
+	// Zorunlu.
+	NextRunAt *string `json:"next_run_at"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// ReverseEtlSyncList: ReverseEtlSyncList şeması.
+type ReverseEtlSyncList struct {
+	// Zorunlu.
+	Data []ReverseEtlSync `json:"data"`
+}
+
 // ScheduleCampaignDto: ScheduleCampaignDto şeması.
 type ScheduleCampaignDto struct {
 	SendAt     *string                        `json:"send_at,omitempty"`
@@ -7597,6 +7679,16 @@ type UpdateNodeDtoPosition struct {
 	Y float64 `json:"y"`
 }
 
+// UpdateReverseEtlDto: UpdateReverseEtlDto şeması.
+type UpdateReverseEtlDto struct {
+	Name *string `json:"name,omitempty"`
+	// Değerler: "hourly", "daily".
+	Schedule    *string        `json:"schedule,omitempty"`
+	Enabled     *bool          `json:"enabled,omitempty"`
+	Config      map[string]any `json:"config,omitempty"`
+	Credentials map[string]any `json:"credentials,omitempty"`
+}
+
 // UpdateTemplateDto: UpdateTemplateDto şeması.
 type UpdateTemplateDto struct {
 	Name *string `json:"name,omitempty"`
@@ -8318,7 +8410,7 @@ type WarehouseExport struct {
 	AppID string `json:"app_id"`
 	// Zorunlu.
 	Name string `json:"name"`
-	// Zorunlu. Değerler: "bigquery", "snowflake", "s3_parquet".
+	// Zorunlu. Değerler: "bigquery", "snowflake", "s3_parquet", "redshift", "databricks".
 	Destination string `json:"destination"`
 	// Zorunlu.
 	Config map[string]any `json:"config"`

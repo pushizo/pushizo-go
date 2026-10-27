@@ -47,6 +47,7 @@ type services struct {
 	LiveActivities      *LiveActivitiesService
 	Mcp                 *McpService
 	Preferences         *PreferencesService
+	ReverseEtl          *ReverseEtlService
 	SMSKeywords         *SMSKeywordsService
 	Surveys             *SurveysService
 	WarehouseExports    *WarehouseExportsService
@@ -89,6 +90,7 @@ func (c *Client) initServices() {
 	c.LiveActivities = &LiveActivitiesService{client: c}
 	c.Mcp = &McpService{client: c}
 	c.Preferences = &PreferencesService{client: c}
+	c.ReverseEtl = &ReverseEtlService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
 	c.Surveys = &SurveysService{client: c}
 	c.WarehouseExports = &WarehouseExportsService{client: c}
@@ -5742,6 +5744,193 @@ func (s *PreferencesService) Set(ctx context.Context, label string, value string
 		return nil, err
 	}
 	return &out, nil
+}
+
+// ReverseEtlService: reverseEtl kaynağı.
+type ReverseEtlService struct {
+	client *Client
+}
+
+// List: Depodan içeri aktarımlar
+//
+// GET /v1/apps/{appId}/reverse-etl
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) List(ctx context.Context, opts ...RequestOption) (*ReverseEtlSyncList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/reverse-etl"}
+	var out ReverseEtlSyncList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: İçeri aktarım oluştur
+//
+// POST /v1/apps/{appId}/reverse-etl
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Create(ctx context.Context, body any, opts ...RequestOption) (*ReverseEtlSync, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/reverse-etl"}
+	op.body = body
+	var out ReverseEtlSync
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Test: Kaydetmeden bağlantı testi
+//
+// POST /v1/apps/{appId}/reverse-etl/test-connection
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Test(ctx context.Context, body any, opts ...RequestOption) (*WarehouseConnectionResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/reverse-etl/test-connection"}
+	op.body = body
+	var out WarehouseConnectionResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: İçeri aktarım detayı
+//
+// GET /v1/apps/{appId}/reverse-etl/{syncId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Get(ctx context.Context, syncID string, opts ...RequestOption) (*ReverseEtlSync, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/reverse-etl/{syncId}"}
+	op.pathParams = map[string]string{"syncId": syncID}
+	var out ReverseEtlSync
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: İçeri aktarımı güncelle
+//
+// PATCH /v1/apps/{appId}/reverse-etl/{syncId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Update(ctx context.Context, syncID string, body *UpdateReverseEtlDto, opts ...RequestOption) (*ReverseEtlSync, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/reverse-etl/{syncId}"}
+	op.pathParams = map[string]string{"syncId": syncID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out ReverseEtlSync
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: İçeri aktarımı sil
+//
+// DELETE /v1/apps/{appId}/reverse-etl/{syncId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Delete(ctx context.Context, syncID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/reverse-etl/{syncId}"}
+	op.pathParams = map[string]string{"syncId": syncID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// TestSaved: Kayıtlı içeri aktarımın bağlantı testi
+//
+// POST /v1/apps/{appId}/reverse-etl/{syncId}/test
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) TestSaved(ctx context.Context, syncID string, opts ...RequestOption) (*WarehouseConnectionResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/reverse-etl/{syncId}/test"}
+	op.pathParams = map[string]string{"syncId": syncID}
+	var out WarehouseConnectionResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Run: Şimdi içeri aktar
+//
+// POST /v1/apps/{appId}/reverse-etl/{syncId}/run
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Run(ctx context.Context, syncID string, opts ...RequestOption) (*ReverseEtlRun, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/reverse-etl/{syncId}/run"}
+	op.pathParams = map[string]string{"syncId": syncID}
+	var out ReverseEtlRun
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ReverseEtlRunsParams: ReverseEtlService.Runs için isteğe bağlı sorgu parametreleri.
+type ReverseEtlRunsParams struct {
+	Limit  *int64
+	Cursor *string
+}
+
+func (p *ReverseEtlRunsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Runs: İçeri aktarım geçmişi
+//
+// GET /v1/apps/{appId}/reverse-etl/{syncId}/runs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ReverseEtlService) Runs(ctx context.Context, syncID string, params *ReverseEtlRunsParams, opts ...RequestOption) (*ReverseEtlRunPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/reverse-etl/{syncId}/runs"}
+	op.pathParams = map[string]string{"syncId": syncID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out ReverseEtlRunPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RunsAll: Runs sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *ReverseEtlService) RunsAll(ctx context.Context, syncID string, params *ReverseEtlRunsParams, opts ...RequestOption) iter.Seq2[ReverseEtlRun, error] {
+	var p ReverseEtlRunsParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]ReverseEtlRun, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.Runs(ctx, syncID, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
 }
 
 // SMSKeywordsService: smsKeywords kaynağı.
