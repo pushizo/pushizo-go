@@ -829,6 +829,7 @@ type AppSettings struct {
 	AndroidChannels              []AppSettingsAndroidChannelsItem `json:"androidChannels,omitempty"`
 	SMS                          *AppSettingsSMS                  `json:"sms,omitempty"`
 	PreferenceCenter             *AppSettingsPreferenceCenter     `json:"preferenceCenter,omitempty"`
+	BrandKit                     *AppSettingsBrandKit             `json:"brandKit,omitempty"`
 	DefaultTTLSeconds            *int64                           `json:"defaultTtlSeconds,omitempty"`
 	IdentityVerificationRequired *bool                            `json:"identityVerificationRequired,omitempty"`
 	AllowedOrigins               []string                         `json:"allowedOrigins,omitempty"`
@@ -850,6 +851,17 @@ type AppSettingsAndroidChannelsItem struct {
 	Sound      *string `json:"sound,omitempty"`
 	Vibration  *bool   `json:"vibration,omitempty"`
 	Group      *string `json:"group,omitempty"`
+}
+
+// AppSettingsBrandKit: AppSettingsBrandKit şeması.
+type AppSettingsBrandKit struct {
+	WebsiteURL   *string `json:"website_url,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	PrimaryColor *string `json:"primary_color,omitempty"`
+	AccentColor  *string `json:"accent_color,omitempty"`
+	Font         *string `json:"font,omitempty"`
+	LogoURL      *string `json:"logo_url,omitempty"`
+	Tone         *string `json:"tone,omitempty"`
 }
 
 // AppSettingsFrequencyCap: AppSettingsFrequencyCap şeması.
@@ -7221,6 +7233,7 @@ type UpdateAppDtoSettings struct {
 	AndroidChannels              []UpdateAppDtoSettingsAndroidChannelsItem `json:"androidChannels,omitempty"`
 	SMS                          *UpdateAppDtoSettingsSMS                  `json:"sms,omitempty"`
 	PreferenceCenter             *UpdateAppDtoSettingsPreferenceCenter     `json:"preferenceCenter,omitempty"`
+	BrandKit                     *UpdateAppDtoSettingsBrandKit             `json:"brandKit,omitempty"`
 	DefaultTTLSeconds            *int64                                    `json:"defaultTtlSeconds,omitempty"`
 	IdentityVerificationRequired *bool                                     `json:"identityVerificationRequired,omitempty"`
 	AllowedOrigins               []string                                  `json:"allowedOrigins,omitempty"`
@@ -7242,6 +7255,17 @@ type UpdateAppDtoSettingsAndroidChannelsItem struct {
 	Sound      *string `json:"sound,omitempty"`
 	Vibration  *bool   `json:"vibration,omitempty"`
 	Group      *string `json:"group,omitempty"`
+}
+
+// UpdateAppDtoSettingsBrandKit: UpdateAppDtoSettingsBrandKit şeması.
+type UpdateAppDtoSettingsBrandKit struct {
+	WebsiteURL   *string `json:"website_url,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	PrimaryColor *string `json:"primary_color,omitempty"`
+	AccentColor  *string `json:"accent_color,omitempty"`
+	Font         *string `json:"font,omitempty"`
+	LogoURL      *string `json:"logo_url,omitempty"`
+	Tone         *string `json:"tone,omitempty"`
 }
 
 // UpdateAppDtoSettingsFrequencyCap: UpdateAppDtoSettingsFrequencyCap şeması.
