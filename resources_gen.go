@@ -50,6 +50,7 @@ type services struct {
 	ReverseEtl          *ReverseEtlService
 	SMSKeywords         *SMSKeywordsService
 	Surveys             *SurveysService
+	Verify              *VerifyService
 	WarehouseExports    *WarehouseExportsService
 	WebCampaigns        *WebCampaignsService
 	Whatsapp            *WhatsappService
@@ -93,6 +94,7 @@ func (c *Client) initServices() {
 	c.ReverseEtl = &ReverseEtlService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
 	c.Surveys = &SurveysService{client: c}
+	c.Verify = &VerifyService{client: c}
 	c.WarehouseExports = &WarehouseExportsService{client: c}
 	c.WebCampaigns = &WebCampaignsService{client: c}
 	c.Whatsapp = &WhatsappService{client: c}
@@ -1022,7 +1024,7 @@ type TemplatesListParams struct {
 	Limit  *int64
 	Cursor *string
 	Q      *string
-	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
 	Channel *string
 }
 
@@ -1229,7 +1231,7 @@ type CampaignsListParams struct {
 	Status *string
 	// Değerler: "one_time", "scheduled", "recurring", "automated", "transactional".
 	Type *string
-	// Değerler: "ios_push", "android_push", "hms_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
 	Channel *string
 	Label   *string
 }
@@ -4604,6 +4606,36 @@ func (s *EmailDeliverabilityService) Usage(ctx context.Context, planID string, p
 	return &out, nil
 }
 
+// Postmaster: Google Postmaster itibar kayıtları
+//
+// GET /v1/apps/{appId}/email-deliverability/postmaster
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *EmailDeliverabilityService) Postmaster(ctx context.Context, opts ...RequestOption) (*PostmasterStats, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/email-deliverability/postmaster"}
+	var out PostmasterStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SyncPostmaster: Google Postmaster dünkü itibarını oku
+//
+// POST /v1/apps/{appId}/email-deliverability/postmaster/sync
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *EmailDeliverabilityService) SyncPostmaster(ctx context.Context, opts ...RequestOption) (*PostmasterStats, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/email-deliverability/postmaster/sync"}
+	var out PostmasterStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // FormsService: forms kaynağı.
 type FormsService struct {
 	client *Client
@@ -6221,6 +6253,49 @@ func (s *SurveysService) Respond(ctx context.Context, surveyID string, body *Pub
 	}
 	op.body = body
 	var out SurveyResponseResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// VerifyService: verify kaynağı.
+type VerifyService struct {
+	client *Client
+}
+
+// Start: SMS doğrulama kodu gönder
+//
+// POST /v1/apps/{appId}/verify/sms
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *VerifyService) Start(ctx context.Context, body *StartVerifyDto, opts ...RequestOption) (*SMSVerification, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/verify/sms"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SMSVerification
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Check: SMS doğrulama kodunu kontrol et
+//
+// POST /v1/apps/{appId}/verify/sms/check
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *VerifyService) Check(ctx context.Context, body *CheckVerifyDto, opts ...RequestOption) (*SMSVerificationCheck, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/verify/sms/check"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SMSVerificationCheck
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
