@@ -1356,15 +1356,30 @@ func (s *CampaignsService) Delete(ctx context.Context, campaignID string, opts .
 	return &out, nil
 }
 
-// Schedule: Zamanla
+// CampaignsScheduleParams: CampaignsService.Schedule için isteğe bağlı sorgu parametreleri.
+type CampaignsScheduleParams struct {
+	// Değerler: "true", "false".
+	Force *string
+}
+
+func (p *CampaignsScheduleParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "force", p.Force)
+}
+
+// Schedule: Zamanla; e-posta liste koruması 409 → force=true (admin kapsamı)
 //
 // POST /v1/apps/{appId}/campaigns/{campaignId}/schedule
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CampaignsService) Schedule(ctx context.Context, campaignID string, body *ScheduleCampaignDto, opts ...RequestOption) (*Campaign, error) {
+func (s *CampaignsService) Schedule(ctx context.Context, campaignID string, body *ScheduleCampaignDto, params *CampaignsScheduleParams, opts ...RequestOption) (*Campaign, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/campaigns/{campaignId}/schedule"}
 	op.pathParams = map[string]string{"campaignId": campaignID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
 	if body == nil {
 		return nil, errNilBody
 	}
@@ -1376,16 +1391,47 @@ func (s *CampaignsService) Schedule(ctx context.Context, campaignID string, body
 	return &out, nil
 }
 
-// Send: Hemen gönder
+// CampaignsSendParams: CampaignsService.Send için isteğe bağlı sorgu parametreleri.
+type CampaignsSendParams struct {
+	// Değerler: "true", "false".
+	Force *string
+}
+
+func (p *CampaignsSendParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "force", p.Force)
+}
+
+// Send: Hemen gönder; e-posta liste koruması 409 → force=true (admin kapsamı)
 //
 // POST /v1/apps/{appId}/campaigns/{campaignId}/send
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CampaignsService) Send(ctx context.Context, campaignID string, opts ...RequestOption) (*Campaign, error) {
+func (s *CampaignsService) Send(ctx context.Context, campaignID string, params *CampaignsSendParams, opts ...RequestOption) (*Campaign, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/campaigns/{campaignId}/send"}
 	op.pathParams = map[string]string{"campaignId": campaignID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
 	var out Campaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// EmailRisk: E-posta liste riski (tahmini geçersiz oranı, 7/30 gün bounce oranı)
+//
+// GET /v1/apps/{appId}/campaigns/{campaignId}/email-risk
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CampaignsService) EmailRisk(ctx context.Context, campaignID string, opts ...RequestOption) (*CampaignEmailRisk, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/campaigns/{campaignId}/email-risk"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	var out CampaignEmailRisk
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

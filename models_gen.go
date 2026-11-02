@@ -1215,6 +1215,34 @@ type CampaignDelivery struct {
 	OnePerUser         *bool   `json:"one_per_user,omitempty"`
 }
 
+// CampaignEmailRisk: CampaignEmailRisk şeması.
+type CampaignEmailRisk struct {
+	// Zorunlu.
+	Applies bool `json:"applies"`
+	// Zorunlu.
+	Recipients int64 `json:"recipients"`
+	// Zorunlu.
+	FlaggedInvalid int64 `json:"flagged_invalid"`
+	// Zorunlu.
+	Sendable int64 `json:"sendable"`
+	// Zorunlu.
+	Valid int64 `json:"valid"`
+	// Zorunlu.
+	Unknown int64 `json:"unknown"`
+	// Zorunlu.
+	Unchecked int64 `json:"unchecked"`
+	// Zorunlu.
+	EstimatedInvalidRatio float64 `json:"estimated_invalid_ratio"`
+	// Zorunlu.
+	MaxInvalidRatio float64 `json:"max_invalid_ratio"`
+	// Zorunlu.
+	Blocked bool `json:"blocked"`
+	// Zorunlu.
+	BounceRate7d *float64 `json:"bounce_rate_7d"`
+	// Zorunlu.
+	BounceRate30d *float64 `json:"bounce_rate_30d"`
+}
+
 // CampaignPage: CampaignPage şeması.
 type CampaignPage struct {
 	// Zorunlu.
@@ -3412,11 +3440,12 @@ type DataFeedTestResultUser struct {
 
 // DeliverabilitySettingsDto: DeliverabilitySettingsDto şeması.
 type DeliverabilitySettingsDto struct {
-	BccAddress  *string                               `json:"bcc_address,omitempty"`
-	Validation  *DeliverabilitySettingsDtoValidation  `json:"validation,omitempty"`
-	Verifier    *DeliverabilitySettingsDtoVerifier    `json:"verifier,omitempty"`
-	VolumeSpike *DeliverabilitySettingsDtoVolumeSpike `json:"volume_spike,omitempty"`
-	Postmaster  *DeliverabilitySettingsDtoPostmaster  `json:"postmaster,omitempty"`
+	BccAddress      *string                               `json:"bcc_address,omitempty"`
+	Validation      *DeliverabilitySettingsDtoValidation  `json:"validation,omitempty"`
+	Verifier        *DeliverabilitySettingsDtoVerifier    `json:"verifier,omitempty"`
+	VolumeSpike     *DeliverabilitySettingsDtoVolumeSpike `json:"volume_spike,omitempty"`
+	MaxInvalidRatio *float64                              `json:"max_invalid_ratio,omitempty"`
+	Postmaster      *DeliverabilitySettingsDtoPostmaster  `json:"postmaster,omitempty"`
 }
 
 // DeliverabilitySettingsDtoPostmaster: DeliverabilitySettingsDtoPostmaster şeması.
@@ -3528,6 +3557,8 @@ type EmailDeliverabilitySettings struct {
 	VolumeSpike EmailDeliverabilitySettingsVolumeSpike `json:"volume_spike"`
 	// Zorunlu.
 	Postmaster EmailDeliverabilitySettingsPostmaster `json:"postmaster"`
+	// Zorunlu.
+	MaxInvalidRatio float64 `json:"max_invalid_ratio"`
 }
 
 // EmailDeliverabilitySettingsPostmaster: EmailDeliverabilitySettingsPostmaster şeması.
@@ -4250,12 +4281,14 @@ type ImportList struct {
 
 // ImportStats: ImportStats şeması.
 type ImportStats struct {
-	Processed            *int64 `json:"processed,omitempty"`
-	CreatedUsers         *int64 `json:"created_users,omitempty"`
-	UpdatedUsers         *int64 `json:"updated_users,omitempty"`
-	CreatedSubscriptions *int64 `json:"created_subscriptions,omitempty"`
-	Skipped              *int64 `json:"skipped,omitempty"`
-	Errors               *int64 `json:"errors,omitempty"`
+	Processed            *int64           `json:"processed,omitempty"`
+	CreatedUsers         *int64           `json:"created_users,omitempty"`
+	UpdatedUsers         *int64           `json:"updated_users,omitempty"`
+	CreatedSubscriptions *int64           `json:"created_subscriptions,omitempty"`
+	Skipped              *int64           `json:"skipped,omitempty"`
+	Errors               *int64           `json:"errors,omitempty"`
+	RejectedEmails       *int64           `json:"rejected_emails,omitempty"`
+	RejectedEmailReasons map[string]int64 `json:"rejected_email_reasons,omitempty"`
 }
 
 // InAppMessage: InAppMessage şeması.
