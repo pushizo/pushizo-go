@@ -2819,6 +2819,27 @@ func (s *AnalyticsService) Conversions(ctx context.Context, params *AnalyticsCon
 	return &out, nil
 }
 
+// RunReport: Rapor çalıştır
+//
+// POST /v1/apps/{appId}/analytics/reports/run
+//
+// Kaynak, metrik, boyut ve filtre seçilerek rapor üretir; alanlar izinli listeyle sınırlıdır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) RunReport(ctx context.Context, body *ReportRunBodyDto, opts ...RequestOption) (*ReportResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/analytics/reports/run"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out ReportResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // Paths: Yol analizi
 //
 // POST /v1/apps/{appId}/analytics/paths
@@ -2963,6 +2984,88 @@ func (s *AnalyticsService) Engagement(ctx context.Context, params *AnalyticsEnga
 		return nil, err
 	}
 	return &out, nil
+}
+
+// List: Kaydedilmiş raporlar
+//
+// GET /v1/apps/{appId}/analytics/reports
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) List(ctx context.Context, opts ...RequestOption) (*SavedReportList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/analytics/reports"}
+	var out SavedReportList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Raporu kaydet
+//
+// POST /v1/apps/{appId}/analytics/reports
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) Create(ctx context.Context, body *CreateSavedReportDto, opts ...RequestOption) (*SavedReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/analytics/reports"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SavedReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Kaydedilmiş rapor
+//
+// GET /v1/apps/{appId}/analytics/reports/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) Get(ctx context.Context, id string, opts ...RequestOption) (*SavedReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/analytics/reports/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	var out SavedReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Raporu güncelle
+//
+// PATCH /v1/apps/{appId}/analytics/reports/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) Update(ctx context.Context, id string, body *UpdateSavedReportDto, opts ...RequestOption) (*SavedReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/analytics/reports/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SavedReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Raporu sil
+//
+// DELETE /v1/apps/{appId}/analytics/reports/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) Delete(ctx context.Context, id string, opts ...RequestOption) error {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/analytics/reports/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	return s.client.do(ctx, op, ro, nil)
 }
 
 // AppsService: App listesi ve ayarları.

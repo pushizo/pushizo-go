@@ -3213,6 +3213,38 @@ type CreatePromoCodeListDto struct {
 	ExpiresAt   *string `json:"expires_at,omitempty"`
 }
 
+// CreateSavedReportDto: CreateSavedReportDto şeması.
+type CreateSavedReportDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Definition CreateSavedReportDtoDefinition `json:"definition"`
+}
+
+// CreateSavedReportDtoDefinition: CreateSavedReportDtoDefinition şeması.
+type CreateSavedReportDtoDefinition struct {
+	// Zorunlu. Değerler: "deliveries", "events", "conversions".
+	Source string `json:"source"`
+	// Zorunlu. Değerler: "sent", "delivered", "failed", "opened", "clicked", "delivery_rate", "open_rate", "click_rate", "failure_rate", "count", "unique_users", "value_sum", "value_avg", "conversions", "revenue".
+	Metrics []string `json:"metrics"`
+	// Değerler: "day", "week", "month", "channel", "provider", "campaign", "status", "name", "source", "event_name", "kind".
+	Dimensions []string                            `json:"dimensions,omitempty"`
+	Filters    map[string][]string                 `json:"filters,omitempty"`
+	Sort       *CreateSavedReportDtoDefinitionSort `json:"sort,omitempty"`
+	Limit      *int64                              `json:"limit,omitempty"`
+	Days       *int64                              `json:"days,omitempty"`
+	From       *string                             `json:"from,omitempty"`
+	To         *string                             `json:"to,omitempty"`
+}
+
+// CreateSavedReportDtoDefinitionSort: CreateSavedReportDtoDefinitionSort şeması.
+type CreateSavedReportDtoDefinitionSort struct {
+	// Zorunlu.
+	By string `json:"by"`
+	// Değerler: "asc", "desc".
+	Direction *string `json:"direction,omitempty"`
+}
+
 // CreateSuppressionDto: CreateSuppressionDto şeması.
 type CreateSuppressionDto struct {
 	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs".
@@ -7065,6 +7097,58 @@ type RenderTemplateDtoUser struct {
 	Properties map[string]any    `json:"properties,omitempty"`
 }
 
+// ReportResult: ReportResult şeması.
+type ReportResult struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Columns []ReportResultColumnsItem `json:"columns"`
+	// Zorunlu.
+	Rows []map[string]any `json:"rows"`
+	// Zorunlu.
+	Totals map[string]float64 `json:"totals"`
+	// Zorunlu.
+	Truncated bool `json:"truncated"`
+}
+
+// ReportResultColumnsItem: ReportResultColumnsItem şeması.
+type ReportResultColumnsItem struct {
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu. Değerler: "dimension", "metric".
+	Kind string `json:"kind"`
+	// Zorunlu. Değerler: "text", "date", "number", "percent".
+	Format string `json:"format"`
+}
+
+// ReportRunBodyDto: ReportRunBodyDto şeması.
+type ReportRunBodyDto struct {
+	// Zorunlu. Değerler: "deliveries", "events", "conversions".
+	Source string `json:"source"`
+	// Zorunlu. Değerler: "sent", "delivered", "failed", "opened", "clicked", "delivery_rate", "open_rate", "click_rate", "failure_rate", "count", "unique_users", "value_sum", "value_avg", "conversions", "revenue".
+	Metrics []string `json:"metrics"`
+	// Değerler: "day", "week", "month", "channel", "provider", "campaign", "status", "name", "source", "event_name", "kind".
+	Dimensions []string              `json:"dimensions,omitempty"`
+	Filters    map[string][]string   `json:"filters,omitempty"`
+	Sort       *ReportRunBodyDtoSort `json:"sort,omitempty"`
+	Limit      *int64                `json:"limit,omitempty"`
+	Days       *int64                `json:"days,omitempty"`
+	From       *string               `json:"from,omitempty"`
+	To         *string               `json:"to,omitempty"`
+	// Değerler: "json", "csv".
+	Format *string `json:"format,omitempty"`
+}
+
+// ReportRunBodyDtoSort: ReportRunBodyDtoSort şeması.
+type ReportRunBodyDtoSort struct {
+	// Zorunlu.
+	By string `json:"by"`
+	// Değerler: "asc", "desc".
+	Direction *string `json:"direction,omitempty"`
+}
+
 // RetentionReport: RetentionReport şeması.
 type RetentionReport struct {
 	// Zorunlu.
@@ -7275,6 +7359,54 @@ type RfmUsersPageDataItem struct {
 	LastEventAt string `json:"last_event_at"`
 	// Zorunlu.
 	SegmentSince string `json:"segment_since"`
+}
+
+// SavedReport: SavedReport şeması.
+type SavedReport struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Definition SavedReportDefinition `json:"definition"`
+	// Zorunlu.
+	CreatedBy *string `json:"created_by"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// SavedReportDefinition: SavedReportDefinition şeması.
+type SavedReportDefinition struct {
+	// Zorunlu. Değerler: "deliveries", "events", "conversions".
+	Source string `json:"source"`
+	// Zorunlu. Değerler: "sent", "delivered", "failed", "opened", "clicked", "delivery_rate", "open_rate", "click_rate", "failure_rate", "count", "unique_users", "value_sum", "value_avg", "conversions", "revenue".
+	Metrics []string `json:"metrics"`
+	// Zorunlu. Değerler: "day", "week", "month", "channel", "provider", "campaign", "status", "name", "source", "event_name", "kind".
+	Dimensions []string `json:"dimensions"`
+	// Zorunlu.
+	Filters map[string][]string        `json:"filters"`
+	Sort    *SavedReportDefinitionSort `json:"sort,omitempty"`
+	// Zorunlu.
+	Limit int64   `json:"limit"`
+	Days  *int64  `json:"days,omitempty"`
+	From  *string `json:"from,omitempty"`
+	To    *string `json:"to,omitempty"`
+}
+
+// SavedReportDefinitionSort: SavedReportDefinitionSort şeması.
+type SavedReportDefinitionSort struct {
+	// Zorunlu.
+	By string `json:"by"`
+	// Zorunlu. Değerler: "asc", "desc".
+	Direction string `json:"direction"`
+}
+
+// SavedReportList: SavedReportList şeması.
+type SavedReportList struct {
+	// Zorunlu.
+	Data []SavedReport `json:"data"`
 }
 
 // ScheduleCampaignDto: ScheduleCampaignDto şeması.
@@ -8668,6 +8800,36 @@ type UpdateRfmConfigDto struct {
 	ValueProperty *string  `json:"value_property,omitempty"`
 	UseMonetary   *bool    `json:"use_monetary,omitempty"`
 	WindowDays    *int64   `json:"window_days,omitempty"`
+}
+
+// UpdateSavedReportDto: UpdateSavedReportDto şeması.
+type UpdateSavedReportDto struct {
+	Name       *string                         `json:"name,omitempty"`
+	Definition *UpdateSavedReportDtoDefinition `json:"definition,omitempty"`
+}
+
+// UpdateSavedReportDtoDefinition: UpdateSavedReportDtoDefinition şeması.
+type UpdateSavedReportDtoDefinition struct {
+	// Zorunlu. Değerler: "deliveries", "events", "conversions".
+	Source string `json:"source"`
+	// Zorunlu. Değerler: "sent", "delivered", "failed", "opened", "clicked", "delivery_rate", "open_rate", "click_rate", "failure_rate", "count", "unique_users", "value_sum", "value_avg", "conversions", "revenue".
+	Metrics []string `json:"metrics"`
+	// Değerler: "day", "week", "month", "channel", "provider", "campaign", "status", "name", "source", "event_name", "kind".
+	Dimensions []string                            `json:"dimensions,omitempty"`
+	Filters    map[string][]string                 `json:"filters,omitempty"`
+	Sort       *UpdateSavedReportDtoDefinitionSort `json:"sort,omitempty"`
+	Limit      *int64                              `json:"limit,omitempty"`
+	Days       *int64                              `json:"days,omitempty"`
+	From       *string                             `json:"from,omitempty"`
+	To         *string                             `json:"to,omitempty"`
+}
+
+// UpdateSavedReportDtoDefinitionSort: UpdateSavedReportDtoDefinitionSort şeması.
+type UpdateSavedReportDtoDefinitionSort struct {
+	// Zorunlu.
+	By string `json:"by"`
+	// Değerler: "asc", "desc".
+	Direction *string `json:"direction,omitempty"`
 }
 
 // UpdateTemplateDto: UpdateTemplateDto şeması.
