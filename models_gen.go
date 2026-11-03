@@ -1672,6 +1672,80 @@ type CannedUpdateDto struct {
 	Language *string `json:"language,omitempty"`
 }
 
+// Catalog: Catalog şeması.
+type Catalog struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	Currency string `json:"currency"`
+	// Zorunlu.
+	ItemCount int64 `json:"item_count"`
+	// Zorunlu.
+	Liquid string `json:"liquid"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// CatalogItem: CatalogItem şeması.
+type CatalogItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	ImageURL *string `json:"image_url"`
+	// Zorunlu.
+	URL *string `json:"url"`
+	// Zorunlu.
+	Price *float64 `json:"price"`
+	// Zorunlu.
+	SalePrice *float64 `json:"sale_price"`
+	// Zorunlu.
+	Currency string `json:"currency"`
+	// Zorunlu.
+	Category *string `json:"category"`
+	// Zorunlu.
+	Brand *string `json:"brand"`
+	// Zorunlu.
+	InStock bool `json:"in_stock"`
+	// Zorunlu.
+	Attributes map[string]string `json:"attributes"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// CatalogItemsPage: CatalogItemsPage şeması.
+type CatalogItemsPage struct {
+	// Zorunlu.
+	Total int64 `json:"total"`
+	// Zorunlu.
+	Data []CatalogItem `json:"data"`
+}
+
+// CatalogList: CatalogList şeması.
+type CatalogList struct {
+	// Zorunlu.
+	Data []Catalog `json:"data"`
+}
+
+// CatalogUpsertResult: CatalogUpsertResult şeması.
+type CatalogUpsertResult struct {
+	// Zorunlu.
+	Catalog Catalog `json:"catalog"`
+	// Zorunlu.
+	Upserted int64 `json:"upserted"`
+}
+
 // ChannelConfig: ChannelConfig şeması.
 type ChannelConfig struct {
 	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
@@ -2365,6 +2439,14 @@ type CreateBudgetAlertRuleDto struct {
 	WindowDays *int64   `json:"window_days,omitempty"`
 	Recipients []string `json:"recipients,omitempty"`
 	Enabled    *bool    `json:"enabled,omitempty"`
+}
+
+// CreateCatalogDto: CreateCatalogDto şeması.
+type CreateCatalogDto struct {
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Currency    *string `json:"currency,omitempty"`
 }
 
 // CreateCategoryDto: CreateCategoryDto şeması.
@@ -7801,6 +7883,12 @@ type UpdateBudgetAlertRuleDto struct {
 	Enabled            *bool    `json:"enabled,omitempty"`
 }
 
+// UpdateCatalogDto: UpdateCatalogDto şeması.
+type UpdateCatalogDto struct {
+	Description *string `json:"description,omitempty"`
+	Currency    *string `json:"currency,omitempty"`
+}
+
 // UpdateCategoryDto: UpdateCategoryDto şeması.
 type UpdateCategoryDto struct {
 	Name        map[string]string `json:"name,omitempty"`
@@ -8434,6 +8522,30 @@ type UpdateWebhookDtoFiltersConditionsItem struct {
 	// Zorunlu. Değerler: "eq", "neq", "in", "not_in", "starts_with", "contains", "exists", "not_exists".
 	Op    string `json:"op"`
 	Value any    `json:"value,omitempty"`
+}
+
+// UpsertCatalogItemsDto: UpsertCatalogItemsDto şeması.
+type UpsertCatalogItemsDto struct {
+	// Zorunlu.
+	Items []UpsertCatalogItemsDtoItemsItem `json:"items"`
+}
+
+// UpsertCatalogItemsDtoItemsItem: UpsertCatalogItemsDtoItemsItem şeması.
+type UpsertCatalogItemsDtoItemsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Title       string            `json:"title"`
+	Description *string           `json:"description,omitempty"`
+	ImageURL    *string           `json:"image_url,omitempty"`
+	URL         *string           `json:"url,omitempty"`
+	Price       *float64          `json:"price,omitempty"`
+	SalePrice   *float64          `json:"sale_price,omitempty"`
+	Currency    *string           `json:"currency,omitempty"`
+	Category    *string           `json:"category,omitempty"`
+	Brand       *string           `json:"brand,omitempty"`
+	InStock     *bool             `json:"in_stock,omitempty"`
+	Attributes  map[string]string `json:"attributes,omitempty"`
 }
 
 // UpsertUserDto: UpsertUserDto şeması.

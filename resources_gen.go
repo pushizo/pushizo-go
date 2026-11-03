@@ -34,6 +34,7 @@ type services struct {
 	Organization        *OrganizationService
 	Ads                 *AdsService
 	CannedResponses     *CannedResponsesService
+	Catalogs            *CatalogsService
 	Categories          *CategoriesService
 	ContentTables       *ContentTablesService
 	Conversations       *ConversationsService
@@ -80,6 +81,7 @@ func (c *Client) initServices() {
 	c.Organization = &OrganizationService{client: c}
 	c.Ads = &AdsService{client: c}
 	c.CannedResponses = &CannedResponsesService{client: c}
+	c.Catalogs = &CatalogsService{client: c}
 	c.Categories = &CategoriesService{client: c}
 	c.ContentTables = &ContentTablesService{client: c}
 	c.Conversations = &ConversationsService{client: c}
@@ -3858,6 +3860,217 @@ func (s *CannedResponsesService) DeleteCanned(ctx context.Context, cannedID stri
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/canned-responses/{cannedId}"}
 	op.pathParams = map[string]string{"cannedId": cannedID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CatalogsService: catalogs kaynağı.
+type CatalogsService struct {
+	client *Client
+}
+
+// List: Ürün katalogları
+//
+// GET /v1/apps/{appId}/catalogs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) List(ctx context.Context, opts ...RequestOption) (*CatalogList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs"}
+	var out CatalogList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Katalog oluştur
+//
+// POST /v1/apps/{appId}/catalogs
+//
+// Şablonda `{% catalog_item '<ad>' id: custom_data.product_id as urun %}{{ urun.title }}`.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Create(ctx context.Context, body *CreateCatalogDto, opts ...RequestOption) (*Catalog, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/catalogs"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Catalog
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Katalog ayrıntısı
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Get(ctx context.Context, catalogID string, opts ...RequestOption) (*Catalog, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	var out Catalog
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Kataloğu güncelle
+//
+// PATCH /v1/apps/{appId}/catalogs/{catalogId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Update(ctx context.Context, catalogID string, body *UpdateCatalogDto, opts ...RequestOption) (*Catalog, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/catalogs/{catalogId}"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Catalog
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Kataloğu sil
+//
+// DELETE /v1/apps/{appId}/catalogs/{catalogId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Delete(ctx context.Context, catalogID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/catalogs/{catalogId}"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CatalogsItemsParams: CatalogsService.Items için isteğe bağlı sorgu parametreleri.
+type CatalogsItemsParams struct {
+	Limit    *int64
+	Offset   *int64
+	Q        *string
+	Category *string
+}
+
+func (p *CatalogsItemsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "offset", p.Offset)
+	addQuery(q, "q", p.Q)
+	addQuery(q, "category", p.Category)
+}
+
+// Items: Ürünler
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}/items
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Items(ctx context.Context, catalogID string, params *CatalogsItemsParams, opts ...RequestOption) (*CatalogItemsPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/items"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out CatalogItemsPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Upsert: Ürünleri ekle veya güncelle (en fazla 1000)
+//
+// PUT /v1/apps/{appId}/catalogs/{catalogId}/items
+//
+// Listede olmayan ürünlere dokunulmaz. Listedeki ürünün verilmeyen alanları temizlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Upsert(ctx context.Context, catalogID string, body *UpsertCatalogItemsDto, opts ...RequestOption) (*CatalogUpsertResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/catalogs/{catalogId}/items"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out CatalogUpsertResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CatalogsUploadForm: CatalogsService.Upload için multipart/form-data alanları.
+type CatalogsUploadForm struct {
+	// Zorunlu. UTF-8 CSV. Zorunlu sütunlar: id, title. Bilinen: description, image_url, url, price, sale_price, currency, category, brand, in_stock. Diğerleri özellik olur. En fazla 100.000 satır, 20 MB.
+	File *FileUpload
+}
+
+// Upload: CSV ile ürün ekle veya güncelle
+//
+// POST /v1/apps/{appId}/catalogs/{catalogId}/items/upload
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Upload(ctx context.Context, catalogID string, form *CatalogsUploadForm, opts ...RequestOption) (*CatalogUpsertResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/catalogs/{catalogId}/items/upload"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	if form == nil {
+		return nil, errNilBody
+	}
+	mp := &multipartBody{}
+	mp.file("file", form.File)
+	op.multipart = mp
+	var out CatalogUpsertResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Item: Ürün ayrıntısı
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}/items/{itemId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Item(ctx context.Context, catalogID string, itemID string, opts ...RequestOption) (*CatalogItem, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/items/{itemId}"}
+	op.pathParams = map[string]string{"catalogId": catalogID, "itemId": itemID}
+	var out CatalogItem
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RemoveItem: Ürünü sil
+//
+// DELETE /v1/apps/{appId}/catalogs/{catalogId}/items/{itemId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) RemoveItem(ctx context.Context, catalogID string, itemID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/catalogs/{catalogId}/items/{itemId}"}
+	op.pathParams = map[string]string{"catalogId": catalogID, "itemId": itemID}
 	var out Ok
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
