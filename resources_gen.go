@@ -51,6 +51,7 @@ type services struct {
 	Preferences         *PreferencesService
 	PromoCodeLists      *PromoCodeListsService
 	ReverseEtl          *ReverseEtlService
+	Rfm                 *RfmService
 	SMSKeywords         *SMSKeywordsService
 	Surveys             *SurveysService
 	Verify              *VerifyService
@@ -98,6 +99,7 @@ func (c *Client) initServices() {
 	c.Preferences = &PreferencesService{client: c}
 	c.PromoCodeLists = &PromoCodeListsService{client: c}
 	c.ReverseEtl = &ReverseEtlService{client: c}
+	c.Rfm = &RfmService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
 	c.Surveys = &SurveysService{client: c}
 	c.Verify = &VerifyService{client: c}
@@ -6487,6 +6489,144 @@ func (s *ReverseEtlService) RunsAll(ctx context.Context, syncID string, params *
 		}
 		return page.Data, page.NextCursor, page.HasMore, nil
 	})
+}
+
+// RfmService: rfm kaynağı.
+type RfmService struct {
+	client *Client
+}
+
+// Config: RFM modeli
+//
+// GET /v1/apps/{appId}/rfm/config
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RfmService) Config(ctx context.Context, opts ...RequestOption) (*RfmConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/rfm/config"}
+	var out RfmConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: RFM modelini ayarla
+//
+// PUT /v1/apps/{appId}/rfm/config
+//
+// Model açıksa skorlar kayıttan sonra yeniden hesaplanır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RfmService) Update(ctx context.Context, body *UpdateRfmConfigDto, opts ...RequestOption) (*RfmConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/rfm/config"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out RfmConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Compute: Skorları yeniden hesapla
+//
+// POST /v1/apps/{appId}/rfm/compute
+//
+// İş kuyruğa alınır; ilerleme `status` alanından izlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RfmService) Compute(ctx context.Context, opts ...RequestOption) (*RfmConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/rfm/compute"}
+	var out RfmConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Overview: Segment dağılımı
+//
+// GET /v1/apps/{appId}/rfm/overview
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RfmService) Overview(ctx context.Context, opts ...RequestOption) (*RfmOverview, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/rfm/overview"}
+	var out RfmOverview
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RfmTransitionsParams: RfmService.Transitions için isteğe bağlı sorgu parametreleri.
+type RfmTransitionsParams struct {
+	From *string
+	To   *string
+}
+
+func (p *RfmTransitionsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "from", p.From)
+	addQuery(q, "to", p.To)
+}
+
+// Transitions: İki tarih arası segment geçişleri
+//
+// GET /v1/apps/{appId}/rfm/transitions
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RfmService) Transitions(ctx context.Context, params *RfmTransitionsParams, opts ...RequestOption) (*RfmTransitions, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/rfm/transitions"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out RfmTransitions
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RfmUsersParams: RfmService.Users için isteğe bağlı sorgu parametreleri.
+type RfmUsersParams struct {
+	// Değerler: "champions", "loyal", "potential", "new", "promising", "need_attention", "about_to_sleep", "at_risk", "cant_lose", "hibernating", "lost".
+	Segment *string
+	Limit   *int64
+	Cursor  *string
+}
+
+func (p *RfmUsersParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "segment", p.Segment)
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Users: Skoru olan kullanıcılar
+//
+// GET /v1/apps/{appId}/rfm/users
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RfmService) Users(ctx context.Context, params *RfmUsersParams, opts ...RequestOption) (*RfmUsersPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/rfm/users"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out RfmUsersPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // SMSKeywordsService: smsKeywords kaynağı.

@@ -6820,6 +6820,116 @@ type ReverseEtlSyncList struct {
 	Data []ReverseEtlSync `json:"data"`
 }
 
+// RfmConfig: RfmConfig şeması.
+type RfmConfig struct {
+	// Zorunlu.
+	Configured bool `json:"configured"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	EventNames []string `json:"event_names"`
+	// Zorunlu.
+	ValueProperty *string `json:"value_property"`
+	// Zorunlu.
+	UseMonetary bool `json:"use_monetary"`
+	// Zorunlu.
+	WindowDays int64 `json:"window_days"`
+	// Zorunlu. Değerler: "idle", "queued", "running", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	FirstComputedAt *string `json:"first_computed_at"`
+	// Zorunlu.
+	LastComputedAt *string `json:"last_computed_at"`
+	// Zorunlu.
+	ScoredUsers int64 `json:"scored_users"`
+}
+
+// RfmOverview: RfmOverview şeması.
+type RfmOverview struct {
+	// Zorunlu.
+	Total int64 `json:"total"`
+	// Zorunlu.
+	LowPopulation bool `json:"low_population"`
+	// Zorunlu.
+	LastComputedAt *string `json:"last_computed_at"`
+	// Zorunlu.
+	Segments []RfmOverviewSegmentsItem `json:"segments"`
+}
+
+// RfmOverviewSegmentsItem: RfmOverviewSegmentsItem şeması.
+type RfmOverviewSegmentsItem struct {
+	// Zorunlu. Değerler: "champions", "loyal", "potential", "new", "promising", "need_attention", "about_to_sleep", "at_risk", "cant_lose", "hibernating", "lost".
+	Segment string `json:"segment"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+	// Zorunlu.
+	Share float64 `json:"share"`
+	// Zorunlu.
+	AvgRecencyDays *float64 `json:"avg_recency_days"`
+	// Zorunlu.
+	AvgFrequency *float64 `json:"avg_frequency"`
+	// Zorunlu.
+	AvgMonetary *float64 `json:"avg_monetary"`
+}
+
+// RfmTransitions: RfmTransitions şeması.
+type RfmTransitions struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	FirstComputedAt *string `json:"first_computed_at"`
+	// Zorunlu.
+	Transitions []RfmTransitionsTransitionsItem `json:"transitions"`
+}
+
+// RfmTransitionsTransitionsItem: RfmTransitionsTransitionsItem şeması.
+type RfmTransitionsTransitionsItem struct {
+	// Zorunlu. Değerler: "champions", "loyal", "potential", "new", "promising", "need_attention", "about_to_sleep", "at_risk", "cant_lose", "hibernating", "lost".
+	From *string `json:"from"`
+	// Zorunlu. Değerler: "champions", "loyal", "potential", "new", "promising", "need_attention", "about_to_sleep", "at_risk", "cant_lose", "hibernating", "lost".
+	To *string `json:"to"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+}
+
+// RfmUsersPage: RfmUsersPage şeması.
+type RfmUsersPage struct {
+	// Zorunlu.
+	Data []RfmUsersPageDataItem `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+}
+
+// RfmUsersPageDataItem: RfmUsersPageDataItem şeması.
+type RfmUsersPageDataItem struct {
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu. Değerler: "champions", "loyal", "potential", "new", "promising", "need_attention", "about_to_sleep", "at_risk", "cant_lose", "hibernating", "lost".
+	Segment string `json:"segment"`
+	// Zorunlu.
+	R int64 `json:"r"`
+	// Zorunlu.
+	F int64 `json:"f"`
+	// Zorunlu.
+	M *int64 `json:"m"`
+	// Zorunlu.
+	RecencyDays int64 `json:"recency_days"`
+	// Zorunlu.
+	Frequency int64 `json:"frequency"`
+	// Zorunlu.
+	Monetary float64 `json:"monetary"`
+	// Zorunlu.
+	LastEventAt string `json:"last_event_at"`
+	// Zorunlu.
+	SegmentSince string `json:"segment_since"`
+}
+
 // ScheduleCampaignDto: ScheduleCampaignDto şeması.
 type ScheduleCampaignDto struct {
 	SendAt     *string                        `json:"send_at,omitempty"`
@@ -8148,6 +8258,17 @@ type UpdateReverseEtlDto struct {
 	Enabled     *bool          `json:"enabled,omitempty"`
 	Config      map[string]any `json:"config,omitempty"`
 	Credentials map[string]any `json:"credentials,omitempty"`
+}
+
+// UpdateRfmConfigDto: UpdateRfmConfigDto şeması.
+type UpdateRfmConfigDto struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	EventNames    []string `json:"event_names"`
+	ValueProperty *string  `json:"value_property,omitempty"`
+	UseMonetary   *bool    `json:"use_monetary,omitempty"`
+	WindowDays    *int64   `json:"window_days,omitempty"`
 }
 
 // UpdateTemplateDto: UpdateTemplateDto şeması.
