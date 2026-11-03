@@ -47,6 +47,7 @@ type services struct {
 	LiveActivities      *LiveActivitiesService
 	Mcp                 *McpService
 	Preferences         *PreferencesService
+	PromoCodeLists      *PromoCodeListsService
 	ReverseEtl          *ReverseEtlService
 	SMSKeywords         *SMSKeywordsService
 	Surveys             *SurveysService
@@ -91,6 +92,7 @@ func (c *Client) initServices() {
 	c.LiveActivities = &LiveActivitiesService{client: c}
 	c.Mcp = &McpService{client: c}
 	c.Preferences = &PreferencesService{client: c}
+	c.PromoCodeLists = &PromoCodeListsService{client: c}
 	c.ReverseEtl = &ReverseEtlService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
 	c.Surveys = &SurveysService{client: c}
@@ -5834,6 +5836,164 @@ func (s *PreferencesService) Set(ctx context.Context, label string, value string
 	}
 	op.body = body
 	var out UserPreferences
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PromoCodeListsService: promoCodeLists kaynağı.
+type PromoCodeListsService struct {
+	client *Client
+}
+
+// ListPromoLists: Promosyon kodu listeleri
+//
+// GET /v1/apps/{appId}/promo-code-lists
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) ListPromoLists(ctx context.Context, opts ...RequestOption) (*PromoCodeListList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/promo-code-lists"}
+	var out PromoCodeListList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreatePromoList: Promosyon kodu listesi oluştur
+//
+// POST /v1/apps/{appId}/promo-code-lists
+//
+// Şablonda `{% promo_code '<ad>' %}` teslimat başına tek kullanımlık kod verir. Kod kalmazsa teslimat `PromoCodeUnavailable` hatasıyla düşer.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) CreatePromoList(ctx context.Context, body *CreatePromoCodeListDto, opts ...RequestOption) (*PromoCodeList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/promo-code-lists"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out PromoCodeList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetPromoList: Promosyon kodu listesi ayrıntısı
+//
+// GET /v1/apps/{appId}/promo-code-lists/{listId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) GetPromoList(ctx context.Context, listID string, opts ...RequestOption) (*PromoCodeList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/promo-code-lists/{listId}"}
+	op.pathParams = map[string]string{"listId": listID}
+	var out PromoCodeList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdatePromoList: Promosyon kodu listesini güncelle (açıklama, son kullanma)
+//
+// PATCH /v1/apps/{appId}/promo-code-lists/{listId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) UpdatePromoList(ctx context.Context, listID string, body *UpdatePromoCodeListDto, opts ...RequestOption) (*PromoCodeList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/promo-code-lists/{listId}"}
+	op.pathParams = map[string]string{"listId": listID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out PromoCodeList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DeletePromoList: Promosyon kodu listesini sil
+//
+// DELETE /v1/apps/{appId}/promo-code-lists/{listId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) DeletePromoList(ctx context.Context, listID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/promo-code-lists/{listId}"}
+	op.pathParams = map[string]string{"listId": listID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PromoCodeListsUploadPromoListForm: PromoCodeListsService.UploadPromoList için multipart/form-data alanları.
+type PromoCodeListsUploadPromoListForm struct {
+	// Zorunlu. UTF-8 CSV; kodlar ilk sütunda, başlık isteğe bağlı. En fazla 1.000.000 kod, 20 MB.
+	File *FileUpload
+}
+
+// UploadPromoList: CSV ile kod ekle (zaten olanlar atlanır)
+//
+// POST /v1/apps/{appId}/promo-code-lists/{listId}/codes
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) UploadPromoList(ctx context.Context, listID string, form *PromoCodeListsUploadPromoListForm, opts ...RequestOption) (*PromoCodeUploadResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/promo-code-lists/{listId}/codes"}
+	op.pathParams = map[string]string{"listId": listID}
+	if form == nil {
+		return nil, errNilBody
+	}
+	mp := &multipartBody{}
+	mp.file("file", form.File)
+	op.multipart = mp
+	var out PromoCodeUploadResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PromoCodeListsPromoCodesParams: PromoCodeListsService.PromoCodes için isteğe bağlı sorgu parametreleri.
+type PromoCodeListsPromoCodesParams struct {
+	Limit  *int64
+	Offset *int64
+	Q      *string
+	// Değerler: "available", "assigned".
+	Status *string
+}
+
+func (p *PromoCodeListsPromoCodesParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "offset", p.Offset)
+	addQuery(q, "q", p.Q)
+	addQuery(q, "status", p.Status)
+}
+
+// PromoCodes: Listedeki kodlar ve atamaları
+//
+// GET /v1/apps/{appId}/promo-code-lists/{listId}/codes
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PromoCodeListsService) PromoCodes(ctx context.Context, listID string, params *PromoCodeListsPromoCodesParams, opts ...RequestOption) (*PromoCodesPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/promo-code-lists/{listId}/codes"}
+	op.pathParams = map[string]string{"listId": listID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out PromoCodesPage
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

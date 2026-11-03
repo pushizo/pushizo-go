@@ -2935,6 +2935,14 @@ type CreateNotificationResult struct {
 	ExternalIDMissing []string `json:"external_id_missing"`
 }
 
+// CreatePromoCodeListDto: CreatePromoCodeListDto şeması.
+type CreatePromoCodeListDto struct {
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	ExpiresAt   *string `json:"expires_at,omitempty"`
+}
+
 // CreateSuppressionDto: CreateSuppressionDto şeması.
 type CreateSuppressionDto struct {
 	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs".
@@ -6154,6 +6162,68 @@ type PostmasterStatsDataItem struct {
 	SpamRate *string `json:"spam_rate"`
 }
 
+// PromoCodeList: PromoCodeList şeması.
+type PromoCodeList struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	ExpiresAt *string `json:"expires_at"`
+	// Zorunlu.
+	TotalCount int64 `json:"total_count"`
+	// Zorunlu.
+	AssignedCount int64 `json:"assigned_count"`
+	// Zorunlu.
+	AvailableCount int64 `json:"available_count"`
+	// Zorunlu.
+	Liquid string `json:"liquid"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// PromoCodeListList: PromoCodeListList şeması.
+type PromoCodeListList struct {
+	// Zorunlu.
+	Data []PromoCodeList `json:"data"`
+}
+
+// PromoCodesPage: PromoCodesPage şeması.
+type PromoCodesPage struct {
+	// Zorunlu.
+	Total int64 `json:"total"`
+	// Zorunlu.
+	Data []PromoCodesPageDataItem `json:"data"`
+}
+
+// PromoCodesPageDataItem: PromoCodesPageDataItem şeması.
+type PromoCodesPageDataItem struct {
+	// Zorunlu.
+	Code string `json:"code"`
+	// Zorunlu.
+	DeliveryID *string `json:"delivery_id"`
+	// Zorunlu.
+	MessageID *string `json:"message_id"`
+	// Zorunlu.
+	AssignedAt *string `json:"assigned_at"`
+}
+
+// PromoCodeUploadResult: PromoCodeUploadResult şeması.
+type PromoCodeUploadResult struct {
+	// Zorunlu.
+	List PromoCodeList `json:"list"`
+	// Zorunlu.
+	Added int64 `json:"added"`
+	// Zorunlu.
+	Skipped int64 `json:"skipped"`
+}
+
 // ProvidersReport: ProvidersReport şeması.
 type ProvidersReport struct {
 	// Zorunlu.
@@ -7899,6 +7969,12 @@ type UpdateNodeDtoPosition struct {
 	X float64 `json:"x"`
 	// Zorunlu.
 	Y float64 `json:"y"`
+}
+
+// UpdatePromoCodeListDto: UpdatePromoCodeListDto şeması.
+type UpdatePromoCodeListDto struct {
+	Description *string `json:"description,omitempty"`
+	ExpiresAt   *string `json:"expires_at,omitempty"`
 }
 
 // UpdateReverseEtlDto: UpdateReverseEtlDto şeması.
