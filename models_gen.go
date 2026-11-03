@@ -6564,7 +6564,7 @@ type ReverseEtlSync struct {
 	AppID string `json:"app_id"`
 	// Zorunlu.
 	Name string `json:"name"`
-	// Zorunlu. Değerler: "snowflake", "bigquery", "postgres", "mysql", "s3", "google_sheets".
+	// Zorunlu. Değerler: "snowflake", "bigquery", "postgres", "mysql", "s3", "google_sheets", "clickhouse", "sqlserver", "trino", "athena", "elasticsearch", "kafka", "pubsub".
 	Source string `json:"source"`
 	// Zorunlu. Değerler: "event", "user".
 	Target string `json:"target"`
@@ -6572,7 +6572,7 @@ type ReverseEtlSync struct {
 	Config map[string]any `json:"config"`
 	// Zorunlu.
 	CredentialsHint string `json:"credentials_hint"`
-	// Zorunlu. Değerler: "hourly", "daily".
+	// Zorunlu. Değerler: "every_5_minutes", "hourly", "daily".
 	Schedule string `json:"schedule"`
 	// Zorunlu.
 	Enabled bool `json:"enabled"`
@@ -7904,7 +7904,7 @@ type UpdateNodeDtoPosition struct {
 // UpdateReverseEtlDto: UpdateReverseEtlDto şeması.
 type UpdateReverseEtlDto struct {
 	Name *string `json:"name,omitempty"`
-	// Değerler: "hourly", "daily".
+	// Değerler: "every_5_minutes", "hourly", "daily".
 	Schedule    *string        `json:"schedule,omitempty"`
 	Enabled     *bool          `json:"enabled,omitempty"`
 	Config      map[string]any `json:"config,omitempty"`
