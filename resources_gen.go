@@ -36,6 +36,7 @@ type services struct {
 	CannedResponses     *CannedResponsesService
 	Catalogs            *CatalogsService
 	Categories          *CategoriesService
+	ChannelScores       *ChannelScoresService
 	ContentTables       *ContentTablesService
 	Conversations       *ConversationsService
 	DataFeeds           *DataFeedsService
@@ -86,6 +87,7 @@ func (c *Client) initServices() {
 	c.CannedResponses = &CannedResponsesService{client: c}
 	c.Catalogs = &CatalogsService{client: c}
 	c.Categories = &CategoriesService{client: c}
+	c.ChannelScores = &ChannelScoresService{client: c}
 	c.ContentTables = &ContentTablesService{client: c}
 	c.Conversations = &ConversationsService{client: c}
 	c.DataFeeds = &DataFeedsService{client: c}
@@ -4250,6 +4252,129 @@ func (s *CategoriesService) Delete(ctx context.Context, categoryID string, opts 
 	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/categories/{categoryId}"}
 	op.pathParams = map[string]string{"categoryId": categoryID}
 	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ChannelScoresService: channelScores kaynağı.
+type ChannelScoresService struct {
+	client *Client
+}
+
+// Config: Kanal skoru ayarı
+//
+// GET /v1/apps/{appId}/channel-scores/config
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ChannelScoresService) Config(ctx context.Context, opts ...RequestOption) (*ChannelScoreConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/channel-scores/config"}
+	var out ChannelScoreConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Kanal skorunu ayarla
+//
+// PUT /v1/apps/{appId}/channel-scores/config
+//
+// Açıkken skorlar kayıttan sonra yeniden hesaplanır; kapatınca silinir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ChannelScoresService) Update(ctx context.Context, body *UpdateChannelScoreConfigDto, opts ...RequestOption) (*ChannelScoreConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/channel-scores/config"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out ChannelScoreConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Compute: Kanal skorlarını yeniden hesapla
+//
+// POST /v1/apps/{appId}/channel-scores/compute
+//
+// İş kuyruğa alınır; ilerleme `status` alanından izlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ChannelScoresService) Compute(ctx context.Context, opts ...RequestOption) (*ChannelScoreConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/channel-scores/compute"}
+	var out ChannelScoreConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Overview: En iyi kanal dağılımı
+//
+// GET /v1/apps/{appId}/channel-scores/overview
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ChannelScoresService) Overview(ctx context.Context, opts ...RequestOption) (*ChannelScoreOverview, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/channel-scores/overview"}
+	var out ChannelScoreOverview
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ChannelScoresUsersParams: ChannelScoresService.Users için isteğe bağlı sorgu parametreleri.
+type ChannelScoresUsersParams struct {
+	// Değerler: "push", "email", "whatsapp", "rcs", "sms".
+	Channel *string
+	Limit   *int64
+	Cursor  *string
+}
+
+func (p *ChannelScoresUsersParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "channel", p.Channel)
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Users: En iyi kanalı belli kullanıcılar
+//
+// GET /v1/apps/{appId}/channel-scores/users
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ChannelScoresService) Users(ctx context.Context, params *ChannelScoresUsersParams, opts ...RequestOption) (*ChannelScoreUsersPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/channel-scores/users"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out ChannelScoreUsersPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// User: Kullanıcının kanal skorları
+//
+// GET /v1/apps/{appId}/channel-scores/users/{userId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *ChannelScoresService) User(ctx context.Context, userID string, opts ...RequestOption) (*ChannelScoreUser, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/channel-scores/users/{userId}"}
+	op.pathParams = map[string]string{"userId": userID}
+	var out ChannelScoreUser
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

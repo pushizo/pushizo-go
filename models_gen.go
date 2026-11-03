@@ -1938,6 +1938,88 @@ type ChannelList struct {
 	Data []ChannelConfig `json:"data"`
 }
 
+// ChannelScoreConfig: ChannelScoreConfig şeması.
+type ChannelScoreConfig struct {
+	// Zorunlu.
+	Configured bool `json:"configured"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	WindowDays int64 `json:"window_days"`
+	// Zorunlu.
+	MinSends int64 `json:"min_sends"`
+	// Zorunlu.
+	CountEmailOpens bool `json:"count_email_opens"`
+	// Zorunlu. Değerler: "idle", "queued", "running", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	LastComputedAt *string `json:"last_computed_at"`
+	// Zorunlu.
+	ScoredUsers int64 `json:"scored_users"`
+}
+
+// ChannelScoreOverview: ChannelScoreOverview şeması.
+type ChannelScoreOverview struct {
+	// Zorunlu.
+	Total int64 `json:"total"`
+	// Zorunlu.
+	LowPopulation bool `json:"low_population"`
+	// Zorunlu.
+	LastComputedAt *string `json:"last_computed_at"`
+	// Zorunlu.
+	Channels []ChannelScoreOverviewChannelsItem `json:"channels"`
+}
+
+// ChannelScoreOverviewChannelsItem: ChannelScoreOverviewChannelsItem şeması.
+type ChannelScoreOverviewChannelsItem struct {
+	// Zorunlu. Değerler: "push", "email", "whatsapp", "rcs", "sms".
+	Channel string `json:"channel"`
+	// Zorunlu.
+	BestUsers int64 `json:"best_users"`
+	// Zorunlu.
+	Share float64 `json:"share"`
+	// Zorunlu.
+	Sends int64 `json:"sends"`
+	// Zorunlu.
+	Engaged int64 `json:"engaged"`
+	// Zorunlu.
+	EngagementRate *float64 `json:"engagement_rate"`
+}
+
+// ChannelScoreUser: ChannelScoreUser şeması.
+type ChannelScoreUser struct {
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu. Değerler: "push", "email", "whatsapp", "rcs", "sms".
+	BestChannel *string `json:"best_channel"`
+	// Zorunlu.
+	Scores []ChannelScoreUserScoresItem `json:"scores"`
+}
+
+// ChannelScoreUserScoresItem: ChannelScoreUserScoresItem şeması.
+type ChannelScoreUserScoresItem struct {
+	// Zorunlu. Değerler: "push", "email", "whatsapp", "rcs", "sms".
+	Channel string `json:"channel"`
+	// Zorunlu.
+	Sends int64 `json:"sends"`
+	// Zorunlu.
+	Engaged int64 `json:"engaged"`
+	// Zorunlu.
+	Score float64 `json:"score"`
+}
+
+// ChannelScoreUsersPage: ChannelScoreUsersPage şeması.
+type ChannelScoreUsersPage struct {
+	// Zorunlu.
+	Data []ChannelScoreUser `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+}
+
 // ChannelValidation: ChannelValidation şeması.
 type ChannelValidation struct {
 	// Zorunlu.
@@ -8212,6 +8294,15 @@ type UpdateCategoryDto struct {
 	Channels       []string `json:"channels,omitempty"`
 	DefaultOptedIn *bool    `json:"default_opted_in,omitempty"`
 	Position       *int64   `json:"position,omitempty"`
+}
+
+// UpdateChannelScoreConfigDto: UpdateChannelScoreConfigDto şeması.
+type UpdateChannelScoreConfigDto struct {
+	// Zorunlu.
+	Enabled         bool   `json:"enabled"`
+	WindowDays      *int64 `json:"window_days,omitempty"`
+	MinSends        *int64 `json:"min_sends,omitempty"`
+	CountEmailOpens *bool  `json:"count_email_opens,omitempty"`
 }
 
 // UpdateContentTableDto: UpdateContentTableDto şeması.
