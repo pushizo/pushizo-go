@@ -2819,6 +2819,27 @@ func (s *AnalyticsService) Conversions(ctx context.Context, params *AnalyticsCon
 	return &out, nil
 }
 
+// Paths: Yol analizi
+//
+// POST /v1/apps/{appId}/analytics/paths
+//
+// Başlangıç olayından sonra veya önce kullanıcıların izlediği yollar.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) Paths(ctx context.Context, body *PathBodyDto, opts ...RequestOption) (*PathReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/analytics/paths"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out PathReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // Funnel: Funnel
 //
 // POST /v1/apps/{appId}/analytics/funnels

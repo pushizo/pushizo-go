@@ -6521,6 +6521,88 @@ type PatchUserDtoDeltasPurchasesItem struct {
 	Count  *int64  `json:"count,omitempty"`
 }
 
+// PathBodyDto: PathBodyDto şeması.
+type PathBodyDto struct {
+	// Zorunlu.
+	Event string `json:"event"`
+	// Değerler: "after", "before".
+	Direction   *string  `json:"direction,omitempty"`
+	Depth       *int64   `json:"depth,omitempty"`
+	Top         *int64   `json:"top,omitempty"`
+	WindowHours *int64   `json:"window_hours,omitempty"`
+	Exclude     []string `json:"exclude,omitempty"`
+	From        *string  `json:"from,omitempty"`
+	To          *string  `json:"to,omitempty"`
+	// Değerler: "json", "csv".
+	Format *string `json:"format,omitempty"`
+}
+
+// PathReport: PathReport şeması.
+type PathReport struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Event string `json:"event"`
+	// Zorunlu. Değerler: "after", "before".
+	Direction string `json:"direction"`
+	// Zorunlu.
+	WindowHours int64 `json:"window_hours"`
+	// Zorunlu.
+	TotalUsers int64 `json:"total_users"`
+	// Zorunlu.
+	Truncated bool `json:"truncated"`
+	// Zorunlu.
+	Levels []PathReportLevelsItem `json:"levels"`
+	// Zorunlu.
+	Links []PathReportLinksItem `json:"links"`
+	// Zorunlu.
+	TopPaths []PathReportTopPathsItem `json:"top_paths"`
+}
+
+// PathReportLevelsItem: PathReportLevelsItem şeması.
+type PathReportLevelsItem struct {
+	// Zorunlu.
+	Step int64 `json:"step"`
+	// Zorunlu.
+	Nodes []PathReportLevelsItemNodesItem `json:"nodes"`
+}
+
+// PathReportLevelsItemNodesItem: PathReportLevelsItemNodesItem şeması.
+type PathReportLevelsItemNodesItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name *string `json:"name"`
+	// Zorunlu. Değerler: "event", "other", "end".
+	Kind string `json:"kind"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+	// Zorunlu.
+	Share float64 `json:"share"`
+}
+
+// PathReportLinksItem: PathReportLinksItem şeması.
+type PathReportLinksItem struct {
+	// Zorunlu.
+	Source string `json:"source"`
+	// Zorunlu.
+	Target string `json:"target"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+}
+
+// PathReportTopPathsItem: PathReportTopPathsItem şeması.
+type PathReportTopPathsItem struct {
+	// Zorunlu.
+	Path []string `json:"path"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+	// Zorunlu.
+	Share float64 `json:"share"`
+}
+
 // PostmasterStats: PostmasterStats şeması.
 type PostmasterStats struct {
 	// Zorunlu.
