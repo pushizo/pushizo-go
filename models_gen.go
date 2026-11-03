@@ -809,6 +809,68 @@ type App struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+// AppFlag: AppFlag şeması.
+type AppFlag struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Description *string `json:"description"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu. Değerler: "boolean", "string", "number", "json".
+	ValueType string `json:"value_type"`
+	// Zorunlu.
+	OnValue any `json:"on_value"`
+	// Zorunlu.
+	OffValue any `json:"off_value"`
+	// Zorunlu.
+	RolloutPercent int64 `json:"rollout_percent"`
+	// Zorunlu.
+	SegmentID *string `json:"segment_id"`
+	// Zorunlu.
+	RolloutSchedule []AppFlagRolloutScheduleItem `json:"rollout_schedule"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// AppFlagEvaluation: AppFlagEvaluation şeması.
+type AppFlagEvaluation struct {
+	// Zorunlu.
+	Flags map[string]AppFlagEvaluationFlagsValue `json:"flags"`
+}
+
+// AppFlagEvaluationFlagsValue: AppFlagEvaluationFlagsValue şeması.
+type AppFlagEvaluationFlagsValue struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Value any `json:"value"`
+	// Zorunlu. Değerler: "on", "disabled", "segment", "rollout".
+	Reason string `json:"reason"`
+}
+
+// AppFlagList: AppFlagList şeması.
+type AppFlagList struct {
+	// Zorunlu.
+	Data []AppFlag `json:"data"`
+}
+
+// AppFlagRolloutScheduleItem: AppFlagRolloutScheduleItem şeması.
+type AppFlagRolloutScheduleItem struct {
+	// Zorunlu.
+	At string `json:"at"`
+	// Zorunlu.
+	Percent int64 `json:"percent"`
+}
+
 // AppList: AppList şeması.
 type AppList struct {
 	// Zorunlu.
@@ -2426,6 +2488,31 @@ type CreateAppDtoPlatformFlags struct {
 	SMS     *bool `json:"sms,omitempty"`
 }
 
+// CreateAppFlagDto: CreateAppFlagDto şeması.
+type CreateAppFlagDto struct {
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Enabled     *bool   `json:"enabled,omitempty"`
+	// Değerler: "boolean", "string", "number", "json".
+	ValueType       *string                               `json:"value_type,omitempty"`
+	OnValue         any                                   `json:"on_value,omitempty"`
+	OffValue        any                                   `json:"off_value,omitempty"`
+	RolloutPercent  *int64                                `json:"rollout_percent,omitempty"`
+	SegmentID       *string                               `json:"segment_id,omitempty"`
+	RolloutSchedule []CreateAppFlagDtoRolloutScheduleItem `json:"rollout_schedule,omitempty"`
+}
+
+// CreateAppFlagDtoRolloutScheduleItem: CreateAppFlagDtoRolloutScheduleItem şeması.
+type CreateAppFlagDtoRolloutScheduleItem struct {
+	// Zorunlu.
+	At string `json:"at"`
+	// Zorunlu.
+	Percent int64 `json:"percent"`
+}
+
 // CreateBudgetAlertRuleDto: CreateBudgetAlertRuleDto şeması.
 type CreateBudgetAlertRuleDto struct {
 	// Zorunlu.
@@ -3892,6 +3979,13 @@ type EstimateAudienceResult struct {
 	NewContacts int64 `json:"new_contacts"`
 	// Zorunlu.
 	ExternalIDMissing []string `json:"external_id_missing"`
+}
+
+// EvaluateAppFlagsDto: EvaluateAppFlagsDto şeması.
+type EvaluateAppFlagsDto struct {
+	ExternalID *string `json:"external_id,omitempty"`
+	UserID     *string `json:"user_id,omitempty"`
+	Subject    *string `json:"subject,omitempty"`
 }
 
 // EventDefinition: EventDefinition şeması.
@@ -8066,6 +8160,28 @@ type UpdateAppDtoSettingsWebPushWelcomeNotification struct {
 type UpdateAppDtoSettingsWebPushWelcomeNotificationTextsValue struct {
 	Title   *string `json:"title,omitempty"`
 	Message *string `json:"message,omitempty"`
+}
+
+// UpdateAppFlagDto: UpdateAppFlagDto şeması.
+type UpdateAppFlagDto struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Enabled     *bool   `json:"enabled,omitempty"`
+	// Değerler: "boolean", "string", "number", "json".
+	ValueType       *string                               `json:"value_type,omitempty"`
+	OnValue         any                                   `json:"on_value,omitempty"`
+	OffValue        any                                   `json:"off_value,omitempty"`
+	RolloutPercent  *int64                                `json:"rollout_percent,omitempty"`
+	SegmentID       *string                               `json:"segment_id,omitempty"`
+	RolloutSchedule []UpdateAppFlagDtoRolloutScheduleItem `json:"rollout_schedule,omitempty"`
+}
+
+// UpdateAppFlagDtoRolloutScheduleItem: UpdateAppFlagDtoRolloutScheduleItem şeması.
+type UpdateAppFlagDtoRolloutScheduleItem struct {
+	// Zorunlu.
+	At string `json:"at"`
+	// Zorunlu.
+	Percent int64 `json:"percent"`
 }
 
 // UpdateBudgetAlertRuleDto: UpdateBudgetAlertRuleDto şeması.

@@ -40,6 +40,7 @@ type services struct {
 	Conversations       *ConversationsService
 	DataFeeds           *DataFeedsService
 	EmailDeliverability *EmailDeliverabilityService
+	FeatureFlags        *FeatureFlagsService
 	Forms               *FormsService
 	Geofences           *GeofencesService
 	GlobalControl       *GlobalControlService
@@ -89,6 +90,7 @@ func (c *Client) initServices() {
 	c.Conversations = &ConversationsService{client: c}
 	c.DataFeeds = &DataFeedsService{client: c}
 	c.EmailDeliverability = &EmailDeliverabilityService{client: c}
+	c.FeatureFlags = &FeatureFlagsService{client: c}
 	c.Forms = &FormsService{client: c}
 	c.Geofences = &GeofencesService{client: c}
 	c.GlobalControl = &GlobalControlService{client: c}
@@ -4994,6 +4996,118 @@ func (s *EmailDeliverabilityService) SyncPostmaster(ctx context.Context, opts ..
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/email-deliverability/postmaster/sync"}
 	var out PostmasterStats
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// FeatureFlagsService: featureFlags kaynağı.
+type FeatureFlagsService struct {
+	client *Client
+}
+
+// List: Özellik bayrakları
+//
+// GET /v1/apps/{appId}/feature-flags
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FeatureFlagsService) List(ctx context.Context, opts ...RequestOption) (*AppFlagList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/feature-flags"}
+	var out AppFlagList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Bayrak oluştur
+//
+// POST /v1/apps/{appId}/feature-flags
+//
+// Değerler uygulama kimliğini bilen herkesçe okunabilir; gizli bilgi yazmayın.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FeatureFlagsService) Create(ctx context.Context, body *CreateAppFlagDto, opts ...RequestOption) (*AppFlag, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/feature-flags"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AppFlag
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Evaluate: Bayrakları bir kullanıcı için değerlendir
+//
+// POST /v1/apps/{appId}/feature-flags/evaluate
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FeatureFlagsService) Evaluate(ctx context.Context, body *EvaluateAppFlagsDto, opts ...RequestOption) (*AppFlagEvaluation, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/feature-flags/evaluate"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AppFlagEvaluation
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Bayrak ayrıntısı
+//
+// GET /v1/apps/{appId}/feature-flags/{flagId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FeatureFlagsService) Get(ctx context.Context, flagID string, opts ...RequestOption) (*AppFlag, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/feature-flags/{flagId}"}
+	op.pathParams = map[string]string{"flagId": flagID}
+	var out AppFlag
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Bayrağı güncelle
+//
+// PATCH /v1/apps/{appId}/feature-flags/{flagId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FeatureFlagsService) Update(ctx context.Context, flagID string, body *UpdateAppFlagDto, opts ...RequestOption) (*AppFlag, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/feature-flags/{flagId}"}
+	op.pathParams = map[string]string{"flagId": flagID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out AppFlag
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Bayrağı sil
+//
+// DELETE /v1/apps/{appId}/feature-flags/{flagId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *FeatureFlagsService) Delete(ctx context.Context, flagID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/feature-flags/{flagId}"}
+	op.pathParams = map[string]string{"flagId": flagID}
+	var out Ok
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
