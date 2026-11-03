@@ -40,6 +40,7 @@ type services struct {
 	DataFeeds           *DataFeedsService
 	EmailDeliverability *EmailDeliverabilityService
 	Forms               *FormsService
+	GlobalControl       *GlobalControlService
 	IdentityKeys        *IdentityKeysService
 	Integrations        *IntegrationsService
 	Journeys            *JourneysService
@@ -85,6 +86,7 @@ func (c *Client) initServices() {
 	c.DataFeeds = &DataFeedsService{client: c}
 	c.EmailDeliverability = &EmailDeliverabilityService{client: c}
 	c.Forms = &FormsService{client: c}
+	c.GlobalControl = &GlobalControlService{client: c}
 	c.IdentityKeys = &IdentityKeysService{client: c}
 	c.Integrations = &IntegrationsService{client: c}
 	c.Journeys = &JourneysService{client: c}
@@ -4847,6 +4849,93 @@ func (s *FormsService) Submit(ctx context.Context, formID string, body *PublicFo
 	}
 	op.body = body
 	var out FormSubmitResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GlobalControlService: globalControl kaynağı.
+type GlobalControlService struct {
+	client *Client
+}
+
+// Get: Genel kontrol grubu ayarı
+//
+// GET /v1/apps/{appId}/global-control
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GlobalControlService) Get(ctx context.Context, opts ...RequestOption) (*GlobalControl, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/global-control"}
+	var out GlobalControl
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Genel kontrol grubunu ayarla
+//
+// PUT /v1/apps/{appId}/global-control
+//
+// Gruptaki kullanıcılar kampanya, otomasyon ve uygulama içi mesajları almaz. API ve işlemsel gönderimler etkilenmez.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GlobalControlService) Update(ctx context.Context, body *UpdateGlobalControlDto, opts ...RequestOption) (*GlobalControl, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/global-control"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out GlobalControl
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Reset: Grubu yeniden kur (üyelik değişir, ölçüm baştan başlar)
+//
+// POST /v1/apps/{appId}/global-control/reset
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GlobalControlService) Reset(ctx context.Context, opts ...RequestOption) (*GlobalControl, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/global-control/reset"}
+	var out GlobalControl
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GlobalControlReportParams: GlobalControlService.Report için isteğe bağlı sorgu parametreleri.
+type GlobalControlReportParams struct {
+	Days  *int64
+	Event *string
+}
+
+func (p *GlobalControlReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "days", p.Days)
+	addQuery(q, "event", p.Event)
+}
+
+// Report: Kontrol ve mesaj alan grubun dönüşüm karşılaştırması
+//
+// GET /v1/apps/{appId}/global-control/report
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GlobalControlService) Report(ctx context.Context, params *GlobalControlReportParams, opts ...RequestOption) (*GlobalControlReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/global-control/report"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out GlobalControlReport
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

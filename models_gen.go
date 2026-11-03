@@ -1208,11 +1208,12 @@ type CampaignDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority           *int64  `json:"priority,omitempty"`
-	CollapseID         *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
-	QuietHoursExempt   *bool   `json:"quiet_hours_exempt,omitempty"`
-	OnePerUser         *bool   `json:"one_per_user,omitempty"`
+	Priority            *int64  `json:"priority,omitempty"`
+	CollapseID          *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
+	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
+	OnePerUser          *bool   `json:"one_per_user,omitempty"`
 }
 
 // CampaignEmailRisk: CampaignEmailRisk şeması.
@@ -1325,11 +1326,12 @@ type CampaignsCreateBodyDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority           *int64  `json:"priority,omitempty"`
-	CollapseID         *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
-	QuietHoursExempt   *bool   `json:"quiet_hours_exempt,omitempty"`
-	OnePerUser         *bool   `json:"one_per_user,omitempty"`
+	Priority            *int64  `json:"priority,omitempty"`
+	CollapseID          *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
+	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
+	OnePerUser          *bool   `json:"one_per_user,omitempty"`
 }
 
 // CampaignsCreateBodyRecurrence: CampaignsCreateBodyRecurrence şeması.
@@ -1499,11 +1501,12 @@ type CampaignsUpdateBodyDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority           *int64  `json:"priority,omitempty"`
-	CollapseID         *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
-	QuietHoursExempt   *bool   `json:"quiet_hours_exempt,omitempty"`
-	OnePerUser         *bool   `json:"one_per_user,omitempty"`
+	Priority            *int64  `json:"priority,omitempty"`
+	CollapseID          *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
+	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
+	OnePerUser          *bool   `json:"one_per_user,omitempty"`
 }
 
 // CampaignsUpdateBodyRecurrence: CampaignsUpdateBodyRecurrence şeması.
@@ -2550,8 +2553,9 @@ type CreateInAppDtoAbTestWinner struct {
 
 // CreateInAppDtoAudience: CreateInAppDtoAudience şeması.
 type CreateInAppDtoAudience struct {
-	IncludedSegments []string `json:"included_segments,omitempty"`
-	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	IncludedSegments    []string `json:"included_segments,omitempty"`
+	ExcludedSegments    []string `json:"excluded_segments,omitempty"`
+	GlobalControlExempt *bool    `json:"global_control_exempt,omitempty"`
 }
 
 // CreateInAppDtoDisplay: CreateInAppDtoDisplay şeması.
@@ -4227,6 +4231,66 @@ type FunnelReportStepsItem struct {
 	DropOff int64 `json:"drop_off"`
 }
 
+// GlobalControl: GlobalControl şeması.
+type GlobalControl struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Percent int64 `json:"percent"`
+	// Zorunlu.
+	StartedAt *string `json:"started_at"`
+}
+
+// GlobalControlReport: GlobalControlReport şeması.
+type GlobalControlReport struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Percent int64 `json:"percent"`
+	// Zorunlu.
+	StartedAt *string `json:"started_at"`
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Events []string `json:"events"`
+	// Zorunlu.
+	Control GlobalControlReportControl `json:"control"`
+	// Zorunlu.
+	Treatment GlobalControlReportTreatment `json:"treatment"`
+	// Zorunlu.
+	LiftPercent *float64 `json:"lift_percent"`
+	// Zorunlu.
+	IncrementalConversions int64 `json:"incremental_conversions"`
+	// Zorunlu.
+	PValue *float64 `json:"p_value"`
+	// Zorunlu.
+	Significant bool `json:"significant"`
+	// Zorunlu.
+	WithheldMessages int64 `json:"withheld_messages"`
+}
+
+// GlobalControlReportControl: GlobalControlReportControl şeması.
+type GlobalControlReportControl struct {
+	// Zorunlu.
+	Users int64 `json:"users"`
+	// Zorunlu.
+	Converted int64 `json:"converted"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
+// GlobalControlReportTreatment: GlobalControlReportTreatment şeması.
+type GlobalControlReportTreatment struct {
+	// Zorunlu.
+	Users int64 `json:"users"`
+	// Zorunlu.
+	Converted int64 `json:"converted"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
 // IdentityKey: IdentityKey şeması.
 type IdentityKey struct {
 	// Zorunlu.
@@ -4364,8 +4428,9 @@ type InAppMessageAbTestWinner struct {
 
 // InAppMessageAudience: InAppMessageAudience şeması.
 type InAppMessageAudience struct {
-	IncludedSegments []string `json:"included_segments,omitempty"`
-	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	IncludedSegments    []string `json:"included_segments,omitempty"`
+	ExcludedSegments    []string `json:"excluded_segments,omitempty"`
+	GlobalControlExempt *bool    `json:"global_control_exempt,omitempty"`
 }
 
 // InAppMessageDisplay: InAppMessageDisplay şeması.
@@ -5628,11 +5693,12 @@ type McpCreateCampaignDraftBodyDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority           *int64  `json:"priority,omitempty"`
-	CollapseID         *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
-	QuietHoursExempt   *bool   `json:"quiet_hours_exempt,omitempty"`
-	OnePerUser         *bool   `json:"one_per_user,omitempty"`
+	Priority            *int64  `json:"priority,omitempty"`
+	CollapseID          *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
+	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
+	OnePerUser          *bool   `json:"one_per_user,omitempty"`
 }
 
 // McpCreateCampaignDraftBodyRecurrence: McpCreateCampaignDraftBodyRecurrence şeması.
@@ -7764,6 +7830,14 @@ type UpdateDataFeedDto struct {
 	Enabled         *bool             `json:"enabled,omitempty"`
 }
 
+// UpdateGlobalControlDto: UpdateGlobalControlDto şeması.
+type UpdateGlobalControlDto struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Percent int64 `json:"percent"`
+}
+
 // UpdateInAppDto: UpdateInAppDto şeması.
 type UpdateInAppDto struct {
 	Name          *string                      `json:"name,omitempty"`
@@ -7795,8 +7869,9 @@ type UpdateInAppDtoAbTestWinner struct {
 
 // UpdateInAppDtoAudience: UpdateInAppDtoAudience şeması.
 type UpdateInAppDtoAudience struct {
-	IncludedSegments []string `json:"included_segments,omitempty"`
-	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	IncludedSegments    []string `json:"included_segments,omitempty"`
+	ExcludedSegments    []string `json:"excluded_segments,omitempty"`
+	GlobalControlExempt *bool    `json:"global_control_exempt,omitempty"`
 }
 
 // UpdateInAppDtoDisplay: UpdateInAppDtoDisplay şeması.
