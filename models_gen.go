@@ -2716,6 +2716,7 @@ type CreateInAppDto struct {
 	Audience    *CreateInAppDtoAudience  `json:"audience,omitempty"`
 	Frequency   *CreateInAppDtoFrequency `json:"frequency,omitempty"`
 	JourneyOnly *bool                    `json:"journey_only,omitempty"`
+	Placement   *string                  `json:"placement,omitempty"`
 	Priority    *int64                   `json:"priority,omitempty"`
 	StartAt     *string                  `json:"start_at,omitempty"`
 	EndAt       *string                  `json:"end_at,omitempty"`
@@ -4615,6 +4616,8 @@ type InAppMessage struct {
 	Frequency InAppMessageFrequency `json:"frequency"`
 	// Zorunlu.
 	JourneyOnly bool `json:"journey_only"`
+	// Zorunlu.
+	Placement *string `json:"placement"`
 	// Zorunlu.
 	StartAt *string `json:"start_at"`
 	// Zorunlu.
@@ -8259,6 +8262,7 @@ type UpdateInAppDto struct {
 	Audience      *UpdateInAppDtoAudience      `json:"audience,omitempty"`
 	Frequency     *UpdateInAppDtoFrequency     `json:"frequency,omitempty"`
 	JourneyOnly   *bool                        `json:"journey_only,omitempty"`
+	Placement     *string                      `json:"placement,omitempty"`
 	Priority      *int64                       `json:"priority,omitempty"`
 	StartAt       *string                      `json:"start_at,omitempty"`
 	EndAt         *string                      `json:"end_at,omitempty"`
