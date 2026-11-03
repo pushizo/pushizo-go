@@ -4080,6 +4080,103 @@ func (s *CatalogsService) RemoveItem(ctx context.Context, catalogID string, item
 	return &out, nil
 }
 
+// CatalogsListRecommendationsParams: CatalogsService.ListRecommendations için isteğe bağlı sorgu parametreleri.
+type CatalogsListRecommendationsParams struct {
+	Limit      *int64
+	UserID     *string
+	ExternalID *string
+	ItemID     *string
+	Category   *string
+}
+
+func (p *CatalogsListRecommendationsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "user_id", p.UserID)
+	addQuery(q, "external_id", p.ExternalID)
+	addQuery(q, "item_id", p.ItemID)
+	addQuery(q, "category", p.Category)
+}
+
+// ListRecommendations: Ürün önerileri
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}/recommendations
+//
+// Stokta olmayan ve kullanıcının satın aldığı ürünler çıkmaz. Sonuç yetmezse yedek kaynakla tamamlanır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) ListRecommendations(ctx context.Context, catalogID string, strategy string, params *CatalogsListRecommendationsParams, opts ...RequestOption) (*Recommendations, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	op.query = url.Values{}
+	addQuery(op.query, "strategy", &strategy)
+	params.appendQuery(op.query)
+	var out Recommendations
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Config: Öneri modeli
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}/recommendations/config
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Config(ctx context.Context, catalogID string, opts ...RequestOption) (*RecommendationConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/config"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	var out RecommendationConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateConfig: Öneri modelini ayarla
+//
+// PUT /v1/apps/{appId}/catalogs/{catalogId}/recommendations/config
+//
+// Model açıksa öneriler kayıttan sonra yeniden hesaplanır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) UpdateConfig(ctx context.Context, catalogID string, body *UpdateRecommendationConfigDto, opts ...RequestOption) (*RecommendationConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/config"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out RecommendationConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Compute: Önerileri yeniden hesapla
+//
+// POST /v1/apps/{appId}/catalogs/{catalogId}/recommendations/compute
+//
+// İş kuyruğa alınır; ilerleme `status` alanından izlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CatalogsService) Compute(ctx context.Context, catalogID string, opts ...RequestOption) (*RecommendationConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/compute"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	var out RecommendationConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // CategoriesService: categories kaynağı.
 type CategoriesService struct {
 	client *Client

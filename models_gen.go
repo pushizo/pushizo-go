@@ -6450,6 +6450,42 @@ type PublicSurveyResponseDto struct {
 	ExternalID *string        `json:"external_id,omitempty"`
 }
 
+// RecommendationConfig: RecommendationConfig şeması.
+type RecommendationConfig struct {
+	// Zorunlu.
+	Configured bool `json:"configured"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	ViewEvents []string `json:"view_events"`
+	// Zorunlu.
+	PurchaseEvents []string `json:"purchase_events"`
+	// Zorunlu.
+	ItemProperty string `json:"item_property"`
+	// Zorunlu.
+	WindowDays int64 `json:"window_days"`
+	// Zorunlu. Değerler: "idle", "queued", "running", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	LastComputedAt *string `json:"last_computed_at"`
+	// Zorunlu.
+	ScoredItems int64 `json:"scored_items"`
+	// Zorunlu.
+	ScoredUsers int64 `json:"scored_users"`
+}
+
+// Recommendations: Recommendations şeması.
+type Recommendations struct {
+	// Zorunlu. Değerler: "personalized", "popular", "trending", "similar", "category", "recently_viewed", "new_arrivals".
+	Strategy string `json:"strategy"`
+	// Zorunlu. Değerler: "personalized", "popular", "trending", "similar", "category", "recently_viewed", "new_arrivals".
+	Source *string `json:"source"`
+	// Zorunlu.
+	Data []CatalogItem `json:"data"`
+}
+
 // RenderPreview: RenderPreview şeması.
 type RenderPreview struct {
 	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
@@ -8248,6 +8284,16 @@ type UpdateNodeDtoPosition struct {
 type UpdatePromoCodeListDto struct {
 	Description *string `json:"description,omitempty"`
 	ExpiresAt   *string `json:"expires_at,omitempty"`
+}
+
+// UpdateRecommendationConfigDto: UpdateRecommendationConfigDto şeması.
+type UpdateRecommendationConfigDto struct {
+	// Zorunlu.
+	Enabled        bool     `json:"enabled"`
+	ViewEvents     []string `json:"view_events,omitempty"`
+	PurchaseEvents []string `json:"purchase_events,omitempty"`
+	ItemProperty   *string  `json:"item_property,omitempty"`
+	WindowDays     *int64   `json:"window_days,omitempty"`
 }
 
 // UpdateReverseEtlDto: UpdateReverseEtlDto şeması.
