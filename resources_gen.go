@@ -41,6 +41,7 @@ type services struct {
 	DataFeeds           *DataFeedsService
 	EmailDeliverability *EmailDeliverabilityService
 	Forms               *FormsService
+	Geofences           *GeofencesService
 	GlobalControl       *GlobalControlService
 	IdentityKeys        *IdentityKeysService
 	Integrations        *IntegrationsService
@@ -89,6 +90,7 @@ func (c *Client) initServices() {
 	c.DataFeeds = &DataFeedsService{client: c}
 	c.EmailDeliverability = &EmailDeliverabilityService{client: c}
 	c.Forms = &FormsService{client: c}
+	c.Geofences = &GeofencesService{client: c}
 	c.GlobalControl = &GlobalControlService{client: c}
 	c.IdentityKeys = &IdentityKeysService{client: c}
 	c.Integrations = &IntegrationsService{client: c}
@@ -5161,6 +5163,99 @@ func (s *FormsService) Submit(ctx context.Context, formID string, body *PublicFo
 	}
 	op.body = body
 	var out FormSubmitResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GeofencesService: geofences kaynağı.
+type GeofencesService struct {
+	client *Client
+}
+
+// List: Bölgeler
+//
+// GET /v1/apps/{appId}/geofences
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GeofencesService) List(ctx context.Context, opts ...RequestOption) (*GeofenceList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/geofences"}
+	var out GeofenceList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Bölge oluştur
+//
+// POST /v1/apps/{appId}/geofences
+//
+// Konum paylaşan abonelik bölgeye girip çıktığında `geofence_enter` ve `geofence_exit` olayları oluşur.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GeofencesService) Create(ctx context.Context, body *CreateGeofenceDto, opts ...RequestOption) (*Geofence, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/geofences"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Geofence
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Bölge ayrıntısı
+//
+// GET /v1/apps/{appId}/geofences/{geofenceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GeofencesService) Get(ctx context.Context, geofenceID string, opts ...RequestOption) (*Geofence, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/geofences/{geofenceId}"}
+	op.pathParams = map[string]string{"geofenceId": geofenceID}
+	var out Geofence
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Bölgeyi güncelle
+//
+// PATCH /v1/apps/{appId}/geofences/{geofenceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GeofencesService) Update(ctx context.Context, geofenceID string, body *UpdateGeofenceDto, opts ...RequestOption) (*Geofence, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/geofences/{geofenceId}"}
+	op.pathParams = map[string]string{"geofenceId": geofenceID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Geofence
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Bölgeyi sil
+//
+// DELETE /v1/apps/{appId}/geofences/{geofenceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *GeofencesService) Delete(ctx context.Context, geofenceID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/geofences/{geofenceId}"}
+	op.pathParams = map[string]string{"geofenceId": geofenceID}
+	var out Ok
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

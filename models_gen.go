@@ -2593,6 +2593,20 @@ type CreateFormDtoSettingsSubscribe struct {
 	SMS   *bool `json:"sms,omitempty"`
 }
 
+// CreateGeofenceDto: CreateGeofenceDto şeması.
+type CreateGeofenceDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Lat float64 `json:"lat"`
+	// Zorunlu.
+	Lng float64 `json:"lng"`
+	// Zorunlu.
+	RadiusM         int64  `json:"radius_m"`
+	CooldownMinutes *int64 `json:"cooldown_minutes,omitempty"`
+	Enabled         *bool  `json:"enabled,omitempty"`
+}
+
 // CreateIdentityKeyDto: CreateIdentityKeyDto şeması.
 type CreateIdentityKeyDto struct {
 	Kid          *string        `json:"kid,omitempty"`
@@ -4311,6 +4325,42 @@ type FunnelReportStepsItem struct {
 	ConversionRate *float64 `json:"conversion_rate"`
 	// Zorunlu.
 	DropOff int64 `json:"drop_off"`
+}
+
+// Geofence: Geofence şeması.
+type Geofence struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Lat float64 `json:"lat"`
+	// Zorunlu.
+	Lng float64 `json:"lng"`
+	// Zorunlu.
+	RadiusM int64 `json:"radius_m"`
+	// Zorunlu.
+	CooldownMinutes int64 `json:"cooldown_minutes"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	EnterCount int64 `json:"enter_count"`
+	// Zorunlu.
+	ExitCount int64 `json:"exit_count"`
+	// Zorunlu.
+	InsideCount int64 `json:"inside_count"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// GeofenceList: GeofenceList şeması.
+type GeofenceList struct {
+	// Zorunlu.
+	Data []Geofence `json:"data"`
 }
 
 // GlobalControl: GlobalControl şeması.
@@ -8062,6 +8112,16 @@ type UpdateDataFeedDto struct {
 	CacheTTLSeconds *int64            `json:"cache_ttl_seconds,omitempty"`
 	TimeoutMs       *int64            `json:"timeout_ms,omitempty"`
 	Enabled         *bool             `json:"enabled,omitempty"`
+}
+
+// UpdateGeofenceDto: UpdateGeofenceDto şeması.
+type UpdateGeofenceDto struct {
+	Name            *string  `json:"name,omitempty"`
+	Lat             *float64 `json:"lat,omitempty"`
+	Lng             *float64 `json:"lng,omitempty"`
+	RadiusM         *int64   `json:"radius_m,omitempty"`
+	CooldownMinutes *int64   `json:"cooldown_minutes,omitempty"`
+	Enabled         *bool    `json:"enabled,omitempty"`
 }
 
 // UpdateGlobalControlDto: UpdateGlobalControlDto şeması.
