@@ -5180,6 +5180,22 @@ func (s *JourneysService) Versions(ctx context.Context, journeyID string, opts .
 	return &out, nil
 }
 
+// RestoreVersion: Eski sürümü yeni taslak olarak geri yükle (yayındaki sürüm değişmez)
+//
+// POST /v1/apps/{appId}/journeys/{journeyId}/versions/{version}/restore
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *JourneysService) RestoreVersion(ctx context.Context, journeyID string, version string, opts ...RequestOption) (*JourneyDetail, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/journeys/{journeyId}/versions/{version}/restore"}
+	op.pathParams = map[string]string{"journeyId": journeyID, "version": version}
+	var out JourneyDetail
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // Publish: Yayınla
 //
 // POST /v1/apps/{appId}/journeys/{journeyId}/publish

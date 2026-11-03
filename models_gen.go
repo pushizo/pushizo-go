@@ -8107,7 +8107,7 @@ type UpdateWarehouseExportDto struct {
 	Name *string `json:"name,omitempty"`
 	// Değerler: "deliveries", "delivery_events", "events", "conversions", "users", "subscriptions".
 	Tables []string `json:"tables,omitempty"`
-	// Değerler: "hourly", "daily".
+	// Değerler: "every_15_minutes", "hourly", "daily".
 	Schedule    *string        `json:"schedule,omitempty"`
 	Enabled     *bool          `json:"enabled,omitempty"`
 	Config      map[string]any `json:"config,omitempty"`
@@ -8658,7 +8658,7 @@ type WarehouseExport struct {
 	CredentialsHint string `json:"credentials_hint"`
 	// Zorunlu. Değerler: "deliveries", "delivery_events", "events", "conversions", "users", "subscriptions".
 	Tables []string `json:"tables"`
-	// Zorunlu. Değerler: "hourly", "daily".
+	// Zorunlu. Değerler: "every_15_minutes", "hourly", "daily".
 	Schedule string `json:"schedule"`
 	// Zorunlu.
 	Enabled bool `json:"enabled"`
