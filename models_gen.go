@@ -9846,6 +9846,118 @@ type UserExport struct {
 	User UserDetail `json:"user"`
 	// Zorunlu.
 	Events []UserExportEventsItem `json:"events"`
+	// Zorunlu.
+	Derived UserExportDerived `json:"derived"`
+}
+
+// UserExportDerived: UserExportDerived şeması.
+type UserExportDerived struct {
+	// Zorunlu.
+	WalletPasses []UserExportDerivedWalletPassesItem `json:"wallet_passes"`
+	// Zorunlu.
+	Rfm *UserExportDerivedRfm `json:"rfm"`
+	// Zorunlu.
+	Predictions []UserExportDerivedPredictionsItem `json:"predictions"`
+	// Zorunlu.
+	ChannelScores []UserExportDerivedChannelScoresItem `json:"channel_scores"`
+	// Zorunlu.
+	Decisions []UserExportDerivedDecisionsItem `json:"decisions"`
+	// Zorunlu.
+	Recommendations []UserExportDerivedRecommendationsItem `json:"recommendations"`
+}
+
+// UserExportDerivedChannelScoresItem: UserExportDerivedChannelScoresItem şeması.
+type UserExportDerivedChannelScoresItem struct {
+	// Zorunlu.
+	Channel string `json:"channel"`
+	// Zorunlu.
+	Sends float64 `json:"sends"`
+	// Zorunlu.
+	Engaged float64 `json:"engaged"`
+	// Zorunlu.
+	Score float64 `json:"score"`
+	// Zorunlu.
+	IsBest bool `json:"is_best"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
+}
+
+// UserExportDerivedDecisionsItem: UserExportDerivedDecisionsItem şeması.
+type UserExportDerivedDecisionsItem struct {
+	// Zorunlu.
+	Agent string `json:"agent"`
+	// Zorunlu.
+	ArmID string `json:"arm_id"`
+	// Zorunlu.
+	Context string `json:"context"`
+	// Zorunlu.
+	AssignedAt string `json:"assigned_at"`
+	// Zorunlu.
+	RewardedAt *string `json:"rewarded_at"`
+}
+
+// UserExportDerivedPredictionsItem: UserExportDerivedPredictionsItem şeması.
+type UserExportDerivedPredictionsItem struct {
+	// Zorunlu.
+	Model string `json:"model"`
+	// Zorunlu.
+	Score float64 `json:"score"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
+}
+
+// UserExportDerivedRecommendationsItem: UserExportDerivedRecommendationsItem şeması.
+type UserExportDerivedRecommendationsItem struct {
+	// Zorunlu.
+	CatalogID string `json:"catalog_id"`
+	// Zorunlu.
+	Personalized []string `json:"personalized"`
+	// Zorunlu.
+	Recent []string `json:"recent"`
+	// Zorunlu.
+	Purchased []string `json:"purchased"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
+}
+
+// UserExportDerivedRfm: UserExportDerivedRfm şeması.
+type UserExportDerivedRfm struct {
+	// Zorunlu.
+	Segment string `json:"segment"`
+	// Zorunlu.
+	SegmentSince string `json:"segment_since"`
+	// Zorunlu.
+	R float64 `json:"r"`
+	// Zorunlu.
+	F float64 `json:"f"`
+	// Zorunlu.
+	M *float64 `json:"m"`
+	// Zorunlu.
+	Frequency float64 `json:"frequency"`
+	// Zorunlu.
+	Monetary float64 `json:"monetary"`
+	// Zorunlu.
+	LastEventAt string `json:"last_event_at"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
+}
+
+// UserExportDerivedWalletPassesItem: UserExportDerivedWalletPassesItem şeması.
+type UserExportDerivedWalletPassesItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	TemplateID string `json:"template_id"`
+	// Zorunlu.
+	Status string `json:"status"`
+	// Zorunlu.
+	BarcodeValue string `json:"barcode_value"`
+	// Zorunlu.
+	Values map[string]string `json:"values"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
 }
 
 // UserExportEventsItem: UserExportEventsItem şeması.
