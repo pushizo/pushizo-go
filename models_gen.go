@@ -3205,6 +3205,18 @@ type CreateNotificationResult struct {
 	ExternalIDMissing []string `json:"external_id_missing"`
 }
 
+// CreatePredictionDto: CreatePredictionDto şeması.
+type CreatePredictionDto struct {
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "churn", "event".
+	Kind        string   `json:"kind"`
+	EventNames  []string `json:"event_names,omitempty"`
+	HorizonDays *int64   `json:"horizon_days,omitempty"`
+}
+
 // CreatePromoCodeListDto: CreatePromoCodeListDto şeması.
 type CreatePromoCodeListDto struct {
 	// Zorunlu.
@@ -6703,6 +6715,110 @@ type PostmasterStatsDataItem struct {
 	SpamRate *string `json:"spam_rate"`
 }
 
+// PredictionModel: PredictionModel şeması.
+type PredictionModel struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "churn", "event".
+	Kind string `json:"kind"`
+	// Zorunlu.
+	EventNames []string `json:"event_names"`
+	// Zorunlu.
+	HorizonDays int64 `json:"horizon_days"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu. Değerler: "idle", "queued", "running", "failed".
+	Status string `json:"status"`
+	// Zorunlu. Değerler: "ready", "insufficient_data", "low_quality".
+	Outcome *string `json:"outcome"`
+	// Zorunlu.
+	LastComputedAt *string `json:"last_computed_at"`
+	// Zorunlu.
+	ScoredUsers int64 `json:"scored_users"`
+	// Zorunlu.
+	Metrics *PredictionModelMetrics `json:"metrics"`
+	// Zorunlu.
+	Distribution []PredictionModelDistributionItem `json:"distribution"`
+}
+
+// PredictionModelDistributionItem: PredictionModelDistributionItem şeması.
+type PredictionModelDistributionItem struct {
+	// Zorunlu. Değerler: "low", "medium", "high".
+	Bucket string `json:"bucket"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+}
+
+// PredictionModelList: PredictionModelList şeması.
+type PredictionModelList struct {
+	// Zorunlu.
+	Data []PredictionModel `json:"data"`
+}
+
+// PredictionModelMetrics: PredictionModelMetrics şeması.
+type PredictionModelMetrics struct {
+	// Zorunlu.
+	Auc *float64 `json:"auc"`
+	// Zorunlu.
+	BaseRate *float64 `json:"base_rate"`
+	// Zorunlu.
+	TrainUsers int64 `json:"train_users"`
+	// Zorunlu.
+	HoldoutUsers int64 `json:"holdout_users"`
+	// Zorunlu.
+	Positives int64 `json:"positives"`
+	// Zorunlu.
+	Negatives int64 `json:"negatives"`
+	// Zorunlu.
+	Calibration []PredictionModelMetricsCalibrationItem `json:"calibration"`
+	// Zorunlu.
+	Importance []PredictionModelMetricsImportanceItem `json:"importance"`
+}
+
+// PredictionModelMetricsCalibrationItem: PredictionModelMetricsCalibrationItem şeması.
+type PredictionModelMetricsCalibrationItem struct {
+	// Zorunlu. Değerler: "low", "medium", "high".
+	Bucket string `json:"bucket"`
+	// Zorunlu.
+	Users int64 `json:"users"`
+	// Zorunlu.
+	Predicted *float64 `json:"predicted"`
+	// Zorunlu.
+	Actual *float64 `json:"actual"`
+}
+
+// PredictionModelMetricsImportanceItem: PredictionModelMetricsImportanceItem şeması.
+type PredictionModelMetricsImportanceItem struct {
+	// Zorunlu. Değerler: "recency_days", "events_7", "events_30", "active_days_30", "target_30", "days_since_target", "tenure_days", "sent_30", "engaged_30".
+	Feature string `json:"feature"`
+	// Zorunlu.
+	Weight float64 `json:"weight"`
+}
+
+// PredictionUsersPage: PredictionUsersPage şeması.
+type PredictionUsersPage struct {
+	// Zorunlu.
+	Data []PredictionUsersPageDataItem `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+}
+
+// PredictionUsersPageDataItem: PredictionUsersPageDataItem şeması.
+type PredictionUsersPageDataItem struct {
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu.
+	Score int64 `json:"score"`
+	// Zorunlu. Değerler: "low", "medium", "high".
+	Bucket string `json:"bucket"`
+}
+
 // PromoCodeList: PromoCodeList şeması.
 type PromoCodeList struct {
 	// Zorunlu.
@@ -8813,6 +8929,14 @@ type UpdateNodeDtoPosition struct {
 	X float64 `json:"x"`
 	// Zorunlu.
 	Y float64 `json:"y"`
+}
+
+// UpdatePredictionDto: UpdatePredictionDto şeması.
+type UpdatePredictionDto struct {
+	Name        *string  `json:"name,omitempty"`
+	Enabled     *bool    `json:"enabled,omitempty"`
+	EventNames  []string `json:"event_names,omitempty"`
+	HorizonDays *int64   `json:"horizon_days,omitempty"`
 }
 
 // UpdatePromoCodeListDto: UpdatePromoCodeListDto şeması.

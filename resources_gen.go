@@ -51,6 +51,7 @@ type services struct {
 	LandingPages        *LandingPagesService
 	LiveActivities      *LiveActivitiesService
 	Mcp                 *McpService
+	Predictions         *PredictionsService
 	Preferences         *PreferencesService
 	PromoCodeLists      *PromoCodeListsService
 	ReverseEtl          *ReverseEtlService
@@ -103,6 +104,7 @@ func (c *Client) initServices() {
 	c.LandingPages = &LandingPagesService{client: c}
 	c.LiveActivities = &LiveActivitiesService{client: c}
 	c.Mcp = &McpService{client: c}
+	c.Predictions = &PredictionsService{client: c}
 	c.Preferences = &PreferencesService{client: c}
 	c.PromoCodeLists = &PromoCodeListsService{client: c}
 	c.ReverseEtl = &ReverseEtlService{client: c}
@@ -6656,6 +6658,148 @@ func (s *McpService) TestSend(ctx context.Context, body *TestPushDto, opts ...Re
 	}
 	op.body = body
 	var out CreateNotificationResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PredictionsService: predictions kaynağı.
+type PredictionsService struct {
+	client *Client
+}
+
+// List: Öngörü modelleri
+//
+// GET /v1/apps/{appId}/predictions
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) List(ctx context.Context, opts ...RequestOption) (*PredictionModelList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/predictions"}
+	var out PredictionModelList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Öngörü modeli oluştur
+//
+// POST /v1/apps/{appId}/predictions
+//
+// Eğitim kuyruğa alınır; sonuç `outcome` alanından izlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) Create(ctx context.Context, body *CreatePredictionDto, opts ...RequestOption) (*PredictionModel, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/predictions"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out PredictionModel
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Öngörü modeli
+//
+// GET /v1/apps/{appId}/predictions/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) Get(ctx context.Context, id string, opts ...RequestOption) (*PredictionModel, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/predictions/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	var out PredictionModel
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Öngörü modelini güncelle
+//
+// PATCH /v1/apps/{appId}/predictions/{id}
+//
+// Olay veya ufuk değişirse yeniden eğitilir; kapatınca skorlar silinir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) Update(ctx context.Context, id string, body *UpdatePredictionDto, opts ...RequestOption) (*PredictionModel, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/predictions/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out PredictionModel
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Öngörü modelini sil
+//
+// DELETE /v1/apps/{appId}/predictions/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) Delete(ctx context.Context, id string, opts ...RequestOption) error {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/predictions/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	return s.client.do(ctx, op, ro, nil)
+}
+
+// Compute: Modeli yeniden eğit
+//
+// POST /v1/apps/{appId}/predictions/{id}/compute
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) Compute(ctx context.Context, id string, opts ...RequestOption) (*PredictionModel, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/predictions/{id}/compute"}
+	op.pathParams = map[string]string{"id": id}
+	var out PredictionModel
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// PredictionsUsersParams: PredictionsService.Users için isteğe bağlı sorgu parametreleri.
+type PredictionsUsersParams struct {
+	// Değerler: "low", "medium", "high".
+	Bucket *string
+	Limit  *int64
+	Cursor *string
+}
+
+func (p *PredictionsUsersParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "bucket", p.Bucket)
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Users: Skoru olan kullanıcılar
+//
+// GET /v1/apps/{appId}/predictions/{id}/users
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *PredictionsService) Users(ctx context.Context, id string, params *PredictionsUsersParams, opts ...RequestOption) (*PredictionUsersPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/predictions/{id}/users"}
+	op.pathParams = map[string]string{"id": id}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out PredictionUsersPage
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
