@@ -3491,6 +3491,47 @@ type CreateTemplateDtoContentWhatsappTemplateButtonParamsItem struct {
 	Value string `json:"value"`
 }
 
+// CreateWalletTemplateDto: CreateWalletTemplateDto şeması.
+type CreateWalletTemplateDto struct {
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "coupon", "loyalty", "event", "generic".
+	Kind string `json:"kind"`
+	// Zorunlu.
+	Design CreateWalletTemplateDtoDesign `json:"design"`
+	Images map[string]string             `json:"images,omitempty"`
+}
+
+// CreateWalletTemplateDtoDesign: CreateWalletTemplateDtoDesign şeması.
+type CreateWalletTemplateDtoDesign struct {
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Description string `json:"description"`
+	// Zorunlu.
+	Organization    string  `json:"organization"`
+	BackgroundColor *string `json:"background_color,omitempty"`
+	ForegroundColor *string `json:"foreground_color,omitempty"`
+	LabelColor      *string `json:"label_color,omitempty"`
+	// Değerler: "qr", "pdf417", "aztec", "code128".
+	Barcode    *string                                   `json:"barcode,omitempty"`
+	Fields     []CreateWalletTemplateDtoDesignFieldsItem `json:"fields,omitempty"`
+	ExpiresAt  *string                                   `json:"expires_at,omitempty"`
+	RelevantAt *string                                   `json:"relevant_at,omitempty"`
+}
+
+// CreateWalletTemplateDtoDesignFieldsItem: CreateWalletTemplateDtoDesignFieldsItem şeması.
+type CreateWalletTemplateDtoDesignFieldsItem struct {
+	// Zorunlu.
+	Key   string  `json:"key"`
+	Label *string `json:"label,omitempty"`
+	Value *string `json:"value,omitempty"`
+	// Değerler: "header", "primary", "secondary", "auxiliary", "back".
+	Section *string `json:"section,omitempty"`
+}
+
 // CreateWarmupPlanDto: CreateWarmupPlanDto şeması.
 type CreateWarmupPlanDto struct {
 	// Zorunlu.
@@ -5246,6 +5287,15 @@ type InboxTeamList struct {
 type IntegrationOk struct {
 	// Zorunlu.
 	Ok bool `json:"ok"`
+}
+
+// IssueWalletPassDto: IssueWalletPassDto şeması.
+type IssueWalletPassDto struct {
+	// Zorunlu.
+	TemplateID   string            `json:"template_id"`
+	ExternalID   *string           `json:"external_id,omitempty"`
+	BarcodeValue *string           `json:"barcode_value,omitempty"`
+	Values       map[string]string `json:"values,omitempty"`
 }
 
 // Journey: Journey şeması.
@@ -9023,6 +9073,78 @@ type UpdateTemplateDtoContentWhatsappTemplateButtonParamsItem struct {
 	Value string `json:"value"`
 }
 
+// UpdateWalletConfigDto: UpdateWalletConfigDto şeması.
+type UpdateWalletConfigDto struct {
+	Apple  *UpdateWalletConfigDtoApple  `json:"apple,omitempty"`
+	Google *UpdateWalletConfigDtoGoogle `json:"google,omitempty"`
+}
+
+// UpdateWalletConfigDtoApple: UpdateWalletConfigDtoApple şeması.
+type UpdateWalletConfigDtoApple struct {
+	// Zorunlu.
+	PassTypeID string `json:"pass_type_id"`
+	// Zorunlu.
+	TeamID string `json:"team_id"`
+	// Zorunlu.
+	CertificatePem string `json:"certificate_pem"`
+	// Zorunlu.
+	PrivateKeyPem string  `json:"private_key_pem"`
+	KeyPassphrase *string `json:"key_passphrase,omitempty"`
+	// Zorunlu.
+	WwdrPem string `json:"wwdr_pem"`
+}
+
+// UpdateWalletConfigDtoGoogle: UpdateWalletConfigDtoGoogle şeması.
+type UpdateWalletConfigDtoGoogle struct {
+	// Zorunlu.
+	IssuerID string `json:"issuer_id"`
+	// Zorunlu.
+	ServiceAccountJSON string `json:"service_account_json"`
+}
+
+// UpdateWalletPassDto: UpdateWalletPassDto şeması.
+type UpdateWalletPassDto struct {
+	BarcodeValue *string           `json:"barcode_value,omitempty"`
+	Values       map[string]string `json:"values,omitempty"`
+}
+
+// UpdateWalletTemplateDto: UpdateWalletTemplateDto şeması.
+type UpdateWalletTemplateDto struct {
+	Name *string `json:"name,omitempty"`
+	// Değerler: "active", "archived".
+	Status *string                        `json:"status,omitempty"`
+	Design *UpdateWalletTemplateDtoDesign `json:"design,omitempty"`
+	Images map[string]string              `json:"images,omitempty"`
+}
+
+// UpdateWalletTemplateDtoDesign: UpdateWalletTemplateDtoDesign şeması.
+type UpdateWalletTemplateDtoDesign struct {
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Description string `json:"description"`
+	// Zorunlu.
+	Organization    string  `json:"organization"`
+	BackgroundColor *string `json:"background_color,omitempty"`
+	ForegroundColor *string `json:"foreground_color,omitempty"`
+	LabelColor      *string `json:"label_color,omitempty"`
+	// Değerler: "qr", "pdf417", "aztec", "code128".
+	Barcode    *string                                   `json:"barcode,omitempty"`
+	Fields     []UpdateWalletTemplateDtoDesignFieldsItem `json:"fields,omitempty"`
+	ExpiresAt  *string                                   `json:"expires_at,omitempty"`
+	RelevantAt *string                                   `json:"relevant_at,omitempty"`
+}
+
+// UpdateWalletTemplateDtoDesignFieldsItem: UpdateWalletTemplateDtoDesignFieldsItem şeması.
+type UpdateWalletTemplateDtoDesignFieldsItem struct {
+	// Zorunlu.
+	Key   string  `json:"key"`
+	Label *string `json:"label,omitempty"`
+	Value *string `json:"value,omitempty"`
+	// Değerler: "header", "primary", "secondary", "auxiliary", "back".
+	Section *string `json:"section,omitempty"`
+}
+
 // UpdateWarehouseExportDto: UpdateWarehouseExportDto şeması.
 type UpdateWarehouseExportDto struct {
 	Name *string `json:"name,omitempty"`
@@ -9567,6 +9689,138 @@ type UsersSearchBodyDefinition struct {
 type VerifyAddressDto struct {
 	// Zorunlu.
 	Address string `json:"address"`
+}
+
+// WalletConfig: WalletConfig şeması.
+type WalletConfig struct {
+	// Zorunlu.
+	Apple WalletConfigApple `json:"apple"`
+	// Zorunlu.
+	Google WalletConfigGoogle `json:"google"`
+}
+
+// WalletConfigApple: WalletConfigApple şeması.
+type WalletConfigApple struct {
+	// Zorunlu.
+	Configured bool `json:"configured"`
+	// Zorunlu.
+	PassTypeID *string `json:"pass_type_id"`
+	// Zorunlu.
+	TeamID *string `json:"team_id"`
+	// Zorunlu.
+	CertificateExpiresAt *string `json:"certificate_expires_at"`
+}
+
+// WalletConfigGoogle: WalletConfigGoogle şeması.
+type WalletConfigGoogle struct {
+	// Zorunlu.
+	Configured bool `json:"configured"`
+	// Zorunlu.
+	IssuerID *string `json:"issuer_id"`
+}
+
+// WalletPass: WalletPass şeması.
+type WalletPass struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	TemplateID string `json:"template_id"`
+	// Zorunlu.
+	UserID *string `json:"user_id"`
+	// Zorunlu.
+	ExternalID *string `json:"external_id"`
+	// Zorunlu.
+	BarcodeValue string `json:"barcode_value"`
+	// Zorunlu.
+	Values map[string]string `json:"values"`
+	// Zorunlu. Değerler: "active", "voided".
+	Status string `json:"status"`
+	// Zorunlu.
+	URL string `json:"url"`
+	// Zorunlu.
+	AppleURL string `json:"apple_url"`
+	// Zorunlu.
+	GoogleURL string `json:"google_url"`
+	// Zorunlu.
+	AppleDevices int64 `json:"apple_devices"`
+	// Zorunlu.
+	Version int64 `json:"version"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// WalletPassPage: WalletPassPage şeması.
+type WalletPassPage struct {
+	// Zorunlu.
+	Data []WalletPass `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+}
+
+// WalletTemplate: WalletTemplate şeması.
+type WalletTemplate struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "coupon", "loyalty", "event", "generic".
+	Kind string `json:"kind"`
+	// Zorunlu. Değerler: "active", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	Design WalletTemplateDesign `json:"design"`
+	// Zorunlu.
+	Images []string `json:"images"`
+	// Zorunlu.
+	Passes int64 `json:"passes"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// WalletTemplateDesign: WalletTemplateDesign şeması.
+type WalletTemplateDesign struct {
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Description string `json:"description"`
+	// Zorunlu.
+	Organization string `json:"organization"`
+	// Zorunlu.
+	BackgroundColor string `json:"background_color"`
+	// Zorunlu.
+	ForegroundColor string `json:"foreground_color"`
+	// Zorunlu.
+	LabelColor string `json:"label_color"`
+	// Zorunlu. Değerler: "qr", "pdf417", "aztec", "code128".
+	Barcode string `json:"barcode"`
+	// Zorunlu.
+	Fields     []WalletTemplateDesignFieldsItem `json:"fields"`
+	ExpiresAt  *string                          `json:"expires_at,omitempty"`
+	RelevantAt *string                          `json:"relevant_at,omitempty"`
+}
+
+// WalletTemplateDesignFieldsItem: WalletTemplateDesignFieldsItem şeması.
+type WalletTemplateDesignFieldsItem struct {
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu.
+	Label string `json:"label"`
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu. Değerler: "header", "primary", "secondary", "auxiliary", "back".
+	Section string `json:"section"`
+}
+
+// WalletTemplateList: WalletTemplateList şeması.
+type WalletTemplateList struct {
+	// Zorunlu.
+	Data []WalletTemplate `json:"data"`
 }
 
 // WarehouseConnectionResult: WarehouseConnectionResult şeması.

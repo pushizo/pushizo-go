@@ -58,6 +58,7 @@ type services struct {
 	SMSKeywords         *SMSKeywordsService
 	Surveys             *SurveysService
 	Verify              *VerifyService
+	Wallet              *WalletService
 	WarehouseExports    *WarehouseExportsService
 	WebCampaigns        *WebCampaignsService
 	Whatsapp            *WhatsappService
@@ -109,6 +110,7 @@ func (c *Client) initServices() {
 	c.SMSKeywords = &SMSKeywordsService{client: c}
 	c.Surveys = &SurveysService{client: c}
 	c.Verify = &VerifyService{client: c}
+	c.Wallet = &WalletService{client: c}
 	c.WarehouseExports = &WarehouseExportsService{client: c}
 	c.WebCampaigns = &WebCampaignsService{client: c}
 	c.Whatsapp = &WhatsappService{client: c}
@@ -7515,6 +7517,243 @@ func (s *VerifyService) Check(ctx context.Context, body *CheckVerifyDto, opts ..
 	}
 	op.body = body
 	var out SMSVerificationCheck
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// WalletService: wallet kaynağı.
+type WalletService struct {
+	client *Client
+}
+
+// Config: Wallet yapılandırması
+//
+// GET /v1/apps/{appId}/wallet/config
+//
+// Kimlik bilgisi geri okunamaz, yalnızca durum döner.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) Config(ctx context.Context, opts ...RequestOption) (*WalletConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/config"}
+	var out WalletConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateConfig: Wallet kimlik bilgilerini ayarla
+//
+// PUT /v1/apps/{appId}/wallet/config
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) UpdateConfig(ctx context.Context, body *UpdateWalletConfigDto, opts ...RequestOption) (*WalletConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/wallet/config"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WalletConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Templates: Wallet şablonları
+//
+// GET /v1/apps/{appId}/wallet/templates
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) Templates(ctx context.Context, opts ...RequestOption) (*WalletTemplateList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/templates"}
+	var out WalletTemplateList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateTemplate: Wallet şablonu oluştur
+//
+// POST /v1/apps/{appId}/wallet/templates
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) CreateTemplate(ctx context.Context, body *CreateWalletTemplateDto, opts ...RequestOption) (*WalletTemplate, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/wallet/templates"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WalletTemplate
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Template: Wallet şablonu
+//
+// GET /v1/apps/{appId}/wallet/templates/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) Template(ctx context.Context, id string, opts ...RequestOption) (*WalletTemplate, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/templates/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	var out WalletTemplate
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateTemplate: Wallet şablonunu güncelle
+//
+// PATCH /v1/apps/{appId}/wallet/templates/{id}
+//
+// Tasarım değişirse verilmiş kartlar da güncellenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) UpdateTemplate(ctx context.Context, id string, body *UpdateWalletTemplateDto, opts ...RequestOption) (*WalletTemplate, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/wallet/templates/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WalletTemplate
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RemoveTemplate: Wallet şablonunu sil
+//
+// DELETE /v1/apps/{appId}/wallet/templates/{id}
+//
+// Verilmiş kartı olan şablon silinemez, arşivlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) RemoveTemplate(ctx context.Context, id string, opts ...RequestOption) error {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/wallet/templates/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	return s.client.do(ctx, op, ro, nil)
+}
+
+// WalletPassesParams: WalletService.Passes için isteğe bağlı sorgu parametreleri.
+type WalletPassesParams struct {
+	TemplateID *string
+	Limit      *int64
+	Cursor     *string
+}
+
+func (p *WalletPassesParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "template_id", p.TemplateID)
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Passes: Verilmiş kartlar
+//
+// GET /v1/apps/{appId}/wallet/passes
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) Passes(ctx context.Context, params *WalletPassesParams, opts ...RequestOption) (*WalletPassPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/passes"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out WalletPassPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Issue: Kart ver
+//
+// POST /v1/apps/{appId}/wallet/passes
+//
+// Kullanıcılı kart şablon başına tektir; tekrar istek aynı kartı döndürür.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) Issue(ctx context.Context, body *IssueWalletPassDto, opts ...RequestOption) (*WalletPass, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/wallet/passes"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WalletPass
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Pass: Kart
+//
+// GET /v1/apps/{appId}/wallet/passes/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) Pass(ctx context.Context, id string, opts ...RequestOption) (*WalletPass, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/passes/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	var out WalletPass
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdatePass: Kartı güncelle
+//
+// PATCH /v1/apps/{appId}/wallet/passes/{id}
+//
+// Cihazdaki kart arka planda yenilenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) UpdatePass(ctx context.Context, id string, body *UpdateWalletPassDto, opts ...RequestOption) (*WalletPass, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/wallet/passes/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WalletPass
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// VoidPass: Kartı iptal et
+//
+// POST /v1/apps/{appId}/wallet/passes/{id}/void
+//
+// Geri alınmaz; cihazdaki kart geçersiz görünür.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WalletService) VoidPass(ctx context.Context, id string, opts ...RequestOption) (*WalletPass, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/wallet/passes/{id}/void"}
+	op.pathParams = map[string]string{"id": id}
+	var out WalletPass
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
