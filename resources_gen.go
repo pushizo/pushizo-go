@@ -40,6 +40,7 @@ type services struct {
 	ContentTables       *ContentTablesService
 	Conversations       *ConversationsService
 	DataFeeds           *DataFeedsService
+	DecisionAgents      *DecisionAgentsService
 	EmailDeliverability *EmailDeliverabilityService
 	FeatureFlags        *FeatureFlagsService
 	Forms               *FormsService
@@ -93,6 +94,7 @@ func (c *Client) initServices() {
 	c.ContentTables = &ContentTablesService{client: c}
 	c.Conversations = &ConversationsService{client: c}
 	c.DataFeeds = &DataFeedsService{client: c}
+	c.DecisionAgents = &DecisionAgentsService{client: c}
 	c.EmailDeliverability = &EmailDeliverabilityService{client: c}
 	c.FeatureFlags = &FeatureFlagsService{client: c}
 	c.Forms = &FormsService{client: c}
@@ -5045,6 +5047,135 @@ func (s *DataFeedsService) TestFeed(ctx context.Context, feedID string, body *Te
 	}
 	op.body = body
 	var out DataFeedTestResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DecisionAgentsService: decisionAgents kaynağı.
+type DecisionAgentsService struct {
+	client *Client
+}
+
+// List: Karar ajanları
+//
+// GET /v1/apps/{appId}/decision-agents
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) List(ctx context.Context, opts ...RequestOption) (*DecisionAgentList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/decision-agents"}
+	var out DecisionAgentList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Create: Karar ajanı oluştur
+//
+// POST /v1/apps/{appId}/decision-agents
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) Create(ctx context.Context, body *CreateDecisionAgentDto, opts ...RequestOption) (*DecisionAgent, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/decision-agents"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out DecisionAgent
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Karar ajanı
+//
+// GET /v1/apps/{appId}/decision-agents/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) Get(ctx context.Context, id string, opts ...RequestOption) (*DecisionAgent, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/decision-agents/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	var out DecisionAgent
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Karar ajanını güncelle
+//
+// PATCH /v1/apps/{appId}/decision-agents/{id}
+//
+// Seçenekler değiştirilemez: geçmiş öğrenme onlara bağlıdır. Yeni seçenekler için yeni ajan oluşturun.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) Update(ctx context.Context, id string, body *UpdateDecisionAgentDto, opts ...RequestOption) (*DecisionAgent, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/decision-agents/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out DecisionAgent
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Delete: Karar ajanını sil
+//
+// DELETE /v1/apps/{appId}/decision-agents/{id}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) Delete(ctx context.Context, id string, opts ...RequestOption) error {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/decision-agents/{id}"}
+	op.pathParams = map[string]string{"id": id}
+	return s.client.do(ctx, op, ro, nil)
+}
+
+// Report: Kazanç raporu
+//
+// GET /v1/apps/{appId}/decision-agents/{id}/report
+//
+// Öğrenen politika ve kontrol grubu karşılaştırması.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) Report(ctx context.Context, id string, opts ...RequestOption) (*DecisionReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/decision-agents/{id}/report"}
+	op.pathParams = map[string]string{"id": id}
+	var out DecisionReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Decide: Kullanıcı için karar al
+//
+// POST /v1/apps/{appId}/decision-agents/{id}/decide
+//
+// Karar kaydedilir, ödül olayı geldikçe ajan öğrenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *DecisionAgentsService) Decide(ctx context.Context, id string, body *DecideDto, opts ...RequestOption) (*DecisionResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/decision-agents/{id}/decide"}
+	op.pathParams = map[string]string{"id": id}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out DecisionResult
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

@@ -2680,6 +2680,30 @@ type CreateDataFeedDto struct {
 	Enabled         *bool             `json:"enabled,omitempty"`
 }
 
+// CreateDecisionAgentDto: CreateDecisionAgentDto şeması.
+type CreateDecisionAgentDto struct {
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Arms []CreateDecisionAgentDtoArmsItem `json:"arms"`
+	// Zorunlu.
+	RewardEvents      []string `json:"reward_events"`
+	RewardWindowHours *int64   `json:"reward_window_hours,omitempty"`
+	HoldoutPercent    *int64   `json:"holdout_percent,omitempty"`
+	ContextPrediction *string  `json:"context_prediction,omitempty"`
+	UseBestChannel    *bool    `json:"use_best_channel,omitempty"`
+}
+
+// CreateDecisionAgentDtoArmsItem: CreateDecisionAgentDtoArmsItem şeması.
+type CreateDecisionAgentDtoArmsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Label string `json:"label"`
+}
+
 // CreateExportDto: CreateExportDto şeması.
 type CreateExportDto struct {
 	// Zorunlu. Değerler: "users", "subscriptions", "events", "deliveries", "message_events".
@@ -3799,6 +3823,142 @@ type DataFeedTestResultUser struct {
 	ID string `json:"id"`
 	// Zorunlu.
 	ExternalID *string `json:"external_id"`
+}
+
+// DecideDto: DecideDto şeması.
+type DecideDto struct {
+	// Zorunlu.
+	ExternalID string `json:"external_id"`
+}
+
+// DecisionAgent: DecisionAgent şeması.
+type DecisionAgent struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Slug string `json:"slug"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	Arms []DecisionAgentArmsItem `json:"arms"`
+	// Zorunlu.
+	RewardEvents []string `json:"reward_events"`
+	// Zorunlu.
+	RewardWindowHours int64 `json:"reward_window_hours"`
+	// Zorunlu.
+	HoldoutPercent int64 `json:"holdout_percent"`
+	// Zorunlu.
+	ContextPrediction *string `json:"context_prediction"`
+	// Zorunlu.
+	UseBestChannel bool `json:"use_best_channel"`
+	// Zorunlu. Değerler: "active", "paused".
+	Status string `json:"status"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// DecisionAgentArmsItem: DecisionAgentArmsItem şeması.
+type DecisionAgentArmsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Label string `json:"label"`
+}
+
+// DecisionAgentList: DecisionAgentList şeması.
+type DecisionAgentList struct {
+	// Zorunlu.
+	Data []DecisionAgent `json:"data"`
+}
+
+// DecisionReport: DecisionReport şeması.
+type DecisionReport struct {
+	// Zorunlu.
+	AgentID string `json:"agent_id"`
+	// Zorunlu.
+	Days int64 `json:"days"`
+	// Zorunlu.
+	Learned DecisionReportLearned `json:"learned"`
+	// Zorunlu.
+	Holdout DecisionReportHoldout `json:"holdout"`
+	// Zorunlu.
+	Lift *float64 `json:"lift"`
+	// Zorunlu.
+	PValue *float64 `json:"p_value"`
+	// Zorunlu.
+	Significant bool `json:"significant"`
+	// Zorunlu.
+	Arms []DecisionReportArmsItem `json:"arms"`
+	// Zorunlu.
+	Contexts []DecisionReportContextsItem `json:"contexts"`
+}
+
+// DecisionReportArmsItem: DecisionReportArmsItem şeması.
+type DecisionReportArmsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Label string `json:"label"`
+	// Zorunlu.
+	Share float64 `json:"share"`
+	// Zorunlu.
+	Assignments int64 `json:"assignments"`
+	// Zorunlu.
+	Settled int64 `json:"settled"`
+	// Zorunlu.
+	Rewards int64 `json:"rewards"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
+// DecisionReportContextsItem: DecisionReportContextsItem şeması.
+type DecisionReportContextsItem struct {
+	// Zorunlu.
+	Context string `json:"context"`
+	// Zorunlu.
+	ArmID string `json:"arm_id"`
+	// Zorunlu.
+	Settled int64 `json:"settled"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
+// DecisionReportHoldout: DecisionReportHoldout şeması.
+type DecisionReportHoldout struct {
+	// Zorunlu.
+	Assignments int64 `json:"assignments"`
+	// Zorunlu.
+	Settled int64 `json:"settled"`
+	// Zorunlu.
+	Rewards int64 `json:"rewards"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
+// DecisionReportLearned: DecisionReportLearned şeması.
+type DecisionReportLearned struct {
+	// Zorunlu.
+	Assignments int64 `json:"assignments"`
+	// Zorunlu.
+	Settled int64 `json:"settled"`
+	// Zorunlu.
+	Rewards int64 `json:"rewards"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
+// DecisionResult: DecisionResult şeması.
+type DecisionResult struct {
+	// Zorunlu.
+	ArmID string `json:"arm_id"`
+	// Zorunlu.
+	Label string `json:"label"`
+	// Zorunlu. Değerler: "thompson", "holdout".
+	Policy string `json:"policy"`
+	// Zorunlu.
+	Context string `json:"context"`
 }
 
 // DeliverabilitySettingsDto: DeliverabilitySettingsDto şeması.
@@ -8702,6 +8862,16 @@ type UpdateDataFeedDto struct {
 	CacheTTLSeconds *int64            `json:"cache_ttl_seconds,omitempty"`
 	TimeoutMs       *int64            `json:"timeout_ms,omitempty"`
 	Enabled         *bool             `json:"enabled,omitempty"`
+}
+
+// UpdateDecisionAgentDto: UpdateDecisionAgentDto şeması.
+type UpdateDecisionAgentDto struct {
+	Name *string `json:"name,omitempty"`
+	// Değerler: "active", "paused".
+	Status            *string  `json:"status,omitempty"`
+	RewardEvents      []string `json:"reward_events,omitempty"`
+	RewardWindowHours *int64   `json:"reward_window_hours,omitempty"`
+	HoldoutPercent    *int64   `json:"holdout_percent,omitempty"`
 }
 
 // UpdateGeofenceDto: UpdateGeofenceDto şeması.
