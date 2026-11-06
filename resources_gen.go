@@ -9,7 +9,7 @@ import (
 )
 
 // APIVersion, SDK'nın üretildiği OpenAPI sözleşmesinin sürümüdür.
-const APIVersion = "1.0.0"
+const APIVersion = "1.1.0"
 
 // services, istemciye eklenen üretilmiş kaynak alanlarıdır.
 type services struct {
