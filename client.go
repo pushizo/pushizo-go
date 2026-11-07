@@ -30,7 +30,7 @@ import (
 )
 
 // Version, SDK sürümüdür (User-Agent başlığında gönderilir).
-const Version = "0.1.0"
+const Version = "0.2.0"
 
 // DefaultBaseURL, varsayılan API adresidir; yerel geliştirmede WithBaseURL("http://localhost:4000").
 const DefaultBaseURL = "https://api.pushizo.com"

@@ -55,6 +55,7 @@ type services struct {
 	Predictions         *PredictionsService
 	Preferences         *PreferencesService
 	PromoCodeLists      *PromoCodeListsService
+	Recommendations     *RecommendationsService
 	ReverseEtl          *ReverseEtlService
 	Rfm                 *RfmService
 	SMSKeywords         *SMSKeywordsService
@@ -109,6 +110,7 @@ func (c *Client) initServices() {
 	c.Predictions = &PredictionsService{client: c}
 	c.Preferences = &PreferencesService{client: c}
 	c.PromoCodeLists = &PromoCodeListsService{client: c}
+	c.Recommendations = &RecommendationsService{client: c}
 	c.ReverseEtl = &ReverseEtlService{client: c}
 	c.Rfm = &RfmService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
@@ -4216,103 +4218,6 @@ func (s *CatalogsService) RemoveItem(ctx context.Context, catalogID string, item
 	return &out, nil
 }
 
-// CatalogsListRecommendationsParams: CatalogsService.ListRecommendations için isteğe bağlı sorgu parametreleri.
-type CatalogsListRecommendationsParams struct {
-	Limit      *int64
-	UserID     *string
-	ExternalID *string
-	ItemID     *string
-	Category   *string
-}
-
-func (p *CatalogsListRecommendationsParams) appendQuery(q url.Values) {
-	if p == nil {
-		return
-	}
-	addQuery(q, "limit", p.Limit)
-	addQuery(q, "user_id", p.UserID)
-	addQuery(q, "external_id", p.ExternalID)
-	addQuery(q, "item_id", p.ItemID)
-	addQuery(q, "category", p.Category)
-}
-
-// ListRecommendations: Ürün önerileri
-//
-// GET /v1/apps/{appId}/catalogs/{catalogId}/recommendations
-//
-// Stokta olmayan ve kullanıcının satın aldığı ürünler çıkmaz. Sonuç yetmezse yedek kaynakla tamamlanır.
-//
-// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CatalogsService) ListRecommendations(ctx context.Context, catalogID string, strategy string, params *CatalogsListRecommendationsParams, opts ...RequestOption) (*Recommendations, error) {
-	ro := s.client.requestConfig(opts)
-	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations"}
-	op.pathParams = map[string]string{"catalogId": catalogID}
-	op.query = url.Values{}
-	addQuery(op.query, "strategy", &strategy)
-	params.appendQuery(op.query)
-	var out Recommendations
-	if err := s.client.do(ctx, op, ro, &out); err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// Config: Öneri modeli
-//
-// GET /v1/apps/{appId}/catalogs/{catalogId}/recommendations/config
-//
-// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CatalogsService) Config(ctx context.Context, catalogID string, opts ...RequestOption) (*RecommendationConfig, error) {
-	ro := s.client.requestConfig(opts)
-	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/config"}
-	op.pathParams = map[string]string{"catalogId": catalogID}
-	var out RecommendationConfig
-	if err := s.client.do(ctx, op, ro, &out); err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// UpdateConfig: Öneri modelini ayarla
-//
-// PUT /v1/apps/{appId}/catalogs/{catalogId}/recommendations/config
-//
-// Model açıksa öneriler kayıttan sonra yeniden hesaplanır.
-//
-// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CatalogsService) UpdateConfig(ctx context.Context, catalogID string, body *UpdateRecommendationConfigDto, opts ...RequestOption) (*RecommendationConfig, error) {
-	ro := s.client.requestConfig(opts)
-	op := &operation{method: "PUT", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/config"}
-	op.pathParams = map[string]string{"catalogId": catalogID}
-	if body == nil {
-		return nil, errNilBody
-	}
-	op.body = body
-	var out RecommendationConfig
-	if err := s.client.do(ctx, op, ro, &out); err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// Compute: Önerileri yeniden hesapla
-//
-// POST /v1/apps/{appId}/catalogs/{catalogId}/recommendations/compute
-//
-// İş kuyruğa alınır; ilerleme `status` alanından izlenir.
-//
-// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CatalogsService) Compute(ctx context.Context, catalogID string, opts ...RequestOption) (*RecommendationConfig, error) {
-	ro := s.client.requestConfig(opts)
-	op := &operation{method: "POST", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/compute"}
-	op.pathParams = map[string]string{"catalogId": catalogID}
-	var out RecommendationConfig
-	if err := s.client.do(ctx, op, ro, &out); err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 // CategoriesService: categories kaynağı.
 type CategoriesService struct {
 	client *Client
@@ -7136,6 +7041,108 @@ func (s *PromoCodeListsService) PromoCodes(ctx context.Context, listID string, p
 	return &out, nil
 }
 
+// RecommendationsService: recommendations kaynağı.
+type RecommendationsService struct {
+	client *Client
+}
+
+// RecommendationsListParams: RecommendationsService.List için isteğe bağlı sorgu parametreleri.
+type RecommendationsListParams struct {
+	Limit      *int64
+	UserID     *string
+	ExternalID *string
+	ItemID     *string
+	Category   *string
+}
+
+func (p *RecommendationsListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "user_id", p.UserID)
+	addQuery(q, "external_id", p.ExternalID)
+	addQuery(q, "item_id", p.ItemID)
+	addQuery(q, "category", p.Category)
+}
+
+// List: Ürün önerileri
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}/recommendations
+//
+// Stokta olmayan ve kullanıcının satın aldığı ürünler çıkmaz. Sonuç yetmezse yedek kaynakla tamamlanır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RecommendationsService) List(ctx context.Context, catalogID string, strategy string, params *RecommendationsListParams, opts ...RequestOption) (*Recommendations, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	op.query = url.Values{}
+	addQuery(op.query, "strategy", &strategy)
+	params.appendQuery(op.query)
+	var out Recommendations
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetConfig: Öneri modeli
+//
+// GET /v1/apps/{appId}/catalogs/{catalogId}/recommendations/config
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RecommendationsService) GetConfig(ctx context.Context, catalogID string, opts ...RequestOption) (*RecommendationConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/config"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	var out RecommendationConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateConfig: Öneri modelini ayarla
+//
+// PUT /v1/apps/{appId}/catalogs/{catalogId}/recommendations/config
+//
+// Model açıksa öneriler kayıttan sonra yeniden hesaplanır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RecommendationsService) UpdateConfig(ctx context.Context, catalogID string, body *UpdateRecommendationConfigDto, opts ...RequestOption) (*RecommendationConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/config"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out RecommendationConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Compute: Önerileri yeniden hesapla
+//
+// POST /v1/apps/{appId}/catalogs/{catalogId}/recommendations/compute
+//
+// İş kuyruğa alınır; ilerleme `status` alanından izlenir.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *RecommendationsService) Compute(ctx context.Context, catalogID string, opts ...RequestOption) (*RecommendationConfig, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/catalogs/{catalogId}/recommendations/compute"}
+	op.pathParams = map[string]string{"catalogId": catalogID}
+	var out RecommendationConfig
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // ReverseEtlService: reverseEtl kaynağı.
 type ReverseEtlService struct {
 	client *Client
@@ -7803,14 +7810,14 @@ type WalletService struct {
 	client *Client
 }
 
-// Config: Wallet yapılandırması
+// GetConfig: Wallet yapılandırması
 //
 // GET /v1/apps/{appId}/wallet/config
 //
 // Kimlik bilgisi geri okunamaz, yalnızca durum döner.
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) Config(ctx context.Context, opts ...RequestOption) (*WalletConfig, error) {
+func (s *WalletService) GetConfig(ctx context.Context, opts ...RequestOption) (*WalletConfig, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/config"}
 	var out WalletConfig
@@ -7839,12 +7846,12 @@ func (s *WalletService) UpdateConfig(ctx context.Context, body *UpdateWalletConf
 	return &out, nil
 }
 
-// Templates: Wallet şablonları
+// ListTemplates: Wallet şablonları
 //
 // GET /v1/apps/{appId}/wallet/templates
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) Templates(ctx context.Context, opts ...RequestOption) (*WalletTemplateList, error) {
+func (s *WalletService) ListTemplates(ctx context.Context, opts ...RequestOption) (*WalletTemplateList, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/templates"}
 	var out WalletTemplateList
@@ -7873,12 +7880,12 @@ func (s *WalletService) CreateTemplate(ctx context.Context, body *CreateWalletTe
 	return &out, nil
 }
 
-// Template: Wallet şablonu
+// GetTemplate: Wallet şablonu
 //
 // GET /v1/apps/{appId}/wallet/templates/{id}
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) Template(ctx context.Context, id string, opts ...RequestOption) (*WalletTemplate, error) {
+func (s *WalletService) GetTemplate(ctx context.Context, id string, opts ...RequestOption) (*WalletTemplate, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/templates/{id}"}
 	op.pathParams = map[string]string{"id": id}
@@ -7911,28 +7918,28 @@ func (s *WalletService) UpdateTemplate(ctx context.Context, id string, body *Upd
 	return &out, nil
 }
 
-// RemoveTemplate: Wallet şablonunu sil
+// DeleteTemplate: Wallet şablonunu sil
 //
 // DELETE /v1/apps/{appId}/wallet/templates/{id}
 //
 // Verilmiş kartı olan şablon silinemez, arşivlenir.
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) RemoveTemplate(ctx context.Context, id string, opts ...RequestOption) error {
+func (s *WalletService) DeleteTemplate(ctx context.Context, id string, opts ...RequestOption) error {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/wallet/templates/{id}"}
 	op.pathParams = map[string]string{"id": id}
 	return s.client.do(ctx, op, ro, nil)
 }
 
-// WalletPassesParams: WalletService.Passes için isteğe bağlı sorgu parametreleri.
-type WalletPassesParams struct {
+// WalletListPassesParams: WalletService.ListPasses için isteğe bağlı sorgu parametreleri.
+type WalletListPassesParams struct {
 	TemplateID *string
 	Limit      *int64
 	Cursor     *string
 }
 
-func (p *WalletPassesParams) appendQuery(q url.Values) {
+func (p *WalletListPassesParams) appendQuery(q url.Values) {
 	if p == nil {
 		return
 	}
@@ -7941,12 +7948,12 @@ func (p *WalletPassesParams) appendQuery(q url.Values) {
 	addQuery(q, "cursor", p.Cursor)
 }
 
-// Passes: Verilmiş kartlar
+// ListPasses: Verilmiş kartlar
 //
 // GET /v1/apps/{appId}/wallet/passes
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) Passes(ctx context.Context, params *WalletPassesParams, opts ...RequestOption) (*WalletPassPage, error) {
+func (s *WalletService) ListPasses(ctx context.Context, params *WalletListPassesParams, opts ...RequestOption) (*WalletPassPage, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/passes"}
 	op.query = url.Values{}
@@ -7958,14 +7965,14 @@ func (s *WalletService) Passes(ctx context.Context, params *WalletPassesParams, 
 	return &out, nil
 }
 
-// Issue: Kart ver
+// IssuePass: Kart ver
 //
 // POST /v1/apps/{appId}/wallet/passes
 //
 // Kullanıcılı kart şablon başına tektir; tekrar istek aynı kartı döndürür.
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) Issue(ctx context.Context, body *IssueWalletPassDto, opts ...RequestOption) (*WalletPass, error) {
+func (s *WalletService) IssuePass(ctx context.Context, body *IssueWalletPassDto, opts ...RequestOption) (*WalletPass, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/wallet/passes"}
 	if body == nil {
@@ -7979,12 +7986,12 @@ func (s *WalletService) Issue(ctx context.Context, body *IssueWalletPassDto, opt
 	return &out, nil
 }
 
-// Pass: Kart
+// GetPass: Kart
 //
 // GET /v1/apps/{appId}/wallet/passes/{id}
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *WalletService) Pass(ctx context.Context, id string, opts ...RequestOption) (*WalletPass, error) {
+func (s *WalletService) GetPass(ctx context.Context, id string, opts ...RequestOption) (*WalletPass, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "GET", path: "/v1/apps/{appId}/wallet/passes/{id}"}
 	op.pathParams = map[string]string{"id": id}
