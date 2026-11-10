@@ -1457,6 +1457,8 @@ type CampaignStats struct {
 	// Zorunlu.
 	Goals []CampaignStatsGoalsItem `json:"goals"`
 	// Zorunlu.
+	Cards *CampaignStatsCards `json:"cards"`
+	// Zorunlu.
 	Channels []CampaignStatsChannelsItem `json:"channels"`
 	// Zorunlu.
 	Hourly []CampaignStatsHourlyItem `json:"hourly"`
@@ -1481,6 +1483,22 @@ type CampaignStats2 struct {
 	Complained   *int64 `json:"complained,omitempty"`
 	Unsubscribed *int64 `json:"unsubscribed,omitempty"`
 	SMSSegments  *int64 `json:"sms_segments,omitempty"`
+}
+
+// CampaignStatsCards: CampaignStatsCards şeması.
+type CampaignStatsCards struct {
+	// Zorunlu.
+	Created int64 `json:"created"`
+	// Zorunlu.
+	Viewed int64 `json:"viewed"`
+	// Zorunlu.
+	Clicked int64 `json:"clicked"`
+	// Zorunlu.
+	Dismissed int64 `json:"dismissed"`
+	// Zorunlu.
+	ViewRate *float64 `json:"view_rate"`
+	// Zorunlu.
+	ClickRate *float64 `json:"click_rate"`
 }
 
 // CampaignStatsChannelsItem: CampaignStatsChannelsItem şeması.
