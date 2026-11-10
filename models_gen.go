@@ -3867,6 +3867,74 @@ type CreateWebhookDtoFiltersConditionsItem struct {
 	Value any    `json:"value,omitempty"`
 }
 
+// CreateWebPersonalizationDto: CreateWebPersonalizationDto şeması.
+type CreateWebPersonalizationDto struct {
+	// Zorunlu.
+	Name       string                                    `json:"name"`
+	Changes    []any                                     `json:"changes,omitempty"`
+	Variants   []CreateWebPersonalizationDtoVariantsItem `json:"variants,omitempty"`
+	Conditions *CreateWebPersonalizationDtoConditions    `json:"conditions,omitempty"`
+	Targeting  *CreateWebPersonalizationDtoTargeting     `json:"targeting,omitempty"`
+	Goal       any                                       `json:"goal,omitempty"`
+	Priority   *int64                                    `json:"priority,omitempty"`
+	StartAt    *string                                   `json:"start_at,omitempty"`
+	EndAt      *string                                   `json:"end_at,omitempty"`
+}
+
+// CreateWebPersonalizationDtoConditions: CreateWebPersonalizationDtoConditions şeması.
+type CreateWebPersonalizationDtoConditions struct {
+	URLRules []CreateWebPersonalizationDtoConditionsURLRulesItem `json:"url_rules,omitempty"`
+	UtmRules []CreateWebPersonalizationDtoConditionsUtmRulesItem `json:"utm_rules,omitempty"`
+	Visits   *CreateWebPersonalizationDtoConditionsVisits        `json:"visits,omitempty"`
+}
+
+// CreateWebPersonalizationDtoConditionsURLRulesItem: CreateWebPersonalizationDtoConditionsUrlRulesItem şeması.
+type CreateWebPersonalizationDtoConditionsURLRulesItem struct {
+	// Zorunlu. Değerler: "equals", "contains", "starts_with", "not_contains", "matches".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
+// CreateWebPersonalizationDtoConditionsUtmRulesItem: CreateWebPersonalizationDtoConditionsUtmRulesItem şeması.
+type CreateWebPersonalizationDtoConditionsUtmRulesItem struct {
+	// Zorunlu. Değerler: "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content".
+	Param string `json:"param"`
+	// Zorunlu. Değerler: "equals", "contains", "exists".
+	Op    string  `json:"op"`
+	Value *string `json:"value,omitempty"`
+}
+
+// CreateWebPersonalizationDtoConditionsVisits: CreateWebPersonalizationDtoConditionsVisits şeması.
+type CreateWebPersonalizationDtoConditionsVisits struct {
+	// Zorunlu. Değerler: "gte", "lte", "eq".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value int64 `json:"value"`
+}
+
+// CreateWebPersonalizationDtoTargeting: CreateWebPersonalizationDtoTargeting şeması.
+type CreateWebPersonalizationDtoTargeting struct {
+	IncludedSegments []string `json:"included_segments,omitempty"`
+	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	// Değerler: "all", "new", "returning".
+	Visitor *string `json:"visitor,omitempty"`
+	// Değerler: "desktop", "mobile", "tablet".
+	Devices []string `json:"devices,omitempty"`
+}
+
+// CreateWebPersonalizationDtoVariantsItem: CreateWebPersonalizationDtoVariantsItem şeması.
+type CreateWebPersonalizationDtoVariantsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	WeightPercent int64 `json:"weight_percent"`
+	// Zorunlu.
+	Changes []any `json:"changes"`
+}
+
 // DataFeed: DataFeed şeması.
 type DataFeed struct {
 	// Zorunlu.
@@ -9844,6 +9912,73 @@ type UpdateWebhookDtoFiltersConditionsItem struct {
 	Value any    `json:"value,omitempty"`
 }
 
+// UpdateWebPersonalizationDto: UpdateWebPersonalizationDto şeması.
+type UpdateWebPersonalizationDto struct {
+	Name       *string                                   `json:"name,omitempty"`
+	Changes    []any                                     `json:"changes,omitempty"`
+	Variants   []UpdateWebPersonalizationDtoVariantsItem `json:"variants,omitempty"`
+	Conditions *UpdateWebPersonalizationDtoConditions    `json:"conditions,omitempty"`
+	Targeting  *UpdateWebPersonalizationDtoTargeting     `json:"targeting,omitempty"`
+	Goal       any                                       `json:"goal,omitempty"`
+	Priority   *int64                                    `json:"priority,omitempty"`
+	StartAt    *string                                   `json:"start_at,omitempty"`
+	EndAt      *string                                   `json:"end_at,omitempty"`
+}
+
+// UpdateWebPersonalizationDtoConditions: UpdateWebPersonalizationDtoConditions şeması.
+type UpdateWebPersonalizationDtoConditions struct {
+	URLRules []UpdateWebPersonalizationDtoConditionsURLRulesItem `json:"url_rules,omitempty"`
+	UtmRules []UpdateWebPersonalizationDtoConditionsUtmRulesItem `json:"utm_rules,omitempty"`
+	Visits   *UpdateWebPersonalizationDtoConditionsVisits        `json:"visits,omitempty"`
+}
+
+// UpdateWebPersonalizationDtoConditionsURLRulesItem: UpdateWebPersonalizationDtoConditionsUrlRulesItem şeması.
+type UpdateWebPersonalizationDtoConditionsURLRulesItem struct {
+	// Zorunlu. Değerler: "equals", "contains", "starts_with", "not_contains", "matches".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
+// UpdateWebPersonalizationDtoConditionsUtmRulesItem: UpdateWebPersonalizationDtoConditionsUtmRulesItem şeması.
+type UpdateWebPersonalizationDtoConditionsUtmRulesItem struct {
+	// Zorunlu. Değerler: "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content".
+	Param string `json:"param"`
+	// Zorunlu. Değerler: "equals", "contains", "exists".
+	Op    string  `json:"op"`
+	Value *string `json:"value,omitempty"`
+}
+
+// UpdateWebPersonalizationDtoConditionsVisits: UpdateWebPersonalizationDtoConditionsVisits şeması.
+type UpdateWebPersonalizationDtoConditionsVisits struct {
+	// Zorunlu. Değerler: "gte", "lte", "eq".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value int64 `json:"value"`
+}
+
+// UpdateWebPersonalizationDtoTargeting: UpdateWebPersonalizationDtoTargeting şeması.
+type UpdateWebPersonalizationDtoTargeting struct {
+	IncludedSegments []string `json:"included_segments,omitempty"`
+	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	// Değerler: "all", "new", "returning".
+	Visitor *string `json:"visitor,omitempty"`
+	// Değerler: "desktop", "mobile", "tablet".
+	Devices []string `json:"devices,omitempty"`
+}
+
+// UpdateWebPersonalizationDtoVariantsItem: UpdateWebPersonalizationDtoVariantsItem şeması.
+type UpdateWebPersonalizationDtoVariantsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	WeightPercent int64 `json:"weight_percent"`
+	// Zorunlu.
+	Changes []any `json:"changes"`
+}
+
 // UpsertCatalogItemsDto: UpsertCatalogItemsDto şeması.
 type UpsertCatalogItemsDto struct {
 	// Zorunlu.
@@ -11200,6 +11335,190 @@ type WebhookWithSecretFiltersConditionsItem struct {
 	// Zorunlu. Değerler: "eq", "neq", "in", "not_in", "starts_with", "contains", "exists", "not_exists".
 	Op    string `json:"op"`
 	Value any    `json:"value,omitempty"`
+}
+
+// WebPersonalization: WebPersonalization şeması.
+type WebPersonalization struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
+	Status string `json:"status"`
+	// Zorunlu.
+	Priority int64 `json:"priority"`
+	// Zorunlu.
+	Changes []any `json:"changes"`
+	// Zorunlu.
+	Variants []WebPersonalizationVariantsItem `json:"variants"`
+	// Zorunlu.
+	AbTest WebPersonalizationAbTest `json:"ab_test"`
+	// Zorunlu.
+	Conditions WebPersonalizationConditions `json:"conditions"`
+	// Zorunlu.
+	Targeting WebPersonalizationTargeting `json:"targeting"`
+	// Zorunlu.
+	Goal any `json:"goal"`
+	// Zorunlu.
+	StartAt *string `json:"start_at"`
+	// Zorunlu.
+	EndAt *string `json:"end_at"`
+	// Zorunlu.
+	Stats WebPersonalizationStats `json:"stats"`
+	// Zorunlu.
+	VariantStats []WebPersonalizationVariantStatsItem `json:"variant_stats"`
+	// Zorunlu.
+	VariantSignificance *WebPersonalizationVariantSignificance `json:"variant_significance"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// WebPersonalizationAbTest: WebPersonalizationAbTest şeması.
+type WebPersonalizationAbTest struct {
+	// Zorunlu.
+	WinnerVariantID *string `json:"winner_variant_id"`
+	// Zorunlu.
+	DecidedAt *string `json:"decided_at"`
+	// Zorunlu.
+	DecidedBy *string `json:"decided_by"`
+}
+
+// WebPersonalizationConditions: WebPersonalizationConditions şeması.
+type WebPersonalizationConditions struct {
+	URLRules []WebPersonalizationConditionsURLRulesItem `json:"url_rules,omitempty"`
+	UtmRules []WebPersonalizationConditionsUtmRulesItem `json:"utm_rules,omitempty"`
+	Visits   *WebPersonalizationConditionsVisits        `json:"visits,omitempty"`
+}
+
+// WebPersonalizationConditionsURLRulesItem: WebPersonalizationConditionsUrlRulesItem şeması.
+type WebPersonalizationConditionsURLRulesItem struct {
+	// Zorunlu. Değerler: "equals", "contains", "starts_with", "not_contains", "matches".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value string `json:"value"`
+}
+
+// WebPersonalizationConditionsUtmRulesItem: WebPersonalizationConditionsUtmRulesItem şeması.
+type WebPersonalizationConditionsUtmRulesItem struct {
+	// Zorunlu. Değerler: "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content".
+	Param string `json:"param"`
+	// Zorunlu. Değerler: "equals", "contains", "exists".
+	Op    string  `json:"op"`
+	Value *string `json:"value,omitempty"`
+}
+
+// WebPersonalizationConditionsVisits: WebPersonalizationConditionsVisits şeması.
+type WebPersonalizationConditionsVisits struct {
+	// Zorunlu. Değerler: "gte", "lte", "eq".
+	Op string `json:"op"`
+	// Zorunlu.
+	Value int64 `json:"value"`
+}
+
+// WebPersonalizationPage: WebPersonalizationPage şeması.
+type WebPersonalizationPage struct {
+	// Zorunlu.
+	Data []WebPersonalization `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// WebPersonalizationReport: WebPersonalizationReport şeması.
+type WebPersonalizationReport struct {
+	// Zorunlu.
+	PersonalizationID string `json:"personalization_id"`
+	// Zorunlu.
+	Days int64 `json:"days"`
+	// Zorunlu.
+	Daily []WebPersonalizationReportDailyItem `json:"daily"`
+	// Zorunlu.
+	Totals WebPersonalizationReportTotals `json:"totals"`
+}
+
+// WebPersonalizationReportDailyItem: WebPersonalizationReportDailyItem şeması.
+type WebPersonalizationReportDailyItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	Visitors int64 `json:"visitors"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+}
+
+// WebPersonalizationReportTotals: WebPersonalizationReportTotals şeması.
+type WebPersonalizationReportTotals struct {
+	// Zorunlu.
+	Visitors int64 `json:"visitors"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
+// WebPersonalizationStats: WebPersonalizationStats şeması.
+type WebPersonalizationStats struct {
+	// Zorunlu.
+	Visitors int64 `json:"visitors"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+}
+
+// WebPersonalizationStatusDto: WebPersonalizationStatusDto şeması.
+type WebPersonalizationStatusDto struct {
+	// Zorunlu. Değerler: "draft", "active", "paused", "archived".
+	Status string `json:"status"`
+}
+
+// WebPersonalizationTargeting: WebPersonalizationTargeting şeması.
+type WebPersonalizationTargeting struct {
+	IncludedSegments []string `json:"included_segments,omitempty"`
+	ExcludedSegments []string `json:"excluded_segments,omitempty"`
+	// Değerler: "all", "new", "returning".
+	Visitor *string `json:"visitor,omitempty"`
+	// Değerler: "desktop", "mobile", "tablet".
+	Devices []string `json:"devices,omitempty"`
+}
+
+// WebPersonalizationVariantSignificance: WebPersonalizationVariantSignificance şeması.
+type WebPersonalizationVariantSignificance struct {
+	// Zorunlu.
+	Leader *string `json:"leader"`
+	// Zorunlu.
+	PValue float64 `json:"p_value"`
+	// Zorunlu.
+	Significant bool `json:"significant"`
+}
+
+// WebPersonalizationVariantsItem: WebPersonalizationVariantsItem şeması.
+type WebPersonalizationVariantsItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu.
+	WeightPercent int64 `json:"weight_percent"`
+	// Zorunlu.
+	Changes []any `json:"changes"`
+}
+
+// WebPersonalizationVariantStatsItem: WebPersonalizationVariantStatsItem şeması.
+type WebPersonalizationVariantStatsItem struct {
+	// Zorunlu.
+	Visitors int64 `json:"visitors"`
+	// Zorunlu.
+	Conversions int64 `json:"conversions"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+	// Zorunlu.
+	VariantID string `json:"variant_id"`
 }
 
 // WhatsAppTemplateList: WhatsAppTemplateList şeması.

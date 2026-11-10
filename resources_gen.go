@@ -64,6 +64,7 @@ type services struct {
 	Wallet              *WalletService
 	WarehouseExports    *WarehouseExportsService
 	WebCampaigns        *WebCampaignsService
+	WebPersonalizations *WebPersonalizationsService
 	Whatsapp            *WhatsappService
 }
 
@@ -119,6 +120,7 @@ func (c *Client) initServices() {
 	c.Wallet = &WalletService{client: c}
 	c.WarehouseExports = &WarehouseExportsService{client: c}
 	c.WebCampaigns = &WebCampaignsService{client: c}
+	c.WebPersonalizations = &WebPersonalizationsService{client: c}
 	c.Whatsapp = &WhatsappService{client: c}
 }
 
@@ -8442,6 +8444,169 @@ func (s *WebCampaignsService) Status(ctx context.Context, campaignID string, bod
 	}
 	op.body = body
 	var out WebCampaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// WebPersonalizationsService: webPersonalizations kaynağı.
+type WebPersonalizationsService struct {
+	client *Client
+}
+
+// WebPersonalizationsListParams: WebPersonalizationsService.List için isteğe bağlı sorgu parametreleri.
+type WebPersonalizationsListParams struct {
+	Limit  *int64
+	Cursor *string
+	// Değerler: "draft", "active", "paused", "archived".
+	Status *string
+}
+
+func (p *WebPersonalizationsListParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+	addQuery(q, "status", p.Status)
+}
+
+// List: Web kişiselleştirme deneyimleri
+//
+// GET /v1/apps/{appId}/web-personalizations
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebPersonalizationsService) List(ctx context.Context, params *WebPersonalizationsListParams, opts ...RequestOption) (*WebPersonalizationPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/web-personalizations"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out WebPersonalizationPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAll: List sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *WebPersonalizationsService) ListAll(ctx context.Context, params *WebPersonalizationsListParams, opts ...RequestOption) iter.Seq2[WebPersonalization, error] {
+	var p WebPersonalizationsListParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]WebPersonalization, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.List(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// Create: Kişiselleştirme deneyimi oluştur (taslak)
+//
+// POST /v1/apps/{appId}/web-personalizations
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebPersonalizationsService) Create(ctx context.Context, body *CreateWebPersonalizationDto, opts ...RequestOption) (*WebPersonalization, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/web-personalizations"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WebPersonalization
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Get: Kişiselleştirme deneyimi detayı ve istatistikleri
+//
+// GET /v1/apps/{appId}/web-personalizations/{personalizationId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebPersonalizationsService) Get(ctx context.Context, personalizationID string, opts ...RequestOption) (*WebPersonalization, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/web-personalizations/{personalizationId}"}
+	op.pathParams = map[string]string{"personalizationId": personalizationID}
+	var out WebPersonalization
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Update: Kişiselleştirme deneyimini düzenle
+//
+// PATCH /v1/apps/{appId}/web-personalizations/{personalizationId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebPersonalizationsService) Update(ctx context.Context, personalizationID string, body *UpdateWebPersonalizationDto, opts ...RequestOption) (*WebPersonalization, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/web-personalizations/{personalizationId}"}
+	op.pathParams = map[string]string{"personalizationId": personalizationID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WebPersonalization
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// WebPersonalizationsReportParams: WebPersonalizationsService.Report için isteğe bağlı sorgu parametreleri.
+type WebPersonalizationsReportParams struct {
+	Days *int64
+}
+
+func (p *WebPersonalizationsReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "days", p.Days)
+}
+
+// Report: Günlük seri
+//
+// GET /v1/apps/{appId}/web-personalizations/{personalizationId}/report
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebPersonalizationsService) Report(ctx context.Context, personalizationID string, params *WebPersonalizationsReportParams, opts ...RequestOption) (*WebPersonalizationReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/web-personalizations/{personalizationId}/report"}
+	op.pathParams = map[string]string{"personalizationId": personalizationID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out WebPersonalizationReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Status: Yayınla / duraklat / arşivle
+//
+// POST /v1/apps/{appId}/web-personalizations/{personalizationId}/status
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WebPersonalizationsService) Status(ctx context.Context, personalizationID string, body *WebPersonalizationStatusDto, opts ...RequestOption) (*WebPersonalization, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/web-personalizations/{personalizationId}/status"}
+	op.pathParams = map[string]string{"personalizationId": personalizationID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WebPersonalization
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
