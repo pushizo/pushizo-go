@@ -899,13 +899,24 @@ type AppSettings struct {
 	DefaultTTLSeconds            *int64                           `json:"defaultTtlSeconds,omitempty"`
 	IdentityVerificationRequired *bool                            `json:"identityVerificationRequired,omitempty"`
 	// Değerler: "off", "full", "masked".
-	IPCapture                *string                `json:"ipCapture,omitempty"`
-	IPRetentionDays          *int64                 `json:"ipRetentionDays,omitempty"`
-	AllowedOrigins           []string               `json:"allowedOrigins,omitempty"`
-	CampaignApprovalRequired *bool                  `json:"campaignApprovalRequired,omitempty"`
-	WebPush                  *AppSettingsWebPush    `json:"webPush,omitempty"`
-	Onboarding               *AppSettingsOnboarding `json:"onboarding,omitempty"`
-	SDKSetup                 *AppSettingsSDKSetup   `json:"sdkSetup,omitempty"`
+	IPCapture                *string                       `json:"ipCapture,omitempty"`
+	IPRetentionDays          *int64                        `json:"ipRetentionDays,omitempty"`
+	AdaptiveFrequency        *AppSettingsAdaptiveFrequency `json:"adaptiveFrequency,omitempty"`
+	AllowedOrigins           []string                      `json:"allowedOrigins,omitempty"`
+	CampaignApprovalRequired *bool                         `json:"campaignApprovalRequired,omitempty"`
+	WebPush                  *AppSettingsWebPush           `json:"webPush,omitempty"`
+	Onboarding               *AppSettingsOnboarding        `json:"onboarding,omitempty"`
+	SDKSetup                 *AppSettingsSDKSetup          `json:"sdkSetup,omitempty"`
+}
+
+// AppSettingsAdaptiveFrequency: AppSettingsAdaptiveFrequency şeması.
+type AppSettingsAdaptiveFrequency struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Min int64 `json:"min"`
+	// Zorunlu.
+	Max int64 `json:"max"`
 }
 
 // AppSettingsAndroidChannelsItem: AppSettingsAndroidChannelsItem şeması.
@@ -8707,13 +8718,24 @@ type UpdateAppDtoSettings struct {
 	DefaultTTLSeconds            *int64                                    `json:"defaultTtlSeconds,omitempty"`
 	IdentityVerificationRequired *bool                                     `json:"identityVerificationRequired,omitempty"`
 	// Değerler: "off", "full", "masked".
-	IPCapture                *string                         `json:"ipCapture,omitempty"`
-	IPRetentionDays          *int64                          `json:"ipRetentionDays,omitempty"`
-	AllowedOrigins           []string                        `json:"allowedOrigins,omitempty"`
-	CampaignApprovalRequired *bool                           `json:"campaignApprovalRequired,omitempty"`
-	WebPush                  *UpdateAppDtoSettingsWebPush    `json:"webPush,omitempty"`
-	Onboarding               *UpdateAppDtoSettingsOnboarding `json:"onboarding,omitempty"`
-	SDKSetup                 *UpdateAppDtoSettingsSDKSetup   `json:"sdkSetup,omitempty"`
+	IPCapture                *string                                `json:"ipCapture,omitempty"`
+	IPRetentionDays          *int64                                 `json:"ipRetentionDays,omitempty"`
+	AdaptiveFrequency        *UpdateAppDtoSettingsAdaptiveFrequency `json:"adaptiveFrequency,omitempty"`
+	AllowedOrigins           []string                               `json:"allowedOrigins,omitempty"`
+	CampaignApprovalRequired *bool                                  `json:"campaignApprovalRequired,omitempty"`
+	WebPush                  *UpdateAppDtoSettingsWebPush           `json:"webPush,omitempty"`
+	Onboarding               *UpdateAppDtoSettingsOnboarding        `json:"onboarding,omitempty"`
+	SDKSetup                 *UpdateAppDtoSettingsSDKSetup          `json:"sdkSetup,omitempty"`
+}
+
+// UpdateAppDtoSettingsAdaptiveFrequency: UpdateAppDtoSettingsAdaptiveFrequency şeması.
+type UpdateAppDtoSettingsAdaptiveFrequency struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Min int64 `json:"min"`
+	// Zorunlu.
+	Max int64 `json:"max"`
 }
 
 // UpdateAppDtoSettingsAndroidChannelsItem: UpdateAppDtoSettingsAndroidChannelsItem şeması.
@@ -9930,6 +9952,10 @@ type User struct {
 	LastIP *string `json:"last_ip"`
 	// Zorunlu.
 	LastIPAt *string `json:"last_ip_at"`
+	// Zorunlu. Değerler: "positive", "negative", "neutral".
+	LastSentiment *string `json:"last_sentiment"`
+	// Zorunlu.
+	LastSentimentAt *string `json:"last_sentiment_at"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
 	// Zorunlu.
@@ -9966,6 +9992,10 @@ type UserDetail struct {
 	LastIP *string `json:"last_ip"`
 	// Zorunlu.
 	LastIPAt *string `json:"last_ip_at"`
+	// Zorunlu. Değerler: "positive", "negative", "neutral".
+	LastSentiment *string `json:"last_sentiment"`
+	// Zorunlu.
+	LastSentimentAt *string `json:"last_sentiment_at"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
 	// Zorunlu.
@@ -10014,6 +10044,24 @@ type UserExportDerived struct {
 	Decisions []UserExportDerivedDecisionsItem `json:"decisions"`
 	// Zorunlu.
 	Recommendations []UserExportDerivedRecommendationsItem `json:"recommendations"`
+	// Zorunlu.
+	Affinities []UserExportDerivedAffinitiesItem `json:"affinities"`
+	// Zorunlu.
+	FrequencyCap *UserExportDerivedFrequencyCap `json:"frequency_cap"`
+}
+
+// UserExportDerivedAffinitiesItem: UserExportDerivedAffinitiesItem şeması.
+type UserExportDerivedAffinitiesItem struct {
+	// Zorunlu.
+	Attribute string `json:"attribute"`
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu.
+	Score float64 `json:"score"`
+	// Zorunlu.
+	Rank float64 `json:"rank"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
 }
 
 // UserExportDerivedChannelScoresItem: UserExportDerivedChannelScoresItem şeması.
@@ -10044,6 +10092,16 @@ type UserExportDerivedDecisionsItem struct {
 	AssignedAt string `json:"assigned_at"`
 	// Zorunlu.
 	RewardedAt *string `json:"rewarded_at"`
+}
+
+// UserExportDerivedFrequencyCap: UserExportDerivedFrequencyCap şeması.
+type UserExportDerivedFrequencyCap struct {
+	// Zorunlu.
+	WeeklyCap float64 `json:"weekly_cap"`
+	// Zorunlu.
+	Engagement float64 `json:"engagement"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
 }
 
 // UserExportDerivedPredictionsItem: UserExportDerivedPredictionsItem şeması.
