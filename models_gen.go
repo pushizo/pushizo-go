@@ -3142,6 +3142,7 @@ type CreateNotificationDto struct {
 	RcsFallbackText           map[string]string                         `json:"rcs_fallback_text,omitempty"`
 	AddToInbox                *bool                                     `json:"add_to_inbox,omitempty"`
 	InboxTTL                  *int64                                    `json:"inbox_ttl,omitempty"`
+	ContentCard               *CreateNotificationDtoContentCard         `json:"content_card,omitempty"`
 	FrequencyCapExempt        *bool                                     `json:"frequency_cap_exempt,omitempty"`
 	QuietHoursExempt          *bool                                     `json:"quiet_hours_exempt,omitempty"`
 	OnePerUser                *bool                                     `json:"one_per_user,omitempty"`
@@ -3171,6 +3172,15 @@ type CreateNotificationDtoButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// CreateNotificationDtoContentCard: CreateNotificationDtoContentCard şeması.
+type CreateNotificationDtoContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // CreateNotificationDtoIOSCarouselItem: CreateNotificationDtoIosCarouselItem şeması.
@@ -3433,36 +3443,37 @@ type CreateTemplateDtoContent struct {
 	IOSBadgeType  *string `json:"ios_badge_type,omitempty"`
 	IOSBadgeCount *int64  `json:"ios_badge_count,omitempty"`
 	// Değerler: "passive", "active", "time-sensitive", "critical".
-	IOSInterruptionLevel      *string        `json:"ios_interruption_level,omitempty"`
-	IOSCategory               *string        `json:"ios_category,omitempty"`
-	AndroidChannelID          *string        `json:"android_channel_id,omitempty"`
-	AndroidGroup              *string        `json:"android_group,omitempty"`
-	AndroidSound              *string        `json:"android_sound,omitempty"`
-	ChromeWebIcon             *string        `json:"chrome_web_icon,omitempty"`
-	ChromeWebImage            *string        `json:"chrome_web_image,omitempty"`
-	ChromeWebBadge            *string        `json:"chrome_web_badge,omitempty"`
-	WebPushTopic              *string        `json:"web_push_topic,omitempty"`
-	ContentAvailable          *bool          `json:"content_available,omitempty"`
-	MutableContent            *bool          `json:"mutable_content,omitempty"`
-	CustomData                map[string]any `json:"custom_data,omitempty"`
-	EmailSubject              *string        `json:"email_subject,omitempty"`
-	EmailBody                 *string        `json:"email_body,omitempty"`
-	EmailMJML                 *string        `json:"email_mjml,omitempty"`
-	EmailPreheader            *string        `json:"email_preheader,omitempty"`
-	EmailFromName             *string        `json:"email_from_name,omitempty"`
-	EmailFromAddress          *string        `json:"email_from_address,omitempty"`
-	EmailReplyToAddress       *string        `json:"email_reply_to_address,omitempty"`
-	DisableEmailClickTracking *bool          `json:"disable_email_click_tracking,omitempty"`
-	SMSFrom                   *string        `json:"sms_from,omitempty"`
-	DisableSMSLinkShortening  *bool          `json:"disable_sms_link_shortening,omitempty"`
-	AddToInbox                *bool          `json:"add_to_inbox,omitempty"`
-	InboxTTL                  *int64         `json:"inbox_ttl,omitempty"`
-	ThreadID                  *string        `json:"thread_id,omitempty"`
-	IOSRelevanceScore         *float64       `json:"ios_relevance_score,omitempty"`
-	TargetContentIdentifier   *string        `json:"target_content_identifier,omitempty"`
-	SmallIcon                 *string        `json:"small_icon,omitempty"`
-	LargeIcon                 *string        `json:"large_icon,omitempty"`
-	AndroidAccentColor        *string        `json:"android_accent_color,omitempty"`
+	IOSInterruptionLevel      *string                              `json:"ios_interruption_level,omitempty"`
+	IOSCategory               *string                              `json:"ios_category,omitempty"`
+	AndroidChannelID          *string                              `json:"android_channel_id,omitempty"`
+	AndroidGroup              *string                              `json:"android_group,omitempty"`
+	AndroidSound              *string                              `json:"android_sound,omitempty"`
+	ChromeWebIcon             *string                              `json:"chrome_web_icon,omitempty"`
+	ChromeWebImage            *string                              `json:"chrome_web_image,omitempty"`
+	ChromeWebBadge            *string                              `json:"chrome_web_badge,omitempty"`
+	WebPushTopic              *string                              `json:"web_push_topic,omitempty"`
+	ContentAvailable          *bool                                `json:"content_available,omitempty"`
+	MutableContent            *bool                                `json:"mutable_content,omitempty"`
+	CustomData                map[string]any                       `json:"custom_data,omitempty"`
+	EmailSubject              *string                              `json:"email_subject,omitempty"`
+	EmailBody                 *string                              `json:"email_body,omitempty"`
+	EmailMJML                 *string                              `json:"email_mjml,omitempty"`
+	EmailPreheader            *string                              `json:"email_preheader,omitempty"`
+	EmailFromName             *string                              `json:"email_from_name,omitempty"`
+	EmailFromAddress          *string                              `json:"email_from_address,omitempty"`
+	EmailReplyToAddress       *string                              `json:"email_reply_to_address,omitempty"`
+	DisableEmailClickTracking *bool                                `json:"disable_email_click_tracking,omitempty"`
+	SMSFrom                   *string                              `json:"sms_from,omitempty"`
+	DisableSMSLinkShortening  *bool                                `json:"disable_sms_link_shortening,omitempty"`
+	AddToInbox                *bool                                `json:"add_to_inbox,omitempty"`
+	InboxTTL                  *int64                               `json:"inbox_ttl,omitempty"`
+	ContentCard               *CreateTemplateDtoContentContentCard `json:"content_card,omitempty"`
+	ThreadID                  *string                              `json:"thread_id,omitempty"`
+	IOSRelevanceScore         *float64                             `json:"ios_relevance_score,omitempty"`
+	TargetContentIdentifier   *string                              `json:"target_content_identifier,omitempty"`
+	SmallIcon                 *string                              `json:"small_icon,omitempty"`
+	LargeIcon                 *string                              `json:"large_icon,omitempty"`
+	AndroidAccentColor        *string                              `json:"android_accent_color,omitempty"`
 	// Değerler: 1, 0, -1.
 	AndroidVisibility   *int64                                       `json:"android_visibility,omitempty"`
 	WebButtons          []CreateTemplateDtoContentWebButtonsItem     `json:"web_buttons,omitempty"`
@@ -3497,6 +3508,15 @@ type CreateTemplateDtoContentButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// CreateTemplateDtoContentContentCard: CreateTemplateDtoContentContentCard şeması.
+type CreateTemplateDtoContentContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // CreateTemplateDtoContentIOSCarouselItem: CreateTemplateDtoContentIosCarouselItem şeması.
@@ -7332,36 +7352,37 @@ type RenderTemplateDtoContent struct {
 	IOSBadgeType  *string `json:"ios_badge_type,omitempty"`
 	IOSBadgeCount *int64  `json:"ios_badge_count,omitempty"`
 	// Değerler: "passive", "active", "time-sensitive", "critical".
-	IOSInterruptionLevel      *string        `json:"ios_interruption_level,omitempty"`
-	IOSCategory               *string        `json:"ios_category,omitempty"`
-	AndroidChannelID          *string        `json:"android_channel_id,omitempty"`
-	AndroidGroup              *string        `json:"android_group,omitempty"`
-	AndroidSound              *string        `json:"android_sound,omitempty"`
-	ChromeWebIcon             *string        `json:"chrome_web_icon,omitempty"`
-	ChromeWebImage            *string        `json:"chrome_web_image,omitempty"`
-	ChromeWebBadge            *string        `json:"chrome_web_badge,omitempty"`
-	WebPushTopic              *string        `json:"web_push_topic,omitempty"`
-	ContentAvailable          *bool          `json:"content_available,omitempty"`
-	MutableContent            *bool          `json:"mutable_content,omitempty"`
-	CustomData                map[string]any `json:"custom_data,omitempty"`
-	EmailSubject              *string        `json:"email_subject,omitempty"`
-	EmailBody                 *string        `json:"email_body,omitempty"`
-	EmailMJML                 *string        `json:"email_mjml,omitempty"`
-	EmailPreheader            *string        `json:"email_preheader,omitempty"`
-	EmailFromName             *string        `json:"email_from_name,omitempty"`
-	EmailFromAddress          *string        `json:"email_from_address,omitempty"`
-	EmailReplyToAddress       *string        `json:"email_reply_to_address,omitempty"`
-	DisableEmailClickTracking *bool          `json:"disable_email_click_tracking,omitempty"`
-	SMSFrom                   *string        `json:"sms_from,omitempty"`
-	DisableSMSLinkShortening  *bool          `json:"disable_sms_link_shortening,omitempty"`
-	AddToInbox                *bool          `json:"add_to_inbox,omitempty"`
-	InboxTTL                  *int64         `json:"inbox_ttl,omitempty"`
-	ThreadID                  *string        `json:"thread_id,omitempty"`
-	IOSRelevanceScore         *float64       `json:"ios_relevance_score,omitempty"`
-	TargetContentIdentifier   *string        `json:"target_content_identifier,omitempty"`
-	SmallIcon                 *string        `json:"small_icon,omitempty"`
-	LargeIcon                 *string        `json:"large_icon,omitempty"`
-	AndroidAccentColor        *string        `json:"android_accent_color,omitempty"`
+	IOSInterruptionLevel      *string                              `json:"ios_interruption_level,omitempty"`
+	IOSCategory               *string                              `json:"ios_category,omitempty"`
+	AndroidChannelID          *string                              `json:"android_channel_id,omitempty"`
+	AndroidGroup              *string                              `json:"android_group,omitempty"`
+	AndroidSound              *string                              `json:"android_sound,omitempty"`
+	ChromeWebIcon             *string                              `json:"chrome_web_icon,omitempty"`
+	ChromeWebImage            *string                              `json:"chrome_web_image,omitempty"`
+	ChromeWebBadge            *string                              `json:"chrome_web_badge,omitempty"`
+	WebPushTopic              *string                              `json:"web_push_topic,omitempty"`
+	ContentAvailable          *bool                                `json:"content_available,omitempty"`
+	MutableContent            *bool                                `json:"mutable_content,omitempty"`
+	CustomData                map[string]any                       `json:"custom_data,omitempty"`
+	EmailSubject              *string                              `json:"email_subject,omitempty"`
+	EmailBody                 *string                              `json:"email_body,omitempty"`
+	EmailMJML                 *string                              `json:"email_mjml,omitempty"`
+	EmailPreheader            *string                              `json:"email_preheader,omitempty"`
+	EmailFromName             *string                              `json:"email_from_name,omitempty"`
+	EmailFromAddress          *string                              `json:"email_from_address,omitempty"`
+	EmailReplyToAddress       *string                              `json:"email_reply_to_address,omitempty"`
+	DisableEmailClickTracking *bool                                `json:"disable_email_click_tracking,omitempty"`
+	SMSFrom                   *string                              `json:"sms_from,omitempty"`
+	DisableSMSLinkShortening  *bool                                `json:"disable_sms_link_shortening,omitempty"`
+	AddToInbox                *bool                                `json:"add_to_inbox,omitempty"`
+	InboxTTL                  *int64                               `json:"inbox_ttl,omitempty"`
+	ContentCard               *RenderTemplateDtoContentContentCard `json:"content_card,omitempty"`
+	ThreadID                  *string                              `json:"thread_id,omitempty"`
+	IOSRelevanceScore         *float64                             `json:"ios_relevance_score,omitempty"`
+	TargetContentIdentifier   *string                              `json:"target_content_identifier,omitempty"`
+	SmallIcon                 *string                              `json:"small_icon,omitempty"`
+	LargeIcon                 *string                              `json:"large_icon,omitempty"`
+	AndroidAccentColor        *string                              `json:"android_accent_color,omitempty"`
 	// Değerler: 1, 0, -1.
 	AndroidVisibility   *int64                                       `json:"android_visibility,omitempty"`
 	WebButtons          []RenderTemplateDtoContentWebButtonsItem     `json:"web_buttons,omitempty"`
@@ -7396,6 +7417,15 @@ type RenderTemplateDtoContentButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// RenderTemplateDtoContentContentCard: RenderTemplateDtoContentContentCard şeması.
+type RenderTemplateDtoContentContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // RenderTemplateDtoContentIOSCarouselItem: RenderTemplateDtoContentIosCarouselItem şeması.
@@ -9365,36 +9395,37 @@ type UpdateTemplateDtoContent struct {
 	IOSBadgeType  *string `json:"ios_badge_type,omitempty"`
 	IOSBadgeCount *int64  `json:"ios_badge_count,omitempty"`
 	// Değerler: "passive", "active", "time-sensitive", "critical".
-	IOSInterruptionLevel      *string        `json:"ios_interruption_level,omitempty"`
-	IOSCategory               *string        `json:"ios_category,omitempty"`
-	AndroidChannelID          *string        `json:"android_channel_id,omitempty"`
-	AndroidGroup              *string        `json:"android_group,omitempty"`
-	AndroidSound              *string        `json:"android_sound,omitempty"`
-	ChromeWebIcon             *string        `json:"chrome_web_icon,omitempty"`
-	ChromeWebImage            *string        `json:"chrome_web_image,omitempty"`
-	ChromeWebBadge            *string        `json:"chrome_web_badge,omitempty"`
-	WebPushTopic              *string        `json:"web_push_topic,omitempty"`
-	ContentAvailable          *bool          `json:"content_available,omitempty"`
-	MutableContent            *bool          `json:"mutable_content,omitempty"`
-	CustomData                map[string]any `json:"custom_data,omitempty"`
-	EmailSubject              *string        `json:"email_subject,omitempty"`
-	EmailBody                 *string        `json:"email_body,omitempty"`
-	EmailMJML                 *string        `json:"email_mjml,omitempty"`
-	EmailPreheader            *string        `json:"email_preheader,omitempty"`
-	EmailFromName             *string        `json:"email_from_name,omitempty"`
-	EmailFromAddress          *string        `json:"email_from_address,omitempty"`
-	EmailReplyToAddress       *string        `json:"email_reply_to_address,omitempty"`
-	DisableEmailClickTracking *bool          `json:"disable_email_click_tracking,omitempty"`
-	SMSFrom                   *string        `json:"sms_from,omitempty"`
-	DisableSMSLinkShortening  *bool          `json:"disable_sms_link_shortening,omitempty"`
-	AddToInbox                *bool          `json:"add_to_inbox,omitempty"`
-	InboxTTL                  *int64         `json:"inbox_ttl,omitempty"`
-	ThreadID                  *string        `json:"thread_id,omitempty"`
-	IOSRelevanceScore         *float64       `json:"ios_relevance_score,omitempty"`
-	TargetContentIdentifier   *string        `json:"target_content_identifier,omitempty"`
-	SmallIcon                 *string        `json:"small_icon,omitempty"`
-	LargeIcon                 *string        `json:"large_icon,omitempty"`
-	AndroidAccentColor        *string        `json:"android_accent_color,omitempty"`
+	IOSInterruptionLevel      *string                              `json:"ios_interruption_level,omitempty"`
+	IOSCategory               *string                              `json:"ios_category,omitempty"`
+	AndroidChannelID          *string                              `json:"android_channel_id,omitempty"`
+	AndroidGroup              *string                              `json:"android_group,omitempty"`
+	AndroidSound              *string                              `json:"android_sound,omitempty"`
+	ChromeWebIcon             *string                              `json:"chrome_web_icon,omitempty"`
+	ChromeWebImage            *string                              `json:"chrome_web_image,omitempty"`
+	ChromeWebBadge            *string                              `json:"chrome_web_badge,omitempty"`
+	WebPushTopic              *string                              `json:"web_push_topic,omitempty"`
+	ContentAvailable          *bool                                `json:"content_available,omitempty"`
+	MutableContent            *bool                                `json:"mutable_content,omitempty"`
+	CustomData                map[string]any                       `json:"custom_data,omitempty"`
+	EmailSubject              *string                              `json:"email_subject,omitempty"`
+	EmailBody                 *string                              `json:"email_body,omitempty"`
+	EmailMJML                 *string                              `json:"email_mjml,omitempty"`
+	EmailPreheader            *string                              `json:"email_preheader,omitempty"`
+	EmailFromName             *string                              `json:"email_from_name,omitempty"`
+	EmailFromAddress          *string                              `json:"email_from_address,omitempty"`
+	EmailReplyToAddress       *string                              `json:"email_reply_to_address,omitempty"`
+	DisableEmailClickTracking *bool                                `json:"disable_email_click_tracking,omitempty"`
+	SMSFrom                   *string                              `json:"sms_from,omitempty"`
+	DisableSMSLinkShortening  *bool                                `json:"disable_sms_link_shortening,omitempty"`
+	AddToInbox                *bool                                `json:"add_to_inbox,omitempty"`
+	InboxTTL                  *int64                               `json:"inbox_ttl,omitempty"`
+	ContentCard               *UpdateTemplateDtoContentContentCard `json:"content_card,omitempty"`
+	ThreadID                  *string                              `json:"thread_id,omitempty"`
+	IOSRelevanceScore         *float64                             `json:"ios_relevance_score,omitempty"`
+	TargetContentIdentifier   *string                              `json:"target_content_identifier,omitempty"`
+	SmallIcon                 *string                              `json:"small_icon,omitempty"`
+	LargeIcon                 *string                              `json:"large_icon,omitempty"`
+	AndroidAccentColor        *string                              `json:"android_accent_color,omitempty"`
 	// Değerler: 1, 0, -1.
 	AndroidVisibility   *int64                                       `json:"android_visibility,omitempty"`
 	WebButtons          []UpdateTemplateDtoContentWebButtonsItem     `json:"web_buttons,omitempty"`
@@ -9429,6 +9460,15 @@ type UpdateTemplateDtoContentButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// UpdateTemplateDtoContentContentCard: UpdateTemplateDtoContentContentCard şeması.
+type UpdateTemplateDtoContentContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // UpdateTemplateDtoContentIOSCarouselItem: UpdateTemplateDtoContentIosCarouselItem şeması.
