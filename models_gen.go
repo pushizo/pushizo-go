@@ -982,9 +982,9 @@ type AppSettingsOnboarding struct {
 	Simulation  *bool   `json:"simulation,omitempty"`
 	CompletedAt *string `json:"completed_at,omitempty"`
 	Version     *int64  `json:"version,omitempty"`
-	// Değerler: "ios", "android", "huawei", "web".
+	// Değerler: "ios", "android", "huawei", "web", "amazon", "windows", "email", "sms".
 	Platforms []string `json:"platforms,omitempty"`
-	// Değerler: "native", "flutter", "react-native", "unity", "capacitor", "cordova", "maui".
+	// Değerler: "native", "flutter", "react-native", "expo", "kmp", "unity", "capacitor", "cordova", "maui".
 	Framework *string `json:"framework,omitempty"`
 	// Değerler: "code", "wordpress".
 	WebIntegration *string `json:"web_integration,omitempty"`
@@ -8917,9 +8917,9 @@ type UpdateAppDtoSettingsOnboarding struct {
 	Simulation  *bool   `json:"simulation,omitempty"`
 	CompletedAt *string `json:"completed_at,omitempty"`
 	Version     *int64  `json:"version,omitempty"`
-	// Değerler: "ios", "android", "huawei", "web".
+	// Değerler: "ios", "android", "huawei", "web", "amazon", "windows", "email", "sms".
 	Platforms []string `json:"platforms,omitempty"`
-	// Değerler: "native", "flutter", "react-native", "unity", "capacitor", "cordova", "maui".
+	// Değerler: "native", "flutter", "react-native", "expo", "kmp", "unity", "capacitor", "cordova", "maui".
 	Framework *string `json:"framework,omitempty"`
 	// Değerler: "code", "wordpress".
 	WebIntegration *string `json:"web_integration,omitempty"`
