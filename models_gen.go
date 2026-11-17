@@ -1230,6 +1230,8 @@ type Campaign struct {
 	UpdatedAt string `json:"updated_at"`
 	// Zorunlu.
 	EstimatedRecipients *int64 `json:"estimated_recipients"`
+	// Zorunlu.
+	Preflight *CampaignPreflight `json:"preflight"`
 }
 
 // CampaignAbTest: CampaignAbTest şeması.
@@ -1338,6 +1340,68 @@ type CampaignPage struct {
 	NextCursor *string `json:"next_cursor"`
 	// Zorunlu.
 	HasMore bool `json:"has_more"`
+}
+
+// CampaignPreflight: CampaignPreflight şeması.
+type CampaignPreflight struct {
+	// Zorunlu.
+	CheckedAt string `json:"checked_at"`
+	// Zorunlu.
+	Summary CampaignPreflightSummary `json:"summary"`
+	// Zorunlu.
+	Codes          []string `json:"codes"`
+	AcknowledgedBy *string  `json:"acknowledged_by,omitempty"`
+	AcknowledgedAt *string  `json:"acknowledged_at,omitempty"`
+}
+
+// CampaignPreflightReport: CampaignPreflightReport şeması.
+type CampaignPreflightReport struct {
+	// Zorunlu.
+	CampaignID string `json:"campaign_id"`
+	// Zorunlu.
+	CheckedAt string `json:"checked_at"`
+	// Zorunlu.
+	LinksChecked bool `json:"links_checked"`
+	// Zorunlu.
+	Summary CampaignPreflightReportSummary `json:"summary"`
+	// Zorunlu.
+	Findings []CampaignPreflightReportFindingsItem `json:"findings"`
+}
+
+// CampaignPreflightReportFindingsItem: CampaignPreflightReportFindingsItem şeması.
+type CampaignPreflightReportFindingsItem struct {
+	// Zorunlu. Değerler: "brand_name_casing", "off_brand_color", "off_brand_font", "banned_phrase", "phishing_term", "link_invalid", "link_insecure_http", "link_unsafe_host", "link_shortener", "link_missing_utm", "link_broken", "link_unreachable", "liquid_syntax_error", "liquid_missing_default", "liquid_unknown_variable", "liquid_undefined_property", "commercial_no_category", "iys_sms_filter_informational", "sms_missing_opt_out", "email_missing_postal_address", "send_time_outside_hours".
+	Code string `json:"code"`
+	// Zorunlu. Değerler: "brand", "content", "links", "personalization", "compliance".
+	Category string `json:"category"`
+	// Zorunlu. Değerler: "critical", "warning", "info".
+	Severity string         `json:"severity"`
+	Field    *string        `json:"field,omitempty"`
+	Params   map[string]any `json:"params,omitempty"`
+}
+
+// CampaignPreflightReportSummary: CampaignPreflightReportSummary şeması.
+type CampaignPreflightReportSummary struct {
+	// Zorunlu.
+	Critical int64 `json:"critical"`
+	// Zorunlu.
+	Warning int64 `json:"warning"`
+	// Zorunlu.
+	Info int64 `json:"info"`
+	// Zorunlu.
+	Blocked bool `json:"blocked"`
+}
+
+// CampaignPreflightSummary: CampaignPreflightSummary şeması.
+type CampaignPreflightSummary struct {
+	// Zorunlu.
+	Critical int64 `json:"critical"`
+	// Zorunlu.
+	Warning int64 `json:"warning"`
+	// Zorunlu.
+	Info int64 `json:"info"`
+	// Zorunlu.
+	Blocked bool `json:"blocked"`
 }
 
 // CampaignRecurrence: CampaignRecurrence şeması.
