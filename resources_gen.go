@@ -2848,6 +2848,45 @@ func (s *AnalyticsService) UninstallReport(ctx context.Context, params *Analytic
 	return &out, nil
 }
 
+// AnalyticsAndroidDeliveryReportParams: AnalyticsService.AndroidDeliveryReport için isteğe bağlı sorgu parametreleri.
+type AnalyticsAndroidDeliveryReportParams struct {
+	From *string
+	To   *string
+	// Değerler: "true", "false".
+	Compare *string
+	// Değerler: "json", "csv".
+	Format *string
+}
+
+func (p *AnalyticsAndroidDeliveryReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "from", p.From)
+	addQuery(q, "to", p.To)
+	addQuery(q, "compare", p.Compare)
+	addQuery(q, "format", p.Format)
+}
+
+// AndroidDeliveryReport: Android teslimat sağlığı raporu
+//
+// GET /v1/apps/{appId}/analytics/android-delivery
+//
+// Üretici ve ROM bazında gönderildi, teslim alındı, açıldı sayıları ile gönderimden cihaza ulaşmaya kadar geçen süre. Teslim alındı cihazdaki SDK alındısından, kısıt özeti SDK teşhisinden hesaplanır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) AndroidDeliveryReport(ctx context.Context, params *AnalyticsAndroidDeliveryReportParams, opts ...RequestOption) (*AndroidDeliveryReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/analytics/android-delivery"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out AndroidDeliveryReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // AnalyticsEventsParams: AnalyticsService.Events için isteğe bağlı sorgu parametreleri.
 type AnalyticsEventsParams struct {
 	From *string

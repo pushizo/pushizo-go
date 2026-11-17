@@ -485,7 +485,23 @@ type AddSubscriptionDtoDevice struct {
 	// Değerler: "phone", "watch".
 	FormFactor *string `json:"form_factor,omitempty"`
 	// Değerler: "alert", "voip", "app_clip".
-	PushKind *string `json:"push_kind,omitempty"`
+	PushKind     *string                           `json:"push_kind,omitempty"`
+	Manufacturer *string                           `json:"manufacturer,omitempty"`
+	Brand        *string                           `json:"brand,omitempty"`
+	Rom          *string                           `json:"rom,omitempty"`
+	RomVersion   *string                           `json:"rom_version,omitempty"`
+	Delivery     *AddSubscriptionDtoDeviceDelivery `json:"delivery,omitempty"`
+}
+
+// AddSubscriptionDtoDeviceDelivery: AddSubscriptionDtoDeviceDelivery şeması.
+type AddSubscriptionDtoDeviceDelivery struct {
+	BatteryOptimizationExempt *bool `json:"battery_optimization_exempt,omitempty"`
+	BackgroundRestricted      *bool `json:"background_restricted,omitempty"`
+	ChannelBlocked            *bool `json:"channel_blocked,omitempty"`
+	PowerSaveMode             *bool `json:"power_save_mode,omitempty"`
+	DataSaver                 *bool `json:"data_saver,omitempty"`
+	// Değerler: "exempted", "active", "working_set", "frequent", "rare", "restricted".
+	StandbyBucket *string `json:"standby_bucket,omitempty"`
 }
 
 // AddSubscriptionDtoOptIn: AddSubscriptionDtoOptIn şeması.
@@ -723,6 +739,170 @@ type AdSpendReportTotals struct {
 	Cpa *float64 `json:"cpa"`
 	// Zorunlu.
 	Roas *float64 `json:"roas"`
+}
+
+// AndroidDeliveryReport: AndroidDeliveryReport şeması.
+type AndroidDeliveryReport struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Devices AndroidDeliveryReportDevices `json:"devices"`
+	// Zorunlu.
+	Totals AndroidDeliveryReportTotals `json:"totals"`
+	// Zorunlu.
+	Previous *AndroidDeliveryReportPrevious `json:"previous"`
+	// Zorunlu.
+	Deprioritized int64 `json:"deprioritized"`
+	// Zorunlu.
+	Aggressive AndroidDeliveryReportAggressive `json:"aggressive"`
+	// Zorunlu.
+	Others AndroidDeliveryReportOthers `json:"others"`
+	// Zorunlu.
+	Vendors []AndroidDeliveryReportVendorsItem `json:"vendors"`
+	// Zorunlu.
+	Roms []AndroidDeliveryReportRomsItem `json:"roms"`
+	// Zorunlu. Değerler: "upgrade_sdk", "vendor_guidance", "background_restricted", "battery_exemption", "deprioritized", "notifications_blocked".
+	Recommendations []string `json:"recommendations"`
+}
+
+// AndroidDeliveryReportAggressive: AndroidDeliveryReportAggressive şeması.
+type AndroidDeliveryReportAggressive struct {
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Delivered int64 `json:"delivered"`
+	// Zorunlu.
+	DeliveryRate *float64 `json:"delivery_rate"`
+}
+
+// AndroidDeliveryReportDevices: AndroidDeliveryReportDevices şeması.
+type AndroidDeliveryReportDevices struct {
+	// Zorunlu.
+	Total int64 `json:"total"`
+	// Zorunlu.
+	Reporting int64 `json:"reporting"`
+	// Zorunlu.
+	ReportingRate *float64 `json:"reporting_rate"`
+	// Zorunlu.
+	Restricted int64 `json:"restricted"`
+	// Zorunlu.
+	RestrictedRate *float64 `json:"restricted_rate"`
+	// Zorunlu.
+	BackgroundRestricted int64 `json:"background_restricted"`
+	// Zorunlu.
+	BatteryOptimized int64 `json:"battery_optimized"`
+	// Zorunlu.
+	LowStandbyBucket int64 `json:"low_standby_bucket"`
+	// Zorunlu.
+	PowerSave int64 `json:"power_save"`
+	// Zorunlu.
+	DataSaver int64 `json:"data_saver"`
+	// Zorunlu.
+	ChannelBlocked int64 `json:"channel_blocked"`
+	// Zorunlu.
+	NotificationsBlocked int64 `json:"notifications_blocked"`
+	// Zorunlu.
+	AggressiveVendor int64 `json:"aggressive_vendor"`
+	// Zorunlu.
+	AggressiveVendorRate *float64 `json:"aggressive_vendor_rate"`
+}
+
+// AndroidDeliveryReportOthers: AndroidDeliveryReportOthers şeması.
+type AndroidDeliveryReportOthers struct {
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Delivered int64 `json:"delivered"`
+	// Zorunlu.
+	DeliveryRate *float64 `json:"delivery_rate"`
+}
+
+// AndroidDeliveryReportPrevious: AndroidDeliveryReportPrevious şeması.
+type AndroidDeliveryReportPrevious struct {
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Delivered int64 `json:"delivered"`
+	// Zorunlu.
+	Opened int64 `json:"opened"`
+	// Zorunlu.
+	DeliveryRate *float64 `json:"delivery_rate"`
+	// Zorunlu.
+	OpenRate *float64 `json:"open_rate"`
+	// Zorunlu.
+	MedianDelaySeconds *int64 `json:"median_delay_seconds"`
+	// Zorunlu.
+	P90DelaySeconds *int64 `json:"p90_delay_seconds"`
+}
+
+// AndroidDeliveryReportRomsItem: AndroidDeliveryReportRomsItem şeması.
+type AndroidDeliveryReportRomsItem struct {
+	// Zorunlu.
+	Rom string `json:"rom"`
+	// Zorunlu.
+	Devices int64 `json:"devices"`
+	// Zorunlu.
+	Restricted int64 `json:"restricted"`
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Delivered int64 `json:"delivered"`
+	// Zorunlu.
+	DeliveryRate *float64 `json:"delivery_rate"`
+	// Zorunlu.
+	MedianDelaySeconds *int64 `json:"median_delay_seconds"`
+}
+
+// AndroidDeliveryReportTotals: AndroidDeliveryReportTotals şeması.
+type AndroidDeliveryReportTotals struct {
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Delivered int64 `json:"delivered"`
+	// Zorunlu.
+	Opened int64 `json:"opened"`
+	// Zorunlu.
+	DeliveryRate *float64 `json:"delivery_rate"`
+	// Zorunlu.
+	OpenRate *float64 `json:"open_rate"`
+	// Zorunlu.
+	MedianDelaySeconds *int64 `json:"median_delay_seconds"`
+	// Zorunlu.
+	P90DelaySeconds *int64 `json:"p90_delay_seconds"`
+}
+
+// AndroidDeliveryReportVendorsItem: AndroidDeliveryReportVendorsItem şeması.
+type AndroidDeliveryReportVendorsItem struct {
+	// Zorunlu.
+	Vendor string `json:"vendor"`
+	// Zorunlu.
+	Aggressive bool `json:"aggressive"`
+	// Zorunlu.
+	Devices int64 `json:"devices"`
+	// Zorunlu.
+	Reporting int64 `json:"reporting"`
+	// Zorunlu.
+	Restricted int64 `json:"restricted"`
+	// Zorunlu.
+	BatteryOptimized int64 `json:"battery_optimized"`
+	// Zorunlu.
+	Sent int64 `json:"sent"`
+	// Zorunlu.
+	Delivered int64 `json:"delivered"`
+	// Zorunlu.
+	Opened int64 `json:"opened"`
+	// Zorunlu.
+	DeliveryRate *float64 `json:"delivery_rate"`
+	// Zorunlu.
+	OpenRate *float64 `json:"open_rate"`
+	// Zorunlu.
+	MedianDelaySeconds *int64 `json:"median_delay_seconds"`
+	// Zorunlu.
+	P90DelaySeconds *int64 `json:"p90_delay_seconds"`
+	// Zorunlu.
+	Deprioritized int64 `json:"deprioritized"`
 }
 
 // APIEventsDto: ApiEventsDto şeması.
@@ -7072,7 +7252,23 @@ type PatchSubscriptionDtoDevice struct {
 	// Değerler: "phone", "watch".
 	FormFactor *string `json:"form_factor,omitempty"`
 	// Değerler: "alert", "voip", "app_clip".
-	PushKind *string `json:"push_kind,omitempty"`
+	PushKind     *string                             `json:"push_kind,omitempty"`
+	Manufacturer *string                             `json:"manufacturer,omitempty"`
+	Brand        *string                             `json:"brand,omitempty"`
+	Rom          *string                             `json:"rom,omitempty"`
+	RomVersion   *string                             `json:"rom_version,omitempty"`
+	Delivery     *PatchSubscriptionDtoDeviceDelivery `json:"delivery,omitempty"`
+}
+
+// PatchSubscriptionDtoDeviceDelivery: PatchSubscriptionDtoDeviceDelivery şeması.
+type PatchSubscriptionDtoDeviceDelivery struct {
+	BatteryOptimizationExempt *bool `json:"battery_optimization_exempt,omitempty"`
+	BackgroundRestricted      *bool `json:"background_restricted,omitempty"`
+	ChannelBlocked            *bool `json:"channel_blocked,omitempty"`
+	PowerSaveMode             *bool `json:"power_save_mode,omitempty"`
+	DataSaver                 *bool `json:"data_saver,omitempty"`
+	// Değerler: "exempted", "active", "working_set", "frequent", "rare", "restricted".
+	StandbyBucket *string `json:"standby_bucket,omitempty"`
 }
 
 // PatchUserDto: PatchUserDto şeması.
@@ -8482,7 +8678,23 @@ type SubscriptionDevice struct {
 	// Değerler: "phone", "watch".
 	FormFactor *string `json:"form_factor,omitempty"`
 	// Değerler: "alert", "voip", "app_clip".
-	PushKind *string `json:"push_kind,omitempty"`
+	PushKind     *string                     `json:"push_kind,omitempty"`
+	Manufacturer *string                     `json:"manufacturer,omitempty"`
+	Brand        *string                     `json:"brand,omitempty"`
+	Rom          *string                     `json:"rom,omitempty"`
+	RomVersion   *string                     `json:"rom_version,omitempty"`
+	Delivery     *SubscriptionDeviceDelivery `json:"delivery,omitempty"`
+}
+
+// SubscriptionDeviceDelivery: SubscriptionDeviceDelivery şeması.
+type SubscriptionDeviceDelivery struct {
+	BatteryOptimizationExempt *bool `json:"battery_optimization_exempt,omitempty"`
+	BackgroundRestricted      *bool `json:"background_restricted,omitempty"`
+	ChannelBlocked            *bool `json:"channel_blocked,omitempty"`
+	PowerSaveMode             *bool `json:"power_save_mode,omitempty"`
+	DataSaver                 *bool `json:"data_saver,omitempty"`
+	// Değerler: "exempted", "active", "working_set", "frequent", "rare", "restricted".
+	StandbyBucket *string `json:"standby_bucket,omitempty"`
 }
 
 // SubscriptionLocation: SubscriptionLocation şeması.
