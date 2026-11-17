@@ -59,6 +59,7 @@ type services struct {
 	Recommendations     *RecommendationsService
 	ReverseEtl          *ReverseEtlService
 	Rfm                 *RfmService
+	SiteSearch          *SiteSearchService
 	SMSKeywords         *SMSKeywordsService
 	Surveys             *SurveysService
 	Verify              *VerifyService
@@ -117,6 +118,7 @@ func (c *Client) initServices() {
 	c.Recommendations = &RecommendationsService{client: c}
 	c.ReverseEtl = &ReverseEtlService{client: c}
 	c.Rfm = &RfmService{client: c}
+	c.SiteSearch = &SiteSearchService{client: c}
 	c.SMSKeywords = &SMSKeywordsService{client: c}
 	c.Surveys = &SurveysService{client: c}
 	c.Verify = &VerifyService{client: c}
@@ -7588,6 +7590,250 @@ func (s *RfmService) Users(ctx context.Context, params *RfmUsersParams, opts ...
 	op.query = url.Values{}
 	params.appendQuery(op.query)
 	var out RfmUsersPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SiteSearchService: siteSearch kaynağı.
+type SiteSearchService struct {
+	client *Client
+}
+
+// Overview: Site araması ayarları, dizin durumu ve AI kullanımı
+//
+// GET /v1/apps/{appId}/site-search
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) Overview(ctx context.Context, opts ...RequestOption) (*SiteSearchOverview, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/site-search"}
+	var out SiteSearchOverview
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateSettings: Site araması ayarlarını güncelle
+//
+// PATCH /v1/apps/{appId}/site-search/settings
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) UpdateSettings(ctx context.Context, body *UpdateSiteSearchSettingsDto, opts ...RequestOption) (*SiteSearchOverview, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/site-search/settings"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SiteSearchOverview
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Sources: Arama kaynakları
+//
+// GET /v1/apps/{appId}/site-search/sources
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) Sources(ctx context.Context, opts ...RequestOption) (*SiteSearchSourceList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/site-search/sources"}
+	var out SiteSearchSourceList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateSource: Arama kaynağı ekle
+//
+// POST /v1/apps/{appId}/site-search/sources
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) CreateSource(ctx context.Context, body *CreateSiteSearchSourceDto, opts ...RequestOption) (*SiteSearchSource, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/site-search/sources"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SiteSearchSource
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateSource: Arama kaynağını düzenle
+//
+// PATCH /v1/apps/{appId}/site-search/sources/{sourceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) UpdateSource(ctx context.Context, sourceID string, body *UpdateSiteSearchSourceDto, opts ...RequestOption) (*SiteSearchSource, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/site-search/sources/{sourceId}"}
+	op.pathParams = map[string]string{"sourceId": sourceID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SiteSearchSource
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RemoveSource: Arama kaynağını ve sayfalarını sil
+//
+// DELETE /v1/apps/{appId}/site-search/sources/{sourceId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) RemoveSource(ctx context.Context, sourceID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/site-search/sources/{sourceId}"}
+	op.pathParams = map[string]string{"sourceId": sourceID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Crawl: Kaynağı şimdi yeniden tara
+//
+// POST /v1/apps/{appId}/site-search/sources/{sourceId}/crawl
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) Crawl(ctx context.Context, sourceID string, opts ...RequestOption) (*SiteSearchCrawlRequest, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/site-search/sources/{sourceId}/crawl"}
+	op.pathParams = map[string]string{"sourceId": sourceID}
+	var out SiteSearchCrawlRequest
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SiteSearchDocumentsParams: SiteSearchService.Documents için isteğe bağlı sorgu parametreleri.
+type SiteSearchDocumentsParams struct {
+	SourceID *string
+	Q        *string
+	Limit    *int64
+	Cursor   *string
+}
+
+func (p *SiteSearchDocumentsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "source_id", p.SourceID)
+	addQuery(q, "q", p.Q)
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Documents: Dizindeki belgeler
+//
+// GET /v1/apps/{appId}/site-search/documents
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) Documents(ctx context.Context, params *SiteSearchDocumentsParams, opts ...RequestOption) (*SiteSearchDocumentPage, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/site-search/documents"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out SiteSearchDocumentPage
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DocumentsAll: Documents sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *SiteSearchService) DocumentsAll(ctx context.Context, params *SiteSearchDocumentsParams, opts ...RequestOption) iter.Seq2[SiteSearchDocument, error] {
+	var p SiteSearchDocumentsParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]SiteSearchDocument, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.Documents(ctx, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// PutDocument: Belgeyi dizine yükle veya değiştir (anahtar app içinde tekildir)
+//
+// PUT /v1/apps/{appId}/site-search/documents/{documentKey}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) PutDocument(ctx context.Context, documentKey string, body *PutSiteSearchDocumentDto, opts ...RequestOption) (*SiteSearchDocumentResult, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PUT", path: "/v1/apps/{appId}/site-search/documents/{documentKey}"}
+	op.pathParams = map[string]string{"documentKey": documentKey}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out SiteSearchDocumentResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RemoveDocument: Belgeyi dizinden sil (belge kimliği veya anahtarı)
+//
+// DELETE /v1/apps/{appId}/site-search/documents/{documentKey}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) RemoveDocument(ctx context.Context, documentKey string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/site-search/documents/{documentKey}"}
+	op.pathParams = map[string]string{"documentKey": documentKey}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SiteSearchReportParams: SiteSearchService.Report için isteğe bağlı sorgu parametreleri.
+type SiteSearchReportParams struct {
+	Days *int64
+}
+
+func (p *SiteSearchReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "days", p.Days)
+}
+
+// Report: Arama raporu
+//
+// GET /v1/apps/{appId}/site-search/report
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *SiteSearchService) Report(ctx context.Context, params *SiteSearchReportParams, opts ...RequestOption) (*SiteSearchReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/site-search/report"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out SiteSearchReport
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}

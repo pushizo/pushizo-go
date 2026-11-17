@@ -3461,6 +3461,19 @@ type CreateSavedReportDtoDefinitionSort struct {
 	Direction *string `json:"direction,omitempty"`
 }
 
+// CreateSiteSearchSourceDto: CreateSiteSearchSourceDto şeması.
+type CreateSiteSearchSourceDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "sitemap", "urls".
+	Kind         string   `json:"kind"`
+	URL          *string  `json:"url,omitempty"`
+	Urls         []string `json:"urls,omitempty"`
+	MaxPages     *int64   `json:"max_pages,omitempty"`
+	RefreshHours *int64   `json:"refresh_hours,omitempty"`
+	Enabled      *bool    `json:"enabled,omitempty"`
+}
+
 // CreateSuppressionDto: CreateSuppressionDto şeması.
 type CreateSuppressionDto struct {
 	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs", "telegram", "viber".
@@ -7467,6 +7480,16 @@ type PublicSurveyResponseDto struct {
 	ExternalID *string        `json:"external_id,omitempty"`
 }
 
+// PutSiteSearchDocumentDto: PutSiteSearchDocumentDto şeması.
+type PutSiteSearchDocumentDto struct {
+	// Zorunlu.
+	URL      string  `json:"url"`
+	Title    *string `json:"title,omitempty"`
+	Content  *string `json:"content,omitempty"`
+	HTML     *string `json:"html,omitempty"`
+	Language *string `json:"language,omitempty"`
+}
+
 // RecommendationConfig: RecommendationConfig şeması.
 type RecommendationConfig struct {
 	// Zorunlu.
@@ -8338,6 +8361,240 @@ type SetPreferencesDtoPreferencesItem struct {
 	Channel *string `json:"channel,omitempty"`
 	// Zorunlu.
 	OptedIn bool `json:"opted_in"`
+}
+
+// SiteSearchCrawlRequest: SiteSearchCrawlRequest şeması.
+type SiteSearchCrawlRequest struct {
+	// Zorunlu.
+	Queued bool `json:"queued"`
+	// Zorunlu.
+	Source SiteSearchSource `json:"source"`
+}
+
+// SiteSearchDocument: SiteSearchDocument şeması.
+type SiteSearchDocument struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Key string `json:"key"`
+	// Zorunlu.
+	SourceID *string `json:"source_id"`
+	// Zorunlu.
+	URL string `json:"url"`
+	// Zorunlu.
+	Title string `json:"title"`
+	// Zorunlu.
+	Language *string `json:"language"`
+	// Zorunlu.
+	Chunks int64 `json:"chunks"`
+	// Zorunlu.
+	Chars int64 `json:"chars"`
+	// Zorunlu.
+	IndexedAt string `json:"indexed_at"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+}
+
+// SiteSearchDocumentPage: SiteSearchDocumentPage şeması.
+type SiteSearchDocumentPage struct {
+	// Zorunlu.
+	Data []SiteSearchDocument `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// SiteSearchDocumentResult: SiteSearchDocumentResult şeması.
+type SiteSearchDocumentResult struct {
+	// Zorunlu. Değerler: "created", "updated", "unchanged".
+	Outcome string `json:"outcome"`
+	// Zorunlu.
+	Document SiteSearchDocument `json:"document"`
+}
+
+// SiteSearchOverview: SiteSearchOverview şeması.
+type SiteSearchOverview struct {
+	// Zorunlu.
+	Settings SiteSearchOverviewSettings `json:"settings"`
+	// Zorunlu.
+	Index SiteSearchOverviewIndex `json:"index"`
+	// Zorunlu.
+	Usage SiteSearchOverviewUsage `json:"usage"`
+	// Zorunlu.
+	Ai SiteSearchOverviewAi `json:"ai"`
+}
+
+// SiteSearchOverviewAi: SiteSearchOverviewAi şeması.
+type SiteSearchOverviewAi struct {
+	// Zorunlu.
+	Available bool `json:"available"`
+	// Zorunlu. Değerler: "disabled", "unavailable", "cap_reached".
+	Reason *string `json:"reason"`
+}
+
+// SiteSearchOverviewIndex: SiteSearchOverviewIndex şeması.
+type SiteSearchOverviewIndex struct {
+	// Zorunlu.
+	Documents int64 `json:"documents"`
+	// Zorunlu.
+	Chunks int64 `json:"chunks"`
+	// Zorunlu.
+	Sources int64 `json:"sources"`
+	// Zorunlu.
+	LastIndexedAt *string `json:"last_indexed_at"`
+}
+
+// SiteSearchOverviewSettings: SiteSearchOverviewSettings şeması.
+type SiteSearchOverviewSettings struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	AiAnswers bool `json:"ai_answers"`
+	// Zorunlu.
+	AllowedOrigins []string `json:"allowed_origins"`
+	// Zorunlu.
+	Language string `json:"language"`
+	// Zorunlu.
+	TextSearchConfig string `json:"text_search_config"`
+	// Zorunlu.
+	MonthlyTokenCap int64 `json:"monthly_token_cap"`
+	// Zorunlu.
+	QueryRetentionDays int64 `json:"query_retention_days"`
+	// Zorunlu.
+	UpdatedAt *string `json:"updated_at"`
+}
+
+// SiteSearchOverviewUsage: SiteSearchOverviewUsage şeması.
+type SiteSearchOverviewUsage struct {
+	// Zorunlu.
+	TokensThisMonth int64 `json:"tokens_this_month"`
+	// Zorunlu.
+	MonthlyTokenCap int64 `json:"monthly_token_cap"`
+	// Zorunlu.
+	PeriodStart string `json:"period_start"`
+}
+
+// SiteSearchReport: SiteSearchReport şeması.
+type SiteSearchReport struct {
+	// Zorunlu.
+	PeriodDays int64 `json:"period_days"`
+	// Zorunlu.
+	Searches int64 `json:"searches"`
+	// Zorunlu.
+	ZeroResults int64 `json:"zero_results"`
+	// Zorunlu.
+	ClickThroughRate float64 `json:"click_through_rate"`
+	// Zorunlu.
+	AnswersRequested int64 `json:"answers_requested"`
+	// Zorunlu.
+	Answered int64 `json:"answered"`
+	// Zorunlu.
+	NotFound int64 `json:"not_found"`
+	// Zorunlu.
+	AnswerFallbacks int64 `json:"answer_fallbacks"`
+	// Zorunlu.
+	Tokens int64 `json:"tokens"`
+	// Zorunlu.
+	TopQueries []SiteSearchReportTopQueriesItem `json:"top_queries"`
+	// Zorunlu.
+	ZeroResultQueries []SiteSearchReportZeroResultQueriesItem `json:"zero_result_queries"`
+	// Zorunlu.
+	Daily []SiteSearchReportDailyItem `json:"daily"`
+}
+
+// SiteSearchReportDailyItem: SiteSearchReportDailyItem şeması.
+type SiteSearchReportDailyItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	Searches int64 `json:"searches"`
+	// Zorunlu.
+	ZeroResults int64 `json:"zero_results"`
+	// Zorunlu.
+	Answered int64 `json:"answered"`
+}
+
+// SiteSearchReportTopQueriesItem: SiteSearchReportTopQueriesItem şeması.
+type SiteSearchReportTopQueriesItem struct {
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	Searches int64 `json:"searches"`
+	// Zorunlu.
+	Clicks int64 `json:"clicks"`
+	// Zorunlu.
+	AvgResults float64 `json:"avg_results"`
+}
+
+// SiteSearchReportZeroResultQueriesItem: SiteSearchReportZeroResultQueriesItem şeması.
+type SiteSearchReportZeroResultQueriesItem struct {
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	Searches int64 `json:"searches"`
+}
+
+// SiteSearchSource: SiteSearchSource şeması.
+type SiteSearchSource struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "sitemap", "urls".
+	Kind string `json:"kind"`
+	// Zorunlu.
+	URL *string `json:"url"`
+	// Zorunlu.
+	Urls []string `json:"urls"`
+	// Zorunlu.
+	MaxPages int64 `json:"max_pages"`
+	// Zorunlu.
+	RefreshHours *int64 `json:"refresh_hours"`
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu. Değerler: "idle", "queued", "crawling", "ok", "partial", "failed".
+	Status string `json:"status"`
+	// Zorunlu.
+	Documents int64 `json:"documents"`
+	// Zorunlu.
+	CrawlRequestedAt *string `json:"crawl_requested_at"`
+	// Zorunlu.
+	LastCrawledAt *string `json:"last_crawled_at"`
+	// Zorunlu.
+	NextCrawlAt *string `json:"next_crawl_at"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	Stats SiteSearchSourceStats `json:"stats"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// SiteSearchSourceList: SiteSearchSourceList şeması.
+type SiteSearchSourceList struct {
+	// Zorunlu.
+	Data []SiteSearchSource `json:"data"`
+}
+
+// SiteSearchSourceStats: SiteSearchSourceStats şeması.
+type SiteSearchSourceStats struct {
+	// Zorunlu.
+	PagesFound int64 `json:"pages_found"`
+	// Zorunlu.
+	PagesIndexed int64 `json:"pages_indexed"`
+	// Zorunlu.
+	PagesUnchanged int64 `json:"pages_unchanged"`
+	// Zorunlu.
+	PagesSkipped int64 `json:"pages_skipped"`
+	// Zorunlu.
+	PagesFailed int64 `json:"pages_failed"`
+	// Zorunlu.
+	PagesRemoved int64 `json:"pages_removed"`
+	// Zorunlu.
+	DurationMs int64 `json:"duration_ms"`
 }
 
 // SMSKeyword: SmsKeyword şeması.
@@ -9674,6 +9931,28 @@ type UpdateSavedReportDtoDefinitionSort struct {
 	By string `json:"by"`
 	// Değerler: "asc", "desc".
 	Direction *string `json:"direction,omitempty"`
+}
+
+// UpdateSiteSearchSettingsDto: UpdateSiteSearchSettingsDto şeması.
+type UpdateSiteSearchSettingsDto struct {
+	Enabled            *bool    `json:"enabled,omitempty"`
+	AiAnswers          *bool    `json:"ai_answers,omitempty"`
+	AllowedOrigins     []string `json:"allowed_origins,omitempty"`
+	Language           *string  `json:"language,omitempty"`
+	MonthlyTokenCap    *int64   `json:"monthly_token_cap,omitempty"`
+	QueryRetentionDays *int64   `json:"query_retention_days,omitempty"`
+}
+
+// UpdateSiteSearchSourceDto: UpdateSiteSearchSourceDto şeması.
+type UpdateSiteSearchSourceDto struct {
+	Name *string `json:"name,omitempty"`
+	// Değerler: "sitemap", "urls".
+	Kind         *string  `json:"kind,omitempty"`
+	URL          *string  `json:"url,omitempty"`
+	Urls         []string `json:"urls,omitempty"`
+	MaxPages     *int64   `json:"max_pages,omitempty"`
+	RefreshHours *int64   `json:"refresh_hours,omitempty"`
+	Enabled      *bool    `json:"enabled,omitempty"`
 }
 
 // UpdateTemplateDto: UpdateTemplateDto şeması.
