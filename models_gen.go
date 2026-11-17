@@ -3760,6 +3760,44 @@ type CreateWalletTemplateDtoDesignFieldsItem struct {
 	Section *string `json:"section,omitempty"`
 }
 
+// CreateWarehouseConnectionDto: CreateWarehouseConnectionDto şeması.
+type CreateWarehouseConnectionDto struct {
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "bigquery", "snowflake", "databricks".
+	Type string `json:"type"`
+	// Zorunlu.
+	Config map[string]any `json:"config"`
+	// Zorunlu.
+	Credentials map[string]any `json:"credentials"`
+}
+
+// CreateWarehouseSegmentDto: CreateWarehouseSegmentDto şeması.
+type CreateWarehouseSegmentDto struct {
+	// Zorunlu.
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	// Zorunlu.
+	ConnectionID string `json:"connection_id"`
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	IDColumn string `json:"id_column"`
+	// Değerler: "external_id", "user_id".
+	IDType                 *string                          `json:"id_type,omitempty"`
+	RefreshIntervalMinutes *int64                           `json:"refresh_interval_minutes,omitempty"`
+	Limits                 *CreateWarehouseSegmentDtoLimits `json:"limits,omitempty"`
+}
+
+// CreateWarehouseSegmentDtoLimits: CreateWarehouseSegmentDtoLimits şeması.
+type CreateWarehouseSegmentDtoLimits struct {
+	TimeoutSeconds *int64 `json:"timeout_seconds,omitempty"`
+	MaxRows        *int64 `json:"max_rows,omitempty"`
+	MaxBytesBilled *int64 `json:"max_bytes_billed,omitempty"`
+	// Değerler: "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large", "3X-Large", "4X-Large", "5X-Large", "6X-Large".
+	MaxWarehouseSize *string `json:"max_warehouse_size,omitempty"`
+}
+
 // CreateWarmupPlanDto: CreateWarmupPlanDto şeması.
 type CreateWarmupPlanDto struct {
 	// Zorunlu.
@@ -7265,6 +7303,30 @@ type PredictionUsersPageDataItem struct {
 	Bucket string `json:"bucket"`
 }
 
+// PreviewWarehouseQueryDto: PreviewWarehouseQueryDto şeması.
+type PreviewWarehouseQueryDto struct {
+	// Zorunlu.
+	ConnectionID string `json:"connection_id"`
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	IDColumn string `json:"id_column"`
+	// Değerler: "external_id", "user_id".
+	IDType *string                         `json:"id_type,omitempty"`
+	Limits *PreviewWarehouseQueryDtoLimits `json:"limits,omitempty"`
+	// Değerler: "dry_run", "sample".
+	Mode *string `json:"mode,omitempty"`
+}
+
+// PreviewWarehouseQueryDtoLimits: PreviewWarehouseQueryDtoLimits şeması.
+type PreviewWarehouseQueryDtoLimits struct {
+	TimeoutSeconds *int64 `json:"timeout_seconds,omitempty"`
+	MaxRows        *int64 `json:"max_rows,omitempty"`
+	MaxBytesBilled *int64 `json:"max_bytes_billed,omitempty"`
+	// Değerler: "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large", "3X-Large", "4X-Large", "5X-Large", "6X-Large".
+	MaxWarehouseSize *string `json:"max_warehouse_size,omitempty"`
+}
+
 // PromoCodeList: PromoCodeList şeması.
 type PromoCodeList struct {
 	// Zorunlu.
@@ -8073,6 +8135,8 @@ type Segment struct {
 	UpdatedAt string `json:"updated_at"`
 	// Zorunlu.
 	SQL *SegmentSQL `json:"sql"`
+	// Zorunlu.
+	Warehouse *SegmentWarehouse `json:"warehouse"`
 }
 
 // SegmentCampaigns: SegmentCampaigns şeması.
@@ -8206,6 +8270,46 @@ type SegmentsUpdateBodyDefinition struct {
 	All  []map[string]any `json:"all,omitempty"`
 	Any  []map[string]any `json:"any,omitempty"`
 	None []map[string]any `json:"none,omitempty"`
+}
+
+// SegmentWarehouse: SegmentWarehouse şeması.
+type SegmentWarehouse struct {
+	// Zorunlu.
+	ConnectionID *string `json:"connection_id"`
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	IDColumn string `json:"id_column"`
+	// Zorunlu. Değerler: "external_id", "user_id".
+	IDType string `json:"id_type"`
+	// Zorunlu.
+	Limits SegmentWarehouseLimits `json:"limits"`
+	// Zorunlu.
+	RefreshIntervalMinutes *int64 `json:"refresh_interval_minutes"`
+	// Zorunlu. Değerler: "queued", "failed", "ok", "never".
+	RefreshState string `json:"refresh_state"`
+	// Zorunlu.
+	RefreshRequestedAt *string `json:"refresh_requested_at"`
+	// Zorunlu.
+	RefreshedAt *string `json:"refreshed_at"`
+	// Zorunlu.
+	MemberCount *int64 `json:"member_count"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
+	// Zorunlu.
+	BytesProcessed *float64 `json:"bytes_processed"`
+}
+
+// SegmentWarehouseLimits: SegmentWarehouseLimits şeması.
+type SegmentWarehouseLimits struct {
+	// Zorunlu.
+	TimeoutSeconds int64 `json:"timeout_seconds"`
+	// Zorunlu.
+	MaxRows int64 `json:"max_rows"`
+	// Zorunlu.
+	MaxBytesBilled float64 `json:"max_bytes_billed"`
+	// Zorunlu. Değerler: "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large", "3X-Large", "4X-Large", "5X-Large", "6X-Large".
+	MaxWarehouseSize *string `json:"max_warehouse_size"`
 }
 
 // SelectWinnerDto: SelectWinnerDto şeması.
@@ -9847,6 +9951,13 @@ type UpdateWalletTemplateDtoDesignFieldsItem struct {
 	Section *string `json:"section,omitempty"`
 }
 
+// UpdateWarehouseConnectionDto: UpdateWarehouseConnectionDto şeması.
+type UpdateWarehouseConnectionDto struct {
+	Name        *string        `json:"name,omitempty"`
+	Config      map[string]any `json:"config,omitempty"`
+	Credentials map[string]any `json:"credentials,omitempty"`
+}
+
 // UpdateWarehouseExportDto: UpdateWarehouseExportDto şeması.
 type UpdateWarehouseExportDto struct {
 	Name *string `json:"name,omitempty"`
@@ -9857,6 +9968,28 @@ type UpdateWarehouseExportDto struct {
 	Enabled     *bool          `json:"enabled,omitempty"`
 	Config      map[string]any `json:"config,omitempty"`
 	Credentials map[string]any `json:"credentials,omitempty"`
+}
+
+// UpdateWarehouseSegmentDto: UpdateWarehouseSegmentDto şeması.
+type UpdateWarehouseSegmentDto struct {
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	ConnectionID *string `json:"connection_id,omitempty"`
+	Query        *string `json:"query,omitempty"`
+	IDColumn     *string `json:"id_column,omitempty"`
+	// Değerler: "external_id", "user_id".
+	IDType                 *string                          `json:"id_type,omitempty"`
+	RefreshIntervalMinutes *int64                           `json:"refresh_interval_minutes,omitempty"`
+	Limits                 *UpdateWarehouseSegmentDtoLimits `json:"limits,omitempty"`
+}
+
+// UpdateWarehouseSegmentDtoLimits: UpdateWarehouseSegmentDtoLimits şeması.
+type UpdateWarehouseSegmentDtoLimits struct {
+	TimeoutSeconds *int64 `json:"timeout_seconds,omitempty"`
+	MaxRows        *int64 `json:"max_rows,omitempty"`
+	MaxBytesBilled *int64 `json:"max_bytes_billed,omitempty"`
+	// Değerler: "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large", "3X-Large", "4X-Large", "5X-Large", "6X-Large".
+	MaxWarehouseSize *string `json:"max_warehouse_size,omitempty"`
 }
 
 // UpdateWarmupPlanDto: UpdateWarmupPlanDto şeması.
@@ -10904,6 +11037,170 @@ type WarehouseExportRunTablesValueTo struct {
 	Ts string `json:"ts"`
 	// Zorunlu.
 	ID string `json:"id"`
+}
+
+// WarehouseSegmentConnection: WarehouseSegmentConnection şeması.
+type WarehouseSegmentConnection struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	AppID string `json:"app_id"`
+	// Zorunlu.
+	Name string `json:"name"`
+	// Zorunlu. Değerler: "bigquery", "snowflake", "databricks".
+	Type string `json:"type"`
+	// Zorunlu.
+	Config map[string]any `json:"config"`
+	// Zorunlu.
+	CredentialsHint string `json:"credentials_hint"`
+	// Zorunlu.
+	SegmentCount int64 `json:"segment_count"`
+	// Zorunlu.
+	LastTestedAt *string `json:"last_tested_at"`
+	// Zorunlu.
+	LastTestError *string `json:"last_test_error"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
+	// Zorunlu.
+	UpdatedAt string `json:"updated_at"`
+}
+
+// WarehouseSegmentConnectionList: WarehouseSegmentConnectionList şeması.
+type WarehouseSegmentConnectionList struct {
+	// Zorunlu.
+	Data []WarehouseSegmentConnection `json:"data"`
+}
+
+// WarehouseSegmentConnectionTest: WarehouseSegmentConnectionTest şeması.
+type WarehouseSegmentConnectionTest struct {
+	// Zorunlu.
+	Ok bool `json:"ok"`
+	// Zorunlu.
+	Error *WarehouseSegmentConnectionTestError `json:"error"`
+}
+
+// WarehouseSegmentConnectionTestError: WarehouseSegmentConnectionTestError şeması.
+type WarehouseSegmentConnectionTestError struct {
+	// Zorunlu.
+	Code string `json:"code"`
+	// Zorunlu.
+	Message string `json:"message"`
+}
+
+// WarehouseSegmentList: WarehouseSegmentList şeması.
+type WarehouseSegmentList struct {
+	// Zorunlu.
+	Data []Segment `json:"data"`
+}
+
+// WarehouseSegmentOptions: WarehouseSegmentOptions şeması.
+type WarehouseSegmentOptions struct {
+	// Zorunlu. Değerler: "bigquery", "snowflake", "databricks".
+	Types []string `json:"types"`
+	// Zorunlu. Değerler: "external_id", "user_id".
+	IDTypes []string `json:"id_types"`
+	// Zorunlu. Değerler: "X-Small", "Small", "Medium", "Large", "X-Large", "2X-Large", "3X-Large", "4X-Large", "5X-Large", "6X-Large".
+	SnowflakeWarehouseSizes []string `json:"snowflake_warehouse_sizes"`
+	// Zorunlu.
+	RefreshIntervals []int64 `json:"refresh_intervals"`
+	// Zorunlu.
+	Limits WarehouseSegmentOptionsLimits `json:"limits"`
+}
+
+// WarehouseSegmentOptionsLimits: WarehouseSegmentOptionsLimits şeması.
+type WarehouseSegmentOptionsLimits struct {
+	// Zorunlu.
+	QueryMax int64 `json:"query_max"`
+	// Zorunlu.
+	TimeoutDefaultSeconds int64 `json:"timeout_default_seconds"`
+	// Zorunlu.
+	TimeoutMinSeconds int64 `json:"timeout_min_seconds"`
+	// Zorunlu.
+	TimeoutMaxSeconds int64 `json:"timeout_max_seconds"`
+	// Zorunlu.
+	MaxRowsDefault int64 `json:"max_rows_default"`
+	// Zorunlu.
+	MaxRowsMax int64 `json:"max_rows_max"`
+	// Zorunlu.
+	MaxBytesBilledDefault int64 `json:"max_bytes_billed_default"`
+	// Zorunlu.
+	MaxBytesBilledMin int64 `json:"max_bytes_billed_min"`
+	// Zorunlu.
+	MaxBytesBilledMax int64 `json:"max_bytes_billed_max"`
+	// Zorunlu.
+	PreviewSample int64 `json:"preview_sample"`
+	// Zorunlu.
+	ConnectionsPerApp int64 `json:"connections_per_app"`
+}
+
+// WarehouseSegmentPreview: WarehouseSegmentPreview şeması.
+type WarehouseSegmentPreview struct {
+	// Zorunlu.
+	RunID string `json:"run_id"`
+	// Zorunlu. Değerler: "dry_run", "sample".
+	Mode string `json:"mode"`
+	// Zorunlu.
+	EstimatedBytes *float64 `json:"estimated_bytes"`
+	// Zorunlu.
+	MaxBytesBilled *float64 `json:"max_bytes_billed"`
+	// Zorunlu.
+	WithinLimit bool `json:"within_limit"`
+	// Zorunlu.
+	Sample []string `json:"sample"`
+	// Zorunlu.
+	SampleTruncated bool `json:"sample_truncated"`
+	// Zorunlu.
+	SampleMatched *int64 `json:"sample_matched"`
+	// Zorunlu.
+	DurationMs int64 `json:"duration_ms"`
+}
+
+// WarehouseSegmentRunList: WarehouseSegmentRunList şeması.
+type WarehouseSegmentRunList struct {
+	// Zorunlu.
+	Data []WarehouseSegmentRunListDataItem `json:"data"`
+	// Zorunlu.
+	NextCursor *string `json:"next_cursor"`
+	// Zorunlu.
+	HasMore bool `json:"has_more"`
+}
+
+// WarehouseSegmentRunListDataItem: WarehouseSegmentRunListDataItem şeması.
+type WarehouseSegmentRunListDataItem struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu.
+	SegmentID *string `json:"segment_id"`
+	// Zorunlu.
+	ConnectionID *string `json:"connection_id"`
+	// Zorunlu. Değerler: "bigquery", "snowflake", "databricks".
+	WarehouseType string `json:"warehouse_type"`
+	// Zorunlu. Değerler: "panel", "api", "schedule".
+	Source string `json:"source"`
+	// Zorunlu.
+	ActorID *string `json:"actor_id"`
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	QueryHash string `json:"query_hash"`
+	// Zorunlu. Değerler: "ok", "rejected", "timeout", "failed".
+	Status string `json:"status"`
+	// Zorunlu. Değerler: "empty", "too_long", "syntax", "multiple_statements", "not_select", "forbidden_relation", "forbidden_function", "forbidden_construct", "forbidden_type".
+	Reason *string `json:"reason"`
+	// Zorunlu.
+	Error *string `json:"error"`
+	// Zorunlu.
+	RowCount int64 `json:"row_count"`
+	// Zorunlu.
+	MatchedCount *int64 `json:"matched_count"`
+	// Zorunlu.
+	BytesProcessed *float64 `json:"bytes_processed"`
+	// Zorunlu.
+	Truncated bool `json:"truncated"`
+	// Zorunlu.
+	DurationMs int64 `json:"duration_ms"`
+	// Zorunlu.
+	CreatedAt string `json:"created_at"`
 }
 
 // WarehouseTables: WarehouseTables şeması.
