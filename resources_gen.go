@@ -1386,6 +1386,8 @@ func (s *CampaignsService) Delete(ctx context.Context, campaignID string, opts .
 type CampaignsScheduleParams struct {
 	// Değerler: "true", "false".
 	Force *string
+	// Değerler: "true", "false".
+	PreflightAck *string
 }
 
 func (p *CampaignsScheduleParams) appendQuery(q url.Values) {
@@ -1393,6 +1395,7 @@ func (p *CampaignsScheduleParams) appendQuery(q url.Values) {
 		return
 	}
 	addQuery(q, "force", p.Force)
+	addQuery(q, "preflight_ack", p.PreflightAck)
 }
 
 // Schedule: Zamanla; e-posta liste koruması 409 → force=true (admin kapsamı)
@@ -1421,6 +1424,8 @@ func (s *CampaignsService) Schedule(ctx context.Context, campaignID string, body
 type CampaignsSendParams struct {
 	// Değerler: "true", "false".
 	Force *string
+	// Değerler: "true", "false".
+	PreflightAck *string
 }
 
 func (p *CampaignsSendParams) appendQuery(q url.Values) {
@@ -1428,6 +1433,7 @@ func (p *CampaignsSendParams) appendQuery(q url.Values) {
 		return
 	}
 	addQuery(q, "force", p.Force)
+	addQuery(q, "preflight_ack", p.PreflightAck)
 }
 
 // Send: Hemen gönder; e-posta liste koruması 409 → force=true (admin kapsamı)
@@ -1442,6 +1448,37 @@ func (s *CampaignsService) Send(ctx context.Context, campaignID string, params *
 	op.query = url.Values{}
 	params.appendQuery(op.query)
 	var out Campaign
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CampaignsPreflightParams: CampaignsService.Preflight için isteğe bağlı sorgu parametreleri.
+type CampaignsPreflightParams struct {
+	// Değerler: "true", "false".
+	CheckLinks *string
+}
+
+func (p *CampaignsPreflightParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "check_links", p.CheckLinks)
+}
+
+// Preflight: Yayın öncesi denetim raporu (marka, yasaklı ifade, bağlantı, kişiselleştirme, KVKK/İYS)
+//
+// POST /v1/apps/{appId}/campaigns/{campaignId}/preflight
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *CampaignsService) Preflight(ctx context.Context, campaignID string, params *CampaignsPreflightParams, opts ...RequestOption) (*CampaignPreflightReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/campaigns/{campaignId}/preflight"}
+	op.pathParams = map[string]string{"campaignId": campaignID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out CampaignPreflightReport
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
@@ -1528,15 +1565,33 @@ func (s *CampaignsService) Duplicate(ctx context.Context, campaignID string, opt
 	return &out, nil
 }
 
+// CampaignsApproveParams: CampaignsService.Approve için isteğe bağlı sorgu parametreleri.
+type CampaignsApproveParams struct {
+	// Değerler: "true", "false".
+	Force *string
+	// Değerler: "true", "false".
+	PreflightAck *string
+}
+
+func (p *CampaignsApproveParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "force", p.Force)
+	addQuery(q, "preflight_ack", p.PreflightAck)
+}
+
 // Approve: Onayla
 //
 // POST /v1/apps/{appId}/campaigns/{campaignId}/approve
 //
 // App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
-func (s *CampaignsService) Approve(ctx context.Context, campaignID string, opts ...RequestOption) (*Campaign, error) {
+func (s *CampaignsService) Approve(ctx context.Context, campaignID string, params *CampaignsApproveParams, opts ...RequestOption) (*Campaign, error) {
 	ro := s.client.requestConfig(opts)
 	op := &operation{method: "POST", path: "/v1/apps/{appId}/campaigns/{campaignId}/approve"}
 	op.pathParams = map[string]string{"campaignId": campaignID}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
 	var out Campaign
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
