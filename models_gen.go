@@ -7971,6 +7971,8 @@ type Segment struct {
 	CreatedAt string `json:"created_at"`
 	// Zorunlu.
 	UpdatedAt string `json:"updated_at"`
+	// Zorunlu.
+	SQL *SegmentSQL `json:"sql"`
 }
 
 // SegmentCampaigns: SegmentCampaigns şeması.
@@ -8074,6 +8076,20 @@ type SegmentsPreviewBodyDefinition struct {
 	All  []map[string]any `json:"all,omitempty"`
 	Any  []map[string]any `json:"any,omitempty"`
 	None []map[string]any `json:"none,omitempty"`
+}
+
+// SegmentSQL: SegmentSql şeması.
+type SegmentSQL struct {
+	// Zorunlu.
+	Query string `json:"query"`
+	// Zorunlu.
+	RefreshIntervalMinutes *int64 `json:"refresh_interval_minutes"`
+	// Zorunlu.
+	RefreshedAt *string `json:"refreshed_at"`
+	// Zorunlu.
+	MemberCount *int64 `json:"member_count"`
+	// Zorunlu.
+	LastError *string `json:"last_error"`
 }
 
 // SegmentsUpdateBody: SegmentsUpdateBody şeması.
