@@ -10359,6 +10359,8 @@ type UserExportDerived struct {
 	Affinities []UserExportDerivedAffinitiesItem `json:"affinities"`
 	// Zorunlu.
 	FrequencyCap *UserExportDerivedFrequencyCap `json:"frequency_cap"`
+	// Zorunlu.
+	Companies []UserExportDerivedCompaniesItem `json:"companies"`
 }
 
 // UserExportDerivedAffinitiesItem: UserExportDerivedAffinitiesItem şeması.
@@ -10389,6 +10391,20 @@ type UserExportDerivedChannelScoresItem struct {
 	IsBest bool `json:"is_best"`
 	// Zorunlu.
 	ComputedAt string `json:"computed_at"`
+}
+
+// UserExportDerivedCompaniesItem: UserExportDerivedCompaniesItem şeması.
+type UserExportDerivedCompaniesItem struct {
+	// Zorunlu.
+	CompanyID string `json:"company_id"`
+	// Zorunlu.
+	ExternalID string `json:"external_id"`
+	// Zorunlu.
+	Name *string `json:"name"`
+	// Zorunlu.
+	Role string `json:"role"`
+	// Zorunlu.
+	JoinedAt string `json:"joined_at"`
 }
 
 // UserExportDerivedDecisionsItem: UserExportDerivedDecisionsItem şeması.
