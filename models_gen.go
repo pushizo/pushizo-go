@@ -898,11 +898,25 @@ type AppSettings struct {
 	BrandKit                     *AppSettingsBrandKit             `json:"brandKit,omitempty"`
 	DefaultTTLSeconds            *int64                           `json:"defaultTtlSeconds,omitempty"`
 	IdentityVerificationRequired *bool                            `json:"identityVerificationRequired,omitempty"`
-	AllowedOrigins               []string                         `json:"allowedOrigins,omitempty"`
-	CampaignApprovalRequired     *bool                            `json:"campaignApprovalRequired,omitempty"`
-	WebPush                      *AppSettingsWebPush              `json:"webPush,omitempty"`
-	Onboarding                   *AppSettingsOnboarding           `json:"onboarding,omitempty"`
-	SDKSetup                     *AppSettingsSDKSetup             `json:"sdkSetup,omitempty"`
+	// Değerler: "off", "full", "masked".
+	IPCapture                *string                       `json:"ipCapture,omitempty"`
+	IPRetentionDays          *int64                        `json:"ipRetentionDays,omitempty"`
+	AdaptiveFrequency        *AppSettingsAdaptiveFrequency `json:"adaptiveFrequency,omitempty"`
+	AllowedOrigins           []string                      `json:"allowedOrigins,omitempty"`
+	CampaignApprovalRequired *bool                         `json:"campaignApprovalRequired,omitempty"`
+	WebPush                  *AppSettingsWebPush           `json:"webPush,omitempty"`
+	Onboarding               *AppSettingsOnboarding        `json:"onboarding,omitempty"`
+	SDKSetup                 *AppSettingsSDKSetup          `json:"sdkSetup,omitempty"`
+}
+
+// AppSettingsAdaptiveFrequency: AppSettingsAdaptiveFrequency şeması.
+type AppSettingsAdaptiveFrequency struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Min int64 `json:"min"`
+	// Zorunlu.
+	Max int64 `json:"max"`
 }
 
 // AppSettingsAndroidChannelsItem: AppSettingsAndroidChannelsItem şeması.
@@ -1169,6 +1183,8 @@ type Campaign struct {
 	// Zorunlu.
 	Category *string `json:"category"`
 	// Zorunlu.
+	Goals CampaignGoals `json:"goals"`
+	// Zorunlu.
 	AbTest CampaignAbTest `json:"ab_test"`
 	// Zorunlu.
 	Variants []CampaignVariantsItem `json:"variants"`
@@ -1270,9 +1286,11 @@ type CampaignDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority            *int64  `json:"priority,omitempty"`
-	CollapseID          *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	Priority           *int64  `json:"priority,omitempty"`
+	CollapseID         *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
+	// Değerler: "low", "normal", "high".
+	FrequencyPriority   *string `json:"frequency_priority,omitempty"`
 	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
 	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
 	OnePerUser          *bool   `json:"one_per_user,omitempty"`
@@ -1306,6 +1324,12 @@ type CampaignEmailRisk struct {
 	BounceRate30d *float64 `json:"bounce_rate_30d"`
 }
 
+// CampaignGoals: CampaignGoals şeması.
+type CampaignGoals struct {
+	Primary   *string  `json:"primary,omitempty"`
+	Secondary []string `json:"secondary,omitempty"`
+}
+
 // CampaignPage: CampaignPage şeması.
 type CampaignPage struct {
 	// Zorunlu.
@@ -1334,8 +1358,10 @@ type CampaignsCreateBody struct {
 	Content map[string]any `json:"content,omitempty"`
 	Labels  []string       `json:"labels,omitempty"`
 	// Tercih kategorisi anahtarı; kapalı kullanıcılar bastırılır
-	Category *string                    `json:"category,omitempty"`
-	AbTest   *CampaignsCreateBodyAbTest `json:"ab_test,omitempty"`
+	Category *string `json:"category,omitempty"`
+	// Dönüşüm hedefleri (ADR-0080): birincil A/B kazananını belirler; olaylar dönüşüm olayı olarak tanımlı olmalı.
+	Goals  *CampaignsCreateBodyGoals  `json:"goals,omitempty"`
+	AbTest *CampaignsCreateBodyAbTest `json:"ab_test,omitempty"`
 	// A/B varyantları (ağırlıklar toplamı 100; en fazla bir is_control)
 	Variants        []CampaignsCreateBodyVariantsItem `json:"variants,omitempty"`
 	TemplateID      *string                           `json:"template_id,omitempty"`
@@ -1388,12 +1414,20 @@ type CampaignsCreateBodyDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority            *int64  `json:"priority,omitempty"`
-	CollapseID          *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	Priority           *int64  `json:"priority,omitempty"`
+	CollapseID         *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
+	// Değerler: "low", "normal", "high".
+	FrequencyPriority   *string `json:"frequency_priority,omitempty"`
 	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
 	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
 	OnePerUser          *bool   `json:"one_per_user,omitempty"`
+}
+
+// CampaignsCreateBodyGoals: Dönüşüm hedefleri (ADR-0080): birincil A/B kazananını belirler; olaylar dönüşüm olayı olarak tanımlı olmalı.
+type CampaignsCreateBodyGoals struct {
+	Primary   *string  `json:"primary,omitempty"`
+	Secondary []string `json:"secondary,omitempty"`
 }
 
 // CampaignsCreateBodyRecurrence: CampaignsCreateBodyRecurrence şeması.
@@ -1420,6 +1454,8 @@ type CampaignStats struct {
 	Campaign Campaign `json:"campaign"`
 	// Zorunlu.
 	Rates CampaignStatsRates `json:"rates"`
+	// Zorunlu.
+	Goals []CampaignStatsGoalsItem `json:"goals"`
 	// Zorunlu.
 	Channels []CampaignStatsChannelsItem `json:"channels"`
 	// Zorunlu.
@@ -1471,6 +1507,18 @@ type CampaignStatsErrorsItem struct {
 	Count int64 `json:"count"`
 }
 
+// CampaignStatsGoalsItem: CampaignStatsGoalsItem şeması.
+type CampaignStatsGoalsItem struct {
+	// Zorunlu.
+	Event string `json:"event"`
+	// Zorunlu.
+	Primary bool `json:"primary"`
+	// Zorunlu.
+	Converted int64 `json:"converted"`
+	// Zorunlu.
+	ConversionRate *float64 `json:"conversion_rate"`
+}
+
 // CampaignStatsHourlyItem: CampaignStatsHourlyItem şeması.
 type CampaignStatsHourlyItem struct {
 	// Zorunlu.
@@ -1509,8 +1557,10 @@ type CampaignsUpdateBody struct {
 	Content map[string]any `json:"content,omitempty"`
 	Labels  []string       `json:"labels,omitempty"`
 	// Tercih kategorisi anahtarı; kapalı kullanıcılar bastırılır
-	Category *string                    `json:"category,omitempty"`
-	AbTest   *CampaignsUpdateBodyAbTest `json:"ab_test,omitempty"`
+	Category *string `json:"category,omitempty"`
+	// Dönüşüm hedefleri (ADR-0080): birincil A/B kazananını belirler; olaylar dönüşüm olayı olarak tanımlı olmalı.
+	Goals  *CampaignsUpdateBodyGoals  `json:"goals,omitempty"`
+	AbTest *CampaignsUpdateBodyAbTest `json:"ab_test,omitempty"`
 	// A/B varyantları (ağırlıklar toplamı 100; en fazla bir is_control)
 	Variants        []CampaignsUpdateBodyVariantsItem `json:"variants,omitempty"`
 	TemplateID      *string                           `json:"template_id,omitempty"`
@@ -1563,12 +1613,20 @@ type CampaignsUpdateBodyDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority            *int64  `json:"priority,omitempty"`
-	CollapseID          *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	Priority           *int64  `json:"priority,omitempty"`
+	CollapseID         *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
+	// Değerler: "low", "normal", "high".
+	FrequencyPriority   *string `json:"frequency_priority,omitempty"`
 	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
 	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
 	OnePerUser          *bool   `json:"one_per_user,omitempty"`
+}
+
+// CampaignsUpdateBodyGoals: Dönüşüm hedefleri (ADR-0080): birincil A/B kazananını belirler; olaylar dönüşüm olayı olarak tanımlı olmalı.
+type CampaignsUpdateBodyGoals struct {
+	Primary   *string  `json:"primary,omitempty"`
+	Secondary []string `json:"secondary,omitempty"`
 }
 
 // CampaignsUpdateBodyRecurrence: CampaignsUpdateBodyRecurrence şeması.
@@ -1687,6 +1745,20 @@ type CampaignVariantStatsVariantsItem struct {
 	OpenRate float64 `json:"open_rate"`
 	// Zorunlu.
 	ClickRate float64 `json:"click_rate"`
+	// Zorunlu.
+	ConversionRate float64 `json:"conversion_rate"`
+	// Zorunlu.
+	Goals []CampaignVariantStatsVariantsItemGoalsItem `json:"goals"`
+}
+
+// CampaignVariantStatsVariantsItemGoalsItem: CampaignVariantStatsVariantsItemGoalsItem şeması.
+type CampaignVariantStatsVariantsItemGoalsItem struct {
+	// Zorunlu.
+	Event string `json:"event"`
+	// Zorunlu.
+	Primary bool `json:"primary"`
+	// Zorunlu.
+	Converted int64 `json:"converted"`
 	// Zorunlu.
 	ConversionRate float64 `json:"conversion_rate"`
 }
@@ -3070,6 +3142,7 @@ type CreateNotificationDto struct {
 	RcsFallbackText           map[string]string                         `json:"rcs_fallback_text,omitempty"`
 	AddToInbox                *bool                                     `json:"add_to_inbox,omitempty"`
 	InboxTTL                  *int64                                    `json:"inbox_ttl,omitempty"`
+	ContentCard               *CreateNotificationDtoContentCard         `json:"content_card,omitempty"`
 	FrequencyCapExempt        *bool                                     `json:"frequency_cap_exempt,omitempty"`
 	QuietHoursExempt          *bool                                     `json:"quiet_hours_exempt,omitempty"`
 	OnePerUser                *bool                                     `json:"one_per_user,omitempty"`
@@ -3099,6 +3172,15 @@ type CreateNotificationDtoButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// CreateNotificationDtoContentCard: CreateNotificationDtoContentCard şeması.
+type CreateNotificationDtoContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // CreateNotificationDtoIOSCarouselItem: CreateNotificationDtoIosCarouselItem şeması.
@@ -3361,36 +3443,37 @@ type CreateTemplateDtoContent struct {
 	IOSBadgeType  *string `json:"ios_badge_type,omitempty"`
 	IOSBadgeCount *int64  `json:"ios_badge_count,omitempty"`
 	// Değerler: "passive", "active", "time-sensitive", "critical".
-	IOSInterruptionLevel      *string        `json:"ios_interruption_level,omitempty"`
-	IOSCategory               *string        `json:"ios_category,omitempty"`
-	AndroidChannelID          *string        `json:"android_channel_id,omitempty"`
-	AndroidGroup              *string        `json:"android_group,omitempty"`
-	AndroidSound              *string        `json:"android_sound,omitempty"`
-	ChromeWebIcon             *string        `json:"chrome_web_icon,omitempty"`
-	ChromeWebImage            *string        `json:"chrome_web_image,omitempty"`
-	ChromeWebBadge            *string        `json:"chrome_web_badge,omitempty"`
-	WebPushTopic              *string        `json:"web_push_topic,omitempty"`
-	ContentAvailable          *bool          `json:"content_available,omitempty"`
-	MutableContent            *bool          `json:"mutable_content,omitempty"`
-	CustomData                map[string]any `json:"custom_data,omitempty"`
-	EmailSubject              *string        `json:"email_subject,omitempty"`
-	EmailBody                 *string        `json:"email_body,omitempty"`
-	EmailMJML                 *string        `json:"email_mjml,omitempty"`
-	EmailPreheader            *string        `json:"email_preheader,omitempty"`
-	EmailFromName             *string        `json:"email_from_name,omitempty"`
-	EmailFromAddress          *string        `json:"email_from_address,omitempty"`
-	EmailReplyToAddress       *string        `json:"email_reply_to_address,omitempty"`
-	DisableEmailClickTracking *bool          `json:"disable_email_click_tracking,omitempty"`
-	SMSFrom                   *string        `json:"sms_from,omitempty"`
-	DisableSMSLinkShortening  *bool          `json:"disable_sms_link_shortening,omitempty"`
-	AddToInbox                *bool          `json:"add_to_inbox,omitempty"`
-	InboxTTL                  *int64         `json:"inbox_ttl,omitempty"`
-	ThreadID                  *string        `json:"thread_id,omitempty"`
-	IOSRelevanceScore         *float64       `json:"ios_relevance_score,omitempty"`
-	TargetContentIdentifier   *string        `json:"target_content_identifier,omitempty"`
-	SmallIcon                 *string        `json:"small_icon,omitempty"`
-	LargeIcon                 *string        `json:"large_icon,omitempty"`
-	AndroidAccentColor        *string        `json:"android_accent_color,omitempty"`
+	IOSInterruptionLevel      *string                              `json:"ios_interruption_level,omitempty"`
+	IOSCategory               *string                              `json:"ios_category,omitempty"`
+	AndroidChannelID          *string                              `json:"android_channel_id,omitempty"`
+	AndroidGroup              *string                              `json:"android_group,omitempty"`
+	AndroidSound              *string                              `json:"android_sound,omitempty"`
+	ChromeWebIcon             *string                              `json:"chrome_web_icon,omitempty"`
+	ChromeWebImage            *string                              `json:"chrome_web_image,omitempty"`
+	ChromeWebBadge            *string                              `json:"chrome_web_badge,omitempty"`
+	WebPushTopic              *string                              `json:"web_push_topic,omitempty"`
+	ContentAvailable          *bool                                `json:"content_available,omitempty"`
+	MutableContent            *bool                                `json:"mutable_content,omitempty"`
+	CustomData                map[string]any                       `json:"custom_data,omitempty"`
+	EmailSubject              *string                              `json:"email_subject,omitempty"`
+	EmailBody                 *string                              `json:"email_body,omitempty"`
+	EmailMJML                 *string                              `json:"email_mjml,omitempty"`
+	EmailPreheader            *string                              `json:"email_preheader,omitempty"`
+	EmailFromName             *string                              `json:"email_from_name,omitempty"`
+	EmailFromAddress          *string                              `json:"email_from_address,omitempty"`
+	EmailReplyToAddress       *string                              `json:"email_reply_to_address,omitempty"`
+	DisableEmailClickTracking *bool                                `json:"disable_email_click_tracking,omitempty"`
+	SMSFrom                   *string                              `json:"sms_from,omitempty"`
+	DisableSMSLinkShortening  *bool                                `json:"disable_sms_link_shortening,omitempty"`
+	AddToInbox                *bool                                `json:"add_to_inbox,omitempty"`
+	InboxTTL                  *int64                               `json:"inbox_ttl,omitempty"`
+	ContentCard               *CreateTemplateDtoContentContentCard `json:"content_card,omitempty"`
+	ThreadID                  *string                              `json:"thread_id,omitempty"`
+	IOSRelevanceScore         *float64                             `json:"ios_relevance_score,omitempty"`
+	TargetContentIdentifier   *string                              `json:"target_content_identifier,omitempty"`
+	SmallIcon                 *string                              `json:"small_icon,omitempty"`
+	LargeIcon                 *string                              `json:"large_icon,omitempty"`
+	AndroidAccentColor        *string                              `json:"android_accent_color,omitempty"`
 	// Değerler: 1, 0, -1.
 	AndroidVisibility   *int64                                       `json:"android_visibility,omitempty"`
 	WebButtons          []CreateTemplateDtoContentWebButtonsItem     `json:"web_buttons,omitempty"`
@@ -3425,6 +3508,15 @@ type CreateTemplateDtoContentButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// CreateTemplateDtoContentContentCard: CreateTemplateDtoContentContentCard şeması.
+type CreateTemplateDtoContentContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // CreateTemplateDtoContentIOSCarouselItem: CreateTemplateDtoContentIosCarouselItem şeması.
@@ -6204,8 +6296,10 @@ type McpCreateCampaignDraftBody struct {
 	Content map[string]any `json:"content,omitempty"`
 	Labels  []string       `json:"labels,omitempty"`
 	// Tercih kategorisi anahtarı; kapalı kullanıcılar bastırılır
-	Category *string                           `json:"category,omitempty"`
-	AbTest   *McpCreateCampaignDraftBodyAbTest `json:"ab_test,omitempty"`
+	Category *string `json:"category,omitempty"`
+	// Dönüşüm hedefleri (ADR-0080): birincil A/B kazananını belirler; olaylar dönüşüm olayı olarak tanımlı olmalı.
+	Goals  *McpCreateCampaignDraftBodyGoals  `json:"goals,omitempty"`
+	AbTest *McpCreateCampaignDraftBodyAbTest `json:"ab_test,omitempty"`
 	// A/B varyantları (ağırlıklar toplamı 100; en fazla bir is_control)
 	Variants        []McpCreateCampaignDraftBodyVariantsItem `json:"variants,omitempty"`
 	TemplateID      *string                                  `json:"template_id,omitempty"`
@@ -6258,12 +6352,20 @@ type McpCreateCampaignDraftBodyDelivery struct {
 	ThrottlePerMinute *int64  `json:"throttle_per_minute,omitempty"`
 	TTL               *int64  `json:"ttl,omitempty"`
 	// Değerler: 5, 10.
-	Priority            *int64  `json:"priority,omitempty"`
-	CollapseID          *string `json:"collapse_id,omitempty"`
-	FrequencyCapExempt  *bool   `json:"frequency_cap_exempt,omitempty"`
+	Priority           *int64  `json:"priority,omitempty"`
+	CollapseID         *string `json:"collapse_id,omitempty"`
+	FrequencyCapExempt *bool   `json:"frequency_cap_exempt,omitempty"`
+	// Değerler: "low", "normal", "high".
+	FrequencyPriority   *string `json:"frequency_priority,omitempty"`
 	GlobalControlExempt *bool   `json:"global_control_exempt,omitempty"`
 	QuietHoursExempt    *bool   `json:"quiet_hours_exempt,omitempty"`
 	OnePerUser          *bool   `json:"one_per_user,omitempty"`
+}
+
+// McpCreateCampaignDraftBodyGoals: Dönüşüm hedefleri (ADR-0080): birincil A/B kazananını belirler; olaylar dönüşüm olayı olarak tanımlı olmalı.
+type McpCreateCampaignDraftBodyGoals struct {
+	Primary   *string  `json:"primary,omitempty"`
+	Secondary []string `json:"secondary,omitempty"`
 }
 
 // McpCreateCampaignDraftBodyRecurrence: McpCreateCampaignDraftBodyRecurrence şeması.
@@ -7250,36 +7352,37 @@ type RenderTemplateDtoContent struct {
 	IOSBadgeType  *string `json:"ios_badge_type,omitempty"`
 	IOSBadgeCount *int64  `json:"ios_badge_count,omitempty"`
 	// Değerler: "passive", "active", "time-sensitive", "critical".
-	IOSInterruptionLevel      *string        `json:"ios_interruption_level,omitempty"`
-	IOSCategory               *string        `json:"ios_category,omitempty"`
-	AndroidChannelID          *string        `json:"android_channel_id,omitempty"`
-	AndroidGroup              *string        `json:"android_group,omitempty"`
-	AndroidSound              *string        `json:"android_sound,omitempty"`
-	ChromeWebIcon             *string        `json:"chrome_web_icon,omitempty"`
-	ChromeWebImage            *string        `json:"chrome_web_image,omitempty"`
-	ChromeWebBadge            *string        `json:"chrome_web_badge,omitempty"`
-	WebPushTopic              *string        `json:"web_push_topic,omitempty"`
-	ContentAvailable          *bool          `json:"content_available,omitempty"`
-	MutableContent            *bool          `json:"mutable_content,omitempty"`
-	CustomData                map[string]any `json:"custom_data,omitempty"`
-	EmailSubject              *string        `json:"email_subject,omitempty"`
-	EmailBody                 *string        `json:"email_body,omitempty"`
-	EmailMJML                 *string        `json:"email_mjml,omitempty"`
-	EmailPreheader            *string        `json:"email_preheader,omitempty"`
-	EmailFromName             *string        `json:"email_from_name,omitempty"`
-	EmailFromAddress          *string        `json:"email_from_address,omitempty"`
-	EmailReplyToAddress       *string        `json:"email_reply_to_address,omitempty"`
-	DisableEmailClickTracking *bool          `json:"disable_email_click_tracking,omitempty"`
-	SMSFrom                   *string        `json:"sms_from,omitempty"`
-	DisableSMSLinkShortening  *bool          `json:"disable_sms_link_shortening,omitempty"`
-	AddToInbox                *bool          `json:"add_to_inbox,omitempty"`
-	InboxTTL                  *int64         `json:"inbox_ttl,omitempty"`
-	ThreadID                  *string        `json:"thread_id,omitempty"`
-	IOSRelevanceScore         *float64       `json:"ios_relevance_score,omitempty"`
-	TargetContentIdentifier   *string        `json:"target_content_identifier,omitempty"`
-	SmallIcon                 *string        `json:"small_icon,omitempty"`
-	LargeIcon                 *string        `json:"large_icon,omitempty"`
-	AndroidAccentColor        *string        `json:"android_accent_color,omitempty"`
+	IOSInterruptionLevel      *string                              `json:"ios_interruption_level,omitempty"`
+	IOSCategory               *string                              `json:"ios_category,omitempty"`
+	AndroidChannelID          *string                              `json:"android_channel_id,omitempty"`
+	AndroidGroup              *string                              `json:"android_group,omitempty"`
+	AndroidSound              *string                              `json:"android_sound,omitempty"`
+	ChromeWebIcon             *string                              `json:"chrome_web_icon,omitempty"`
+	ChromeWebImage            *string                              `json:"chrome_web_image,omitempty"`
+	ChromeWebBadge            *string                              `json:"chrome_web_badge,omitempty"`
+	WebPushTopic              *string                              `json:"web_push_topic,omitempty"`
+	ContentAvailable          *bool                                `json:"content_available,omitempty"`
+	MutableContent            *bool                                `json:"mutable_content,omitempty"`
+	CustomData                map[string]any                       `json:"custom_data,omitempty"`
+	EmailSubject              *string                              `json:"email_subject,omitempty"`
+	EmailBody                 *string                              `json:"email_body,omitempty"`
+	EmailMJML                 *string                              `json:"email_mjml,omitempty"`
+	EmailPreheader            *string                              `json:"email_preheader,omitempty"`
+	EmailFromName             *string                              `json:"email_from_name,omitempty"`
+	EmailFromAddress          *string                              `json:"email_from_address,omitempty"`
+	EmailReplyToAddress       *string                              `json:"email_reply_to_address,omitempty"`
+	DisableEmailClickTracking *bool                                `json:"disable_email_click_tracking,omitempty"`
+	SMSFrom                   *string                              `json:"sms_from,omitempty"`
+	DisableSMSLinkShortening  *bool                                `json:"disable_sms_link_shortening,omitempty"`
+	AddToInbox                *bool                                `json:"add_to_inbox,omitempty"`
+	InboxTTL                  *int64                               `json:"inbox_ttl,omitempty"`
+	ContentCard               *RenderTemplateDtoContentContentCard `json:"content_card,omitempty"`
+	ThreadID                  *string                              `json:"thread_id,omitempty"`
+	IOSRelevanceScore         *float64                             `json:"ios_relevance_score,omitempty"`
+	TargetContentIdentifier   *string                              `json:"target_content_identifier,omitempty"`
+	SmallIcon                 *string                              `json:"small_icon,omitempty"`
+	LargeIcon                 *string                              `json:"large_icon,omitempty"`
+	AndroidAccentColor        *string                              `json:"android_accent_color,omitempty"`
 	// Değerler: 1, 0, -1.
 	AndroidVisibility   *int64                                       `json:"android_visibility,omitempty"`
 	WebButtons          []RenderTemplateDtoContentWebButtonsItem     `json:"web_buttons,omitempty"`
@@ -7314,6 +7417,15 @@ type RenderTemplateDtoContentButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// RenderTemplateDtoContentContentCard: RenderTemplateDtoContentContentCard şeması.
+type RenderTemplateDtoContentContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // RenderTemplateDtoContentIOSCarouselItem: RenderTemplateDtoContentIosCarouselItem şeması.
@@ -8506,6 +8618,74 @@ type TriggerRunDtoAlias struct {
 	Value string `json:"value"`
 }
 
+// UninstallReport: UninstallReport şeması.
+type UninstallReport struct {
+	// Zorunlu.
+	From string `json:"from"`
+	// Zorunlu.
+	To string `json:"to"`
+	// Zorunlu.
+	Totals UninstallReportTotals `json:"totals"`
+	// Zorunlu.
+	Previous *UninstallReportPrevious `json:"previous"`
+	// Zorunlu.
+	Rows []UninstallReportRowsItem `json:"rows"`
+	// Zorunlu.
+	ByChannel []UninstallReportByChannelItem `json:"by_channel"`
+	// Zorunlu.
+	LastMessages []UninstallReportLastMessagesItem `json:"last_messages"`
+}
+
+// UninstallReportByChannelItem: UninstallReportByChannelItem şeması.
+type UninstallReportByChannelItem struct {
+	// Zorunlu.
+	Channel string `json:"channel"`
+	// Zorunlu.
+	Uninstalls int64 `json:"uninstalls"`
+	// Zorunlu.
+	Active int64 `json:"active"`
+}
+
+// UninstallReportLastMessagesItem: UninstallReportLastMessagesItem şeması.
+type UninstallReportLastMessagesItem struct {
+	// Zorunlu.
+	CampaignID *string `json:"campaign_id"`
+	// Zorunlu.
+	Name *string `json:"name"`
+	// Zorunlu.
+	Source string `json:"source"`
+	// Zorunlu.
+	Uninstalls int64 `json:"uninstalls"`
+}
+
+// UninstallReportPrevious: UninstallReportPrevious şeması.
+type UninstallReportPrevious struct {
+	// Zorunlu.
+	Uninstalls int64 `json:"uninstalls"`
+	// Zorunlu.
+	Active int64 `json:"active"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
+// UninstallReportRowsItem: UninstallReportRowsItem şeması.
+type UninstallReportRowsItem struct {
+	// Zorunlu.
+	Date string `json:"date"`
+	// Zorunlu.
+	Uninstalls int64 `json:"uninstalls"`
+}
+
+// UninstallReportTotals: UninstallReportTotals şeması.
+type UninstallReportTotals struct {
+	// Zorunlu.
+	Uninstalls int64 `json:"uninstalls"`
+	// Zorunlu.
+	Active int64 `json:"active"`
+	// Zorunlu.
+	Rate *float64 `json:"rate"`
+}
+
 // UpdateAdAudienceDto: UpdateAdAudienceDto şeması.
 type UpdateAdAudienceDto struct {
 	Name        *string `json:"name,omitempty"`
@@ -8567,11 +8747,25 @@ type UpdateAppDtoSettings struct {
 	BrandKit                     *UpdateAppDtoSettingsBrandKit             `json:"brandKit,omitempty"`
 	DefaultTTLSeconds            *int64                                    `json:"defaultTtlSeconds,omitempty"`
 	IdentityVerificationRequired *bool                                     `json:"identityVerificationRequired,omitempty"`
-	AllowedOrigins               []string                                  `json:"allowedOrigins,omitempty"`
-	CampaignApprovalRequired     *bool                                     `json:"campaignApprovalRequired,omitempty"`
-	WebPush                      *UpdateAppDtoSettingsWebPush              `json:"webPush,omitempty"`
-	Onboarding                   *UpdateAppDtoSettingsOnboarding           `json:"onboarding,omitempty"`
-	SDKSetup                     *UpdateAppDtoSettingsSDKSetup             `json:"sdkSetup,omitempty"`
+	// Değerler: "off", "full", "masked".
+	IPCapture                *string                                `json:"ipCapture,omitempty"`
+	IPRetentionDays          *int64                                 `json:"ipRetentionDays,omitempty"`
+	AdaptiveFrequency        *UpdateAppDtoSettingsAdaptiveFrequency `json:"adaptiveFrequency,omitempty"`
+	AllowedOrigins           []string                               `json:"allowedOrigins,omitempty"`
+	CampaignApprovalRequired *bool                                  `json:"campaignApprovalRequired,omitempty"`
+	WebPush                  *UpdateAppDtoSettingsWebPush           `json:"webPush,omitempty"`
+	Onboarding               *UpdateAppDtoSettingsOnboarding        `json:"onboarding,omitempty"`
+	SDKSetup                 *UpdateAppDtoSettingsSDKSetup          `json:"sdkSetup,omitempty"`
+}
+
+// UpdateAppDtoSettingsAdaptiveFrequency: UpdateAppDtoSettingsAdaptiveFrequency şeması.
+type UpdateAppDtoSettingsAdaptiveFrequency struct {
+	// Zorunlu.
+	Enabled bool `json:"enabled"`
+	// Zorunlu.
+	Min int64 `json:"min"`
+	// Zorunlu.
+	Max int64 `json:"max"`
 }
 
 // UpdateAppDtoSettingsAndroidChannelsItem: UpdateAppDtoSettingsAndroidChannelsItem şeması.
@@ -9201,36 +9395,37 @@ type UpdateTemplateDtoContent struct {
 	IOSBadgeType  *string `json:"ios_badge_type,omitempty"`
 	IOSBadgeCount *int64  `json:"ios_badge_count,omitempty"`
 	// Değerler: "passive", "active", "time-sensitive", "critical".
-	IOSInterruptionLevel      *string        `json:"ios_interruption_level,omitempty"`
-	IOSCategory               *string        `json:"ios_category,omitempty"`
-	AndroidChannelID          *string        `json:"android_channel_id,omitempty"`
-	AndroidGroup              *string        `json:"android_group,omitempty"`
-	AndroidSound              *string        `json:"android_sound,omitempty"`
-	ChromeWebIcon             *string        `json:"chrome_web_icon,omitempty"`
-	ChromeWebImage            *string        `json:"chrome_web_image,omitempty"`
-	ChromeWebBadge            *string        `json:"chrome_web_badge,omitempty"`
-	WebPushTopic              *string        `json:"web_push_topic,omitempty"`
-	ContentAvailable          *bool          `json:"content_available,omitempty"`
-	MutableContent            *bool          `json:"mutable_content,omitempty"`
-	CustomData                map[string]any `json:"custom_data,omitempty"`
-	EmailSubject              *string        `json:"email_subject,omitempty"`
-	EmailBody                 *string        `json:"email_body,omitempty"`
-	EmailMJML                 *string        `json:"email_mjml,omitempty"`
-	EmailPreheader            *string        `json:"email_preheader,omitempty"`
-	EmailFromName             *string        `json:"email_from_name,omitempty"`
-	EmailFromAddress          *string        `json:"email_from_address,omitempty"`
-	EmailReplyToAddress       *string        `json:"email_reply_to_address,omitempty"`
-	DisableEmailClickTracking *bool          `json:"disable_email_click_tracking,omitempty"`
-	SMSFrom                   *string        `json:"sms_from,omitempty"`
-	DisableSMSLinkShortening  *bool          `json:"disable_sms_link_shortening,omitempty"`
-	AddToInbox                *bool          `json:"add_to_inbox,omitempty"`
-	InboxTTL                  *int64         `json:"inbox_ttl,omitempty"`
-	ThreadID                  *string        `json:"thread_id,omitempty"`
-	IOSRelevanceScore         *float64       `json:"ios_relevance_score,omitempty"`
-	TargetContentIdentifier   *string        `json:"target_content_identifier,omitempty"`
-	SmallIcon                 *string        `json:"small_icon,omitempty"`
-	LargeIcon                 *string        `json:"large_icon,omitempty"`
-	AndroidAccentColor        *string        `json:"android_accent_color,omitempty"`
+	IOSInterruptionLevel      *string                              `json:"ios_interruption_level,omitempty"`
+	IOSCategory               *string                              `json:"ios_category,omitempty"`
+	AndroidChannelID          *string                              `json:"android_channel_id,omitempty"`
+	AndroidGroup              *string                              `json:"android_group,omitempty"`
+	AndroidSound              *string                              `json:"android_sound,omitempty"`
+	ChromeWebIcon             *string                              `json:"chrome_web_icon,omitempty"`
+	ChromeWebImage            *string                              `json:"chrome_web_image,omitempty"`
+	ChromeWebBadge            *string                              `json:"chrome_web_badge,omitempty"`
+	WebPushTopic              *string                              `json:"web_push_topic,omitempty"`
+	ContentAvailable          *bool                                `json:"content_available,omitempty"`
+	MutableContent            *bool                                `json:"mutable_content,omitempty"`
+	CustomData                map[string]any                       `json:"custom_data,omitempty"`
+	EmailSubject              *string                              `json:"email_subject,omitempty"`
+	EmailBody                 *string                              `json:"email_body,omitempty"`
+	EmailMJML                 *string                              `json:"email_mjml,omitempty"`
+	EmailPreheader            *string                              `json:"email_preheader,omitempty"`
+	EmailFromName             *string                              `json:"email_from_name,omitempty"`
+	EmailFromAddress          *string                              `json:"email_from_address,omitempty"`
+	EmailReplyToAddress       *string                              `json:"email_reply_to_address,omitempty"`
+	DisableEmailClickTracking *bool                                `json:"disable_email_click_tracking,omitempty"`
+	SMSFrom                   *string                              `json:"sms_from,omitempty"`
+	DisableSMSLinkShortening  *bool                                `json:"disable_sms_link_shortening,omitempty"`
+	AddToInbox                *bool                                `json:"add_to_inbox,omitempty"`
+	InboxTTL                  *int64                               `json:"inbox_ttl,omitempty"`
+	ContentCard               *UpdateTemplateDtoContentContentCard `json:"content_card,omitempty"`
+	ThreadID                  *string                              `json:"thread_id,omitempty"`
+	IOSRelevanceScore         *float64                             `json:"ios_relevance_score,omitempty"`
+	TargetContentIdentifier   *string                              `json:"target_content_identifier,omitempty"`
+	SmallIcon                 *string                              `json:"small_icon,omitempty"`
+	LargeIcon                 *string                              `json:"large_icon,omitempty"`
+	AndroidAccentColor        *string                              `json:"android_accent_color,omitempty"`
 	// Değerler: 1, 0, -1.
 	AndroidVisibility   *int64                                       `json:"android_visibility,omitempty"`
 	WebButtons          []UpdateTemplateDtoContentWebButtonsItem     `json:"web_buttons,omitempty"`
@@ -9265,6 +9460,15 @@ type UpdateTemplateDtoContentButtonsItem struct {
 	Text string  `json:"text"`
 	Icon *string `json:"icon,omitempty"`
 	URL  *string `json:"url,omitempty"`
+}
+
+// UpdateTemplateDtoContentContentCard: UpdateTemplateDtoContentContentCard şeması.
+type UpdateTemplateDtoContentContentCard struct {
+	// Zorunlu. Değerler: "classic", "captioned_image", "image_only".
+	Type       string            `json:"type"`
+	Pinned     *bool             `json:"pinned,omitempty"`
+	Priority   *int64            `json:"priority,omitempty"`
+	ButtonText map[string]string `json:"button_text,omitempty"`
 }
 
 // UpdateTemplateDtoContentIOSCarouselItem: UpdateTemplateDtoContentIosCarouselItem şeması.
@@ -9785,6 +9989,14 @@ type User struct {
 	// Zorunlu.
 	MergedInto *string `json:"merged_into"`
 	// Zorunlu.
+	LastIP *string `json:"last_ip"`
+	// Zorunlu.
+	LastIPAt *string `json:"last_ip_at"`
+	// Zorunlu. Değerler: "positive", "negative", "neutral".
+	LastSentiment *string `json:"last_sentiment"`
+	// Zorunlu.
+	LastSentimentAt *string `json:"last_sentiment_at"`
+	// Zorunlu.
 	CreatedAt string `json:"created_at"`
 	// Zorunlu.
 	UpdatedAt string `json:"updated_at"`
@@ -9816,6 +10028,14 @@ type UserDetail struct {
 	UsageSeconds int64 `json:"usage_seconds"`
 	// Zorunlu.
 	MergedInto *string `json:"merged_into"`
+	// Zorunlu.
+	LastIP *string `json:"last_ip"`
+	// Zorunlu.
+	LastIPAt *string `json:"last_ip_at"`
+	// Zorunlu. Değerler: "positive", "negative", "neutral".
+	LastSentiment *string `json:"last_sentiment"`
+	// Zorunlu.
+	LastSentimentAt *string `json:"last_sentiment_at"`
 	// Zorunlu.
 	CreatedAt string `json:"created_at"`
 	// Zorunlu.
@@ -9864,6 +10084,24 @@ type UserExportDerived struct {
 	Decisions []UserExportDerivedDecisionsItem `json:"decisions"`
 	// Zorunlu.
 	Recommendations []UserExportDerivedRecommendationsItem `json:"recommendations"`
+	// Zorunlu.
+	Affinities []UserExportDerivedAffinitiesItem `json:"affinities"`
+	// Zorunlu.
+	FrequencyCap *UserExportDerivedFrequencyCap `json:"frequency_cap"`
+}
+
+// UserExportDerivedAffinitiesItem: UserExportDerivedAffinitiesItem şeması.
+type UserExportDerivedAffinitiesItem struct {
+	// Zorunlu.
+	Attribute string `json:"attribute"`
+	// Zorunlu.
+	Value string `json:"value"`
+	// Zorunlu.
+	Score float64 `json:"score"`
+	// Zorunlu.
+	Rank float64 `json:"rank"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
 }
 
 // UserExportDerivedChannelScoresItem: UserExportDerivedChannelScoresItem şeması.
@@ -9894,6 +10132,16 @@ type UserExportDerivedDecisionsItem struct {
 	AssignedAt string `json:"assigned_at"`
 	// Zorunlu.
 	RewardedAt *string `json:"rewarded_at"`
+}
+
+// UserExportDerivedFrequencyCap: UserExportDerivedFrequencyCap şeması.
+type UserExportDerivedFrequencyCap struct {
+	// Zorunlu.
+	WeeklyCap float64 `json:"weekly_cap"`
+	// Zorunlu.
+	Engagement float64 `json:"engagement"`
+	// Zorunlu.
+	ComputedAt string `json:"computed_at"`
 }
 
 // UserExportDerivedPredictionsItem: UserExportDerivedPredictionsItem şeması.

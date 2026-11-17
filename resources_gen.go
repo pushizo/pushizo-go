@@ -380,6 +380,7 @@ type UsersListParams struct {
 	// Değerler: "last_active_at", "-last_active_at".
 	Sort             *string
 	Q                *string
+	IP               *string
 	Tag              *string
 	LastActiveAfter  *string
 	LastActiveBefore *string
@@ -393,6 +394,7 @@ func (p *UsersListParams) appendQuery(q url.Values) {
 	addQuery(q, "cursor", p.Cursor)
 	addQuery(q, "sort", p.Sort)
 	addQuery(q, "q", p.Q)
+	addQuery(q, "ip", p.IP)
 	addQuery(q, "tag", p.Tag)
 	addQuery(q, "last_active_after", p.LastActiveAfter)
 	addQuery(q, "last_active_before", p.LastActiveBefore)
@@ -2740,6 +2742,45 @@ func (s *AnalyticsService) Subscriptions(ctx context.Context, params *AnalyticsS
 	op.query = url.Values{}
 	params.appendQuery(op.query)
 	var out SubscriptionsReport
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// AnalyticsUninstallReportParams: AnalyticsService.UninstallReport için isteğe bağlı sorgu parametreleri.
+type AnalyticsUninstallReportParams struct {
+	From *string
+	To   *string
+	// Değerler: "true", "false".
+	Compare *string
+	// Değerler: "json", "csv".
+	Format *string
+}
+
+func (p *AnalyticsUninstallReportParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "from", p.From)
+	addQuery(q, "to", p.To)
+	addQuery(q, "compare", p.Compare)
+	addQuery(q, "format", p.Format)
+}
+
+// UninstallReport: Uygulama kaldırma raporu
+//
+// GET /v1/apps/{appId}/analytics/uninstalls
+//
+// Mobil push sağlayıcısının "cihaz kayıtlı değil" yanıtından sayılır.
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *AnalyticsService) UninstallReport(ctx context.Context, params *AnalyticsUninstallReportParams, opts ...RequestOption) (*UninstallReport, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/analytics/uninstalls"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out UninstallReport
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
