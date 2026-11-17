@@ -458,7 +458,7 @@ type AddAliasDto struct {
 
 // AddSubscriptionDto: AddSubscriptionDto şeması.
 type AddSubscriptionDto struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Token  string                    `json:"token"`
@@ -958,7 +958,7 @@ type AppSettingsFrequencyCapsItem struct {
 	Max int64 `json:"max"`
 	// Zorunlu.
 	Window AppSettingsFrequencyCapsItemWindow `json:"window"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels []string `json:"channels,omitempty"`
 }
 
@@ -1394,7 +1394,7 @@ type CampaignsCreateBodyAudience struct {
 	ExcludeSegments []string `json:"exclude_segments,omitempty"`
 	// Filtre AST: all/any/none grupları ve { field, op, value } koşulları (docs/plan/05 §5.7).
 	Filters *CampaignsCreateBodyAudienceFilters `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels        []string `json:"channels,omitempty"`
 	TestDevicesOnly *bool    `json:"test_devices_only,omitempty"`
 }
@@ -1503,7 +1503,7 @@ type CampaignStatsCards struct {
 
 // CampaignStatsChannelsItem: CampaignStatsChannelsItem şeması.
 type CampaignStatsChannelsItem struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Targeted int64 `json:"targeted"`
@@ -1611,7 +1611,7 @@ type CampaignsUpdateBodyAudience struct {
 	ExcludeSegments []string `json:"exclude_segments,omitempty"`
 	// Filtre AST: all/any/none grupları ve { field, op, value } koşulları (docs/plan/05 §5.7).
 	Filters *CampaignsUpdateBodyAudienceFilters `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels        []string `json:"channels,omitempty"`
 	TestDevicesOnly *bool    `json:"test_devices_only,omitempty"`
 }
@@ -1900,9 +1900,9 @@ type CatalogUpsertResult struct {
 
 // ChannelConfig: ChannelConfig şeması.
 type ChannelConfig struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
-	// Zorunlu. Değerler: "apns", "fcm", "hms", "adm", "wns", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "meta_whatsapp", "google_rbm", "mock".
+	// Zorunlu. Değerler: "apns", "fcm", "hms", "adm", "wns", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "meta_whatsapp", "google_rbm", "telegram_bot", "viber_bot", "mock".
 	Provider *string `json:"provider"`
 	// Zorunlu. Değerler: "unconfigured", "active", "invalid", "suspended".
 	Status string `json:"status"`
@@ -1963,15 +1963,20 @@ type ChannelConfigConfig struct {
 	Usercode            *string `json:"usercode,omitempty"`
 	Msgheader           *string `json:"msgheader,omitempty"`
 	// Değerler: "0", "11", "12".
-	IYSFilter          *string `json:"iys_filter,omitempty"`
-	WabaID             *string `json:"waba_id,omitempty"`
-	PhoneNumberID      *string `json:"phone_number_id,omitempty"`
-	GraphAPIVersion    *string `json:"graph_api_version,omitempty"`
-	DisplayPhoneNumber *string `json:"display_phone_number,omitempty"`
-	VerifiedName       *string `json:"verified_name,omitempty"`
-	RbmAgentID         *string `json:"rbm_agent_id,omitempty"`
-	ContentSid         *string `json:"content_sid,omitempty"`
-	SMSFallback        *bool   `json:"sms_fallback,omitempty"`
+	IYSFilter           *string `json:"iys_filter,omitempty"`
+	WabaID              *string `json:"waba_id,omitempty"`
+	PhoneNumberID       *string `json:"phone_number_id,omitempty"`
+	GraphAPIVersion     *string `json:"graph_api_version,omitempty"`
+	DisplayPhoneNumber  *string `json:"display_phone_number,omitempty"`
+	VerifiedName        *string `json:"verified_name,omitempty"`
+	RbmAgentID          *string `json:"rbm_agent_id,omitempty"`
+	ContentSid          *string `json:"content_sid,omitempty"`
+	SMSFallback         *bool   `json:"sms_fallback,omitempty"`
+	TelegramBotUsername *string `json:"telegram_bot_username,omitempty"`
+	ViberURI            *string `json:"viber_uri,omitempty"`
+	ViberSenderName     *string `json:"viber_sender_name,omitempty"`
+	ViberSenderAvatar   *string `json:"viber_sender_avatar,omitempty"`
+	WebhookRegisteredAt *string `json:"webhook_registered_at,omitempty"`
 }
 
 // ChannelConfigDnsCheck: ChannelConfigDnsCheck şeması.
@@ -2184,7 +2189,7 @@ type ContentTableRows struct {
 type Conversation struct {
 	// Zorunlu.
 	ID string `json:"id"`
-	// Zorunlu. Değerler: "sms", "whatsapp", "rcs", "email", "chat".
+	// Zorunlu. Değerler: "sms", "whatsapp", "rcs", "telegram", "viber", "email", "chat".
 	Channel string `json:"channel"`
 	// Zorunlu. Değerler: "open", "pending", "resolved", "closed".
 	Status string `json:"status"`
@@ -2715,7 +2720,7 @@ type CreateCategoryDto struct {
 	// Zorunlu.
 	Name        map[string]string `json:"name"`
 	Description map[string]string `json:"description,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels       []string `json:"channels,omitempty"`
 	DefaultOptedIn *bool    `json:"default_opted_in,omitempty"`
 	Position       *int64   `json:"position,omitempty"`
@@ -2809,7 +2814,7 @@ type CreateExportDtoFilters struct {
 	MessageID  *string `json:"message_id,omitempty"`
 	CampaignID *string `json:"campaign_id,omitempty"`
 	Status     *string `json:"status,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel   *string `json:"channel,omitempty"`
 	SegmentID *string `json:"segment_id,omitempty"`
 }
@@ -2995,7 +3000,7 @@ type CreateKeywordDto struct {
 	Keyword string `json:"keyword"`
 	// Değerler: "org", "app".
 	Scope *string `json:"scope,omitempty"`
-	// Değerler: "sms", "whatsapp", "rcs".
+	// Değerler: "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels []string `json:"channels,omitempty"`
 	// Zorunlu.
 	Actions     CreateKeywordDtoActions `json:"actions"`
@@ -3084,6 +3089,15 @@ type CreateLookalikeDto struct {
 	Ratio float64 `json:"ratio"`
 }
 
+// CreateMessengerLinkDto: CreateMessengerLinkDto şeması.
+type CreateMessengerLinkDto struct {
+	// Zorunlu. Değerler: "telegram", "viber".
+	Channel    string  `json:"channel"`
+	UserID     *string `json:"user_id,omitempty"`
+	ExternalID *string `json:"external_id,omitempty"`
+	TTLSeconds *int64  `json:"ttl_seconds,omitempty"`
+}
+
 // CreateNotificationDto: CreateNotificationDto şeması.
 type CreateNotificationDto struct {
 	AppID          *string `json:"app_id,omitempty"`
@@ -3158,6 +3172,8 @@ type CreateNotificationDto struct {
 	RcsContentSid             *string                                   `json:"rcs_content_sid,omitempty"`
 	RcsContentVariables       map[string]string                         `json:"rcs_content_variables,omitempty"`
 	RcsFallbackText           map[string]string                         `json:"rcs_fallback_text,omitempty"`
+	MessengerImageURL         *string                                   `json:"messenger_image_url,omitempty"`
+	MessengerButtons          []any                                     `json:"messenger_buttons,omitempty"`
 	AddToInbox                *bool                                     `json:"add_to_inbox,omitempty"`
 	InboxTTL                  *int64                                    `json:"inbox_ttl,omitempty"`
 	ContentCard               *CreateNotificationDtoContentCard         `json:"content_card,omitempty"`
@@ -3228,7 +3244,7 @@ type CreateNotificationDtoTarget struct {
 	IncludedSegments       []string            `json:"included_segments,omitempty"`
 	ExcludedSegments       []string            `json:"excluded_segments,omitempty"`
 	Filters                any                 `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels            []string `json:"channels,omitempty"`
 	TestDevicesOnly     *bool    `json:"test_devices_only,omitempty"`
 	EmailTo             []string `json:"email_to,omitempty"`
@@ -3383,7 +3399,7 @@ type CreateSavedReportDtoDefinitionSort struct {
 
 // CreateSuppressionDto: CreateSuppressionDto şeması.
 type CreateSuppressionDto struct {
-	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Value string `json:"value"`
@@ -3438,7 +3454,7 @@ type CreateSurveyDtoSettings struct {
 type CreateTemplateDto struct {
 	// Zorunlu.
 	Name string `json:"name"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string  `json:"channel,omitempty"`
 	Tags    []string `json:"tags,omitempty"`
 	// Zorunlu.
@@ -3505,6 +3521,8 @@ type CreateTemplateDtoContent struct {
 	RcsContentSid       *string                                      `json:"rcs_content_sid,omitempty"`
 	RcsContentVariables map[string]string                            `json:"rcs_content_variables,omitempty"`
 	RcsFallbackText     map[string]string                            `json:"rcs_fallback_text,omitempty"`
+	MessengerImageURL   *string                                      `json:"messenger_image_url,omitempty"`
+	MessengerButtons    []any                                        `json:"messenger_buttons,omitempty"`
 	IOSCarousel         []CreateTemplateDtoContentIOSCarouselItem    `json:"ios_carousel,omitempty"`
 	AndroidLiveUpdate   *CreateTemplateDtoContentAndroidLiveUpdate   `json:"android_live_update,omitempty"`
 	Voip                *bool                                        `json:"voip,omitempty"`
@@ -4190,7 +4208,7 @@ type Delivery struct {
 	SubscriptionID string `json:"subscription_id"`
 	// Zorunlu.
 	UserID *string `json:"user_id"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Provider *string `json:"provider"`
@@ -4468,7 +4486,7 @@ type EstimateAudienceDtoTarget struct {
 	IncludedSegments       []string            `json:"included_segments,omitempty"`
 	ExcludedSegments       []string            `json:"excluded_segments,omitempty"`
 	Filters                any                 `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels            []string `json:"channels,omitempty"`
 	TestDevicesOnly     *bool    `json:"test_devices_only,omitempty"`
 	EmailTo             []string `json:"email_to,omitempty"`
@@ -4686,7 +4704,7 @@ type ExportFilters struct {
 	MessageID  *string `json:"message_id,omitempty"`
 	CampaignID *string `json:"campaign_id,omitempty"`
 	Status     *string `json:"status,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel   *string `json:"channel,omitempty"`
 	SegmentID *string `json:"segment_id,omitempty"`
 }
@@ -6418,7 +6436,7 @@ type McpCreateCampaignDraftBodyAudience struct {
 	ExcludeSegments []string `json:"exclude_segments,omitempty"`
 	// Filtre AST: all/any/none grupları ve { field, op, value } koşulları (docs/plan/05 §5.7).
 	Filters *McpCreateCampaignDraftBodyAudienceFilters `json:"filters,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels        []string `json:"channels,omitempty"`
 	TestDevicesOnly *bool    `json:"test_devices_only,omitempty"`
 }
@@ -6753,6 +6771,22 @@ type MessageVariantsItem struct {
 	IsControl bool `json:"is_control"`
 }
 
+// MessengerLink: MessengerLink şeması.
+type MessengerLink struct {
+	// Zorunlu.
+	ID string `json:"id"`
+	// Zorunlu. Değerler: "telegram", "viber".
+	Channel string `json:"channel"`
+	// Zorunlu.
+	UserID string `json:"user_id"`
+	// Zorunlu.
+	URL string `json:"url"`
+	// Zorunlu.
+	Token string `json:"token"`
+	// Zorunlu.
+	ExpiresAt string `json:"expires_at"`
+}
+
 // Ok: Ok şeması.
 type Ok struct {
 	// Zorunlu.
@@ -6820,9 +6854,9 @@ type OverviewStats struct {
 
 // OverviewStatsChannelsItem: OverviewStatsChannelsItem şeması.
 type OverviewStatsChannelsItem struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
-	// Zorunlu. Değerler: "apns", "fcm", "hms", "adm", "wns", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "meta_whatsapp", "google_rbm", "mock".
+	// Zorunlu. Değerler: "apns", "fcm", "hms", "adm", "wns", "webpush", "smtp", "ses", "resend", "twilio", "netgsm", "meta_whatsapp", "google_rbm", "telegram_bot", "viber_bot", "mock".
 	Provider *string `json:"provider"`
 	// Zorunlu. Değerler: "unconfigured", "active", "invalid", "suspended".
 	Status string `json:"status"`
@@ -7345,7 +7379,7 @@ type Recommendations struct {
 
 // RenderPreview: RenderPreview şeması.
 type RenderPreview struct {
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Language string `json:"language"`
@@ -7413,7 +7447,7 @@ type RenderPreviewSMS struct {
 
 // RenderTemplateDto: RenderTemplateDto şeması.
 type RenderTemplateDto struct {
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel    *string                   `json:"channel,omitempty"`
 	Language   *string                   `json:"language,omitempty"`
 	User       *RenderTemplateDtoUser    `json:"user,omitempty"`
@@ -7482,6 +7516,8 @@ type RenderTemplateDtoContent struct {
 	RcsContentSid       *string                                      `json:"rcs_content_sid,omitempty"`
 	RcsContentVariables map[string]string                            `json:"rcs_content_variables,omitempty"`
 	RcsFallbackText     map[string]string                            `json:"rcs_fallback_text,omitempty"`
+	MessengerImageURL   *string                                      `json:"messenger_image_url,omitempty"`
+	MessengerButtons    []any                                        `json:"messenger_buttons,omitempty"`
 	IOSCarousel         []RenderTemplateDtoContentIOSCarouselItem    `json:"ios_carousel,omitempty"`
 	AndroidLiveUpdate   *RenderTemplateDtoContentAndroidLiveUpdate   `json:"android_live_update,omitempty"`
 	Voip                *bool                                        `json:"voip,omitempty"`
@@ -8114,7 +8150,7 @@ type SetPreferencesDto struct {
 type SetPreferencesDtoPreferencesItem struct {
 	// Zorunlu.
 	Category string `json:"category"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string `json:"channel,omitempty"`
 	// Zorunlu.
 	OptedIn bool `json:"opted_in"`
@@ -8130,7 +8166,7 @@ type SMSKeyword struct {
 	Scope string `json:"scope"`
 	// Zorunlu.
 	AppID *string `json:"app_id"`
-	// Zorunlu. Değerler: "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels []string `json:"channels"`
 	// Zorunlu.
 	Actions map[string]any `json:"actions"`
@@ -8213,7 +8249,7 @@ type Subscription struct {
 	AppID string `json:"app_id"`
 	// Zorunlu.
 	UserID *string `json:"user_id"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	Token string `json:"token"`
@@ -8357,7 +8393,7 @@ type Suppression struct {
 	ID string `json:"id"`
 	// Zorunlu.
 	AppID string `json:"app_id"`
-	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel string `json:"channel"`
 	// Zorunlu.
 	ValueMasked string `json:"value_masked"`
@@ -8596,7 +8632,7 @@ type Template struct {
 	AppID string `json:"app_id"`
 	// Zorunlu.
 	Name string `json:"name"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string `json:"channel"`
 	// Zorunlu.
 	CurrentVersion int64 `json:"current_version"`
@@ -8893,7 +8929,7 @@ type UpdateAppDtoSettingsFrequencyCapsItem struct {
 	Max int64 `json:"max"`
 	// Zorunlu.
 	Window UpdateAppDtoSettingsFrequencyCapsItemWindow `json:"window"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels []string `json:"channels,omitempty"`
 }
 
@@ -9110,7 +9146,7 @@ type UpdateCatalogDto struct {
 type UpdateCategoryDto struct {
 	Name        map[string]string `json:"name,omitempty"`
 	Description map[string]string `json:"description,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels       []string `json:"channels,omitempty"`
 	DefaultOptedIn *bool    `json:"default_opted_in,omitempty"`
 	Position       *int64   `json:"position,omitempty"`
@@ -9269,7 +9305,7 @@ type UpdateJourneyDto struct {
 // UpdateKeywordDto: UpdateKeywordDto şeması.
 type UpdateKeywordDto struct {
 	Keyword *string `json:"keyword,omitempty"`
-	// Değerler: "sms", "whatsapp", "rcs".
+	// Değerler: "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels    []string                 `json:"channels,omitempty"`
 	Actions     *UpdateKeywordDtoActions `json:"actions,omitempty"`
 	Enabled     *bool                    `json:"enabled,omitempty"`
@@ -9459,7 +9495,7 @@ type UpdateSavedReportDtoDefinitionSort struct {
 // UpdateTemplateDto: UpdateTemplateDto şeması.
 type UpdateTemplateDto struct {
 	Name *string `json:"name,omitempty"`
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string                   `json:"channel,omitempty"`
 	Tags    []string                  `json:"tags,omitempty"`
 	Content *UpdateTemplateDtoContent `json:"content,omitempty"`
@@ -9525,6 +9561,8 @@ type UpdateTemplateDtoContent struct {
 	RcsContentSid       *string                                      `json:"rcs_content_sid,omitempty"`
 	RcsContentVariables map[string]string                            `json:"rcs_content_variables,omitempty"`
 	RcsFallbackText     map[string]string                            `json:"rcs_fallback_text,omitempty"`
+	MessengerImageURL   *string                                      `json:"messenger_image_url,omitempty"`
+	MessengerButtons    []any                                        `json:"messenger_buttons,omitempty"`
 	IOSCarousel         []UpdateTemplateDtoContentIOSCarouselItem    `json:"ios_carousel,omitempty"`
 	AndroidLiveUpdate   *UpdateTemplateDtoContentAndroidLiveUpdate   `json:"android_live_update,omitempty"`
 	Voip                *bool                                        `json:"voip,omitempty"`
@@ -10155,7 +10193,7 @@ type User struct {
 	UpdatedAt string `json:"updated_at"`
 	// Zorunlu.
 	SubscriptionCount int64 `json:"subscription_count"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels []string `json:"channels"`
 }
 
@@ -10195,7 +10233,7 @@ type UserDetail struct {
 	UpdatedAt string `json:"updated_at"`
 	// Zorunlu.
 	SubscriptionCount int64 `json:"subscription_count"`
-	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Zorunlu. Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channels []string `json:"channels"`
 	// Zorunlu.
 	Aliases []UserDetailAliasesItem `json:"aliases"`

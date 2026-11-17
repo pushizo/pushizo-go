@@ -52,6 +52,7 @@ type services struct {
 	LandingPages        *LandingPagesService
 	LiveActivities      *LiveActivitiesService
 	Mcp                 *McpService
+	MessengerLinks      *MessengerLinksService
 	Predictions         *PredictionsService
 	Preferences         *PreferencesService
 	PromoCodeLists      *PromoCodeListsService
@@ -108,6 +109,7 @@ func (c *Client) initServices() {
 	c.LandingPages = &LandingPagesService{client: c}
 	c.LiveActivities = &LiveActivitiesService{client: c}
 	c.Mcp = &McpService{client: c}
+	c.MessengerLinks = &MessengerLinksService{client: c}
 	c.Predictions = &PredictionsService{client: c}
 	c.Preferences = &PreferencesService{client: c}
 	c.PromoCodeLists = &PromoCodeListsService{client: c}
@@ -1050,7 +1052,7 @@ type TemplatesListParams struct {
 	Limit  *int64
 	Cursor *string
 	Q      *string
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string
 }
 
@@ -1257,7 +1259,7 @@ type CampaignsListParams struct {
 	Status *string
 	// Değerler: "one_time", "scheduled", "recurring", "automated", "transactional".
 	Type *string
-	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs".
+	// Değerler: "ios_push", "android_push", "hms_push", "adm_push", "wns_push", "web_push", "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string
 	Label   *string
 }
@@ -1946,7 +1948,7 @@ func (s *InboxService) UpdateSettings(ctx context.Context, body *InboxSettingsUp
 type InboxMetricsParams struct {
 	From *string
 	To   *string
-	// Değerler: "sms", "whatsapp", "rcs", "email", "chat".
+	// Değerler: "sms", "whatsapp", "rcs", "telegram", "viber", "email", "chat".
 	Channel *string
 }
 
@@ -2087,7 +2089,7 @@ type SuppressionsService struct {
 type SuppressionsListParams struct {
 	Limit  *int64
 	Cursor *string
-	// Değerler: "email", "sms", "whatsapp", "rcs".
+	// Değerler: "email", "sms", "whatsapp", "rcs", "telegram", "viber".
 	Channel *string
 	// Değerler: "bounce", "complaint", "manual", "unsubscribe_link", "stop".
 	Reason *string
@@ -4646,7 +4648,7 @@ type ConversationsService struct {
 type ConversationsListParams struct {
 	Limit  *int64
 	Cursor *string
-	// Değerler: "sms", "whatsapp", "rcs", "email", "chat".
+	// Değerler: "sms", "whatsapp", "rcs", "telegram", "viber", "email", "chat".
 	Channel *string
 	// Değerler: "open", "pending", "resolved", "closed".
 	Status *string
@@ -6737,6 +6739,30 @@ func (s *McpService) TestSend(ctx context.Context, body *TestPushDto, opts ...Re
 	}
 	op.body = body
 	var out CreateNotificationResult
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// MessengerLinksService: messengerLinks kaynağı.
+type MessengerLinksService struct {
+	client *Client
+}
+
+// Create: Telegram/Viber abonelik bağlama derin bağlantısı (tek kullanımlık belirteç; kullanıcı bota yazınca sohbet kimliği bu kullanıcıya abonelik olarak bağlanır)
+//
+// POST /v1/apps/{appId}/messenger-links
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *MessengerLinksService) Create(ctx context.Context, body *CreateMessengerLinkDto, opts ...RequestOption) (*MessengerLink, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/messenger-links"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out MessengerLink
 	if err := s.client.do(ctx, op, ro, &out); err != nil {
 		return nil, err
 	}
