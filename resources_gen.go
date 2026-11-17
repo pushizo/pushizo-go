@@ -63,6 +63,7 @@ type services struct {
 	Verify              *VerifyService
 	Wallet              *WalletService
 	WarehouseExports    *WarehouseExportsService
+	WarehouseSegments   *WarehouseSegmentsService
 	WebCampaigns        *WebCampaignsService
 	WebPersonalizations *WebPersonalizationsService
 	Whatsapp            *WhatsappService
@@ -119,6 +120,7 @@ func (c *Client) initServices() {
 	c.Verify = &VerifyService{client: c}
 	c.Wallet = &WalletService{client: c}
 	c.WarehouseExports = &WarehouseExportsService{client: c}
+	c.WarehouseSegments = &WarehouseSegmentsService{client: c}
 	c.WebCampaigns = &WebCampaignsService{client: c}
 	c.WebPersonalizations = &WebPersonalizationsService{client: c}
 	c.Whatsapp = &WhatsappService{client: c}
@@ -8280,6 +8282,274 @@ func (s *WarehouseExportsService) RunsAll(ctx context.Context, exportID string, 
 			p.Cursor = cursor
 		}
 		page, err := s.Runs(ctx, exportID, &p, opts...)
+		if err != nil {
+			return nil, nil, false, err
+		}
+		return page.Data, page.NextCursor, page.HasMore, nil
+	})
+}
+
+// WarehouseSegmentsService: warehouseSegments kaynağı.
+type WarehouseSegmentsService struct {
+	client *Client
+}
+
+// Options: Ambar segmenti seçenekleri ve sınırlar
+//
+// GET /v1/apps/{appId}/warehouse-segments/options
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) Options(ctx context.Context, opts ...RequestOption) (*WarehouseSegmentOptions, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/warehouse-segments/options"}
+	var out WarehouseSegmentOptions
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListConnections: Ambar bağlantıları
+//
+// GET /v1/apps/{appId}/warehouse-segments/connections
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) ListConnections(ctx context.Context, opts ...RequestOption) (*WarehouseSegmentConnectionList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/warehouse-segments/connections"}
+	var out WarehouseSegmentConnectionList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateConnection: Ambar bağlantısı oluştur
+//
+// POST /v1/apps/{appId}/warehouse-segments/connections
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) CreateConnection(ctx context.Context, body *CreateWarehouseConnectionDto, opts ...RequestOption) (*WarehouseSegmentConnection, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/warehouse-segments/connections"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WarehouseSegmentConnection
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetConnection: Ambar bağlantısı detayı
+//
+// GET /v1/apps/{appId}/warehouse-segments/connections/{connectionId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) GetConnection(ctx context.Context, connectionID string, opts ...RequestOption) (*WarehouseSegmentConnection, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/warehouse-segments/connections/{connectionId}"}
+	op.pathParams = map[string]string{"connectionId": connectionID}
+	var out WarehouseSegmentConnection
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateConnection: Ambar bağlantısını güncelle
+//
+// PATCH /v1/apps/{appId}/warehouse-segments/connections/{connectionId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) UpdateConnection(ctx context.Context, connectionID string, body *UpdateWarehouseConnectionDto, opts ...RequestOption) (*WarehouseSegmentConnection, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/warehouse-segments/connections/{connectionId}"}
+	op.pathParams = map[string]string{"connectionId": connectionID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WarehouseSegmentConnection
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RemoveConnection: Ambar bağlantısını sil
+//
+// DELETE /v1/apps/{appId}/warehouse-segments/connections/{connectionId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) RemoveConnection(ctx context.Context, connectionID string, opts ...RequestOption) (*Ok, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "DELETE", path: "/v1/apps/{appId}/warehouse-segments/connections/{connectionId}"}
+	op.pathParams = map[string]string{"connectionId": connectionID}
+	var out Ok
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// TestConnection: Ambar bağlantısını dene
+//
+// POST /v1/apps/{appId}/warehouse-segments/connections/{connectionId}/test
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) TestConnection(ctx context.Context, connectionID string, opts ...RequestOption) (*WarehouseSegmentConnectionTest, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/warehouse-segments/connections/{connectionId}/test"}
+	op.pathParams = map[string]string{"connectionId": connectionID}
+	var out WarehouseSegmentConnectionTest
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Preview: Ambar sorgusunu önizle (dry-run veya örnek)
+//
+// POST /v1/apps/{appId}/warehouse-segments/preview
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) Preview(ctx context.Context, body *PreviewWarehouseQueryDto, opts ...RequestOption) (*WarehouseSegmentPreview, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/warehouse-segments/preview"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out WarehouseSegmentPreview
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListSegments: Ambar segmentleri
+//
+// GET /v1/apps/{appId}/warehouse-segments/segments
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) ListSegments(ctx context.Context, opts ...RequestOption) (*WarehouseSegmentList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/warehouse-segments/segments"}
+	var out WarehouseSegmentList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// CreateSegment: Ambar segmenti oluştur
+//
+// POST /v1/apps/{appId}/warehouse-segments/segments
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) CreateSegment(ctx context.Context, body *CreateWarehouseSegmentDto, opts ...RequestOption) (*Segment, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/warehouse-segments/segments"}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Segment
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateSegment: Ambar segmentini güncelle
+//
+// PATCH /v1/apps/{appId}/warehouse-segments/segments/{segmentId}
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) UpdateSegment(ctx context.Context, segmentID string, body *UpdateWarehouseSegmentDto, opts ...RequestOption) (*Segment, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "PATCH", path: "/v1/apps/{appId}/warehouse-segments/segments/{segmentId}"}
+	op.pathParams = map[string]string{"segmentId": segmentID}
+	if body == nil {
+		return nil, errNilBody
+	}
+	op.body = body
+	var out Segment
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Refresh: Ambar segmentini yenileme kuyruğuna al
+//
+// POST /v1/apps/{appId}/warehouse-segments/segments/{segmentId}/refresh
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) Refresh(ctx context.Context, segmentID string, opts ...RequestOption) (*Segment, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "POST", path: "/v1/apps/{appId}/warehouse-segments/segments/{segmentId}/refresh"}
+	op.pathParams = map[string]string{"segmentId": segmentID}
+	var out Segment
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// WarehouseSegmentsRunsParams: WarehouseSegmentsService.Runs için isteğe bağlı sorgu parametreleri.
+type WarehouseSegmentsRunsParams struct {
+	SegmentID    *string
+	ConnectionID *string
+	// Değerler: "ok", "rejected", "timeout", "failed".
+	Status *string
+	Limit  *int64
+	Cursor *string
+}
+
+func (p *WarehouseSegmentsRunsParams) appendQuery(q url.Values) {
+	if p == nil {
+		return
+	}
+	addQuery(q, "segment_id", p.SegmentID)
+	addQuery(q, "connection_id", p.ConnectionID)
+	addQuery(q, "status", p.Status)
+	addQuery(q, "limit", p.Limit)
+	addQuery(q, "cursor", p.Cursor)
+}
+
+// Runs: Ambar sorgu kaydı
+//
+// GET /v1/apps/{appId}/warehouse-segments/runs
+//
+// App kapsamı istemcinin varsayılan app’i veya ForApp seçeneğidir.
+func (s *WarehouseSegmentsService) Runs(ctx context.Context, params *WarehouseSegmentsRunsParams, opts ...RequestOption) (*WarehouseSegmentRunList, error) {
+	ro := s.client.requestConfig(opts)
+	op := &operation{method: "GET", path: "/v1/apps/{appId}/warehouse-segments/runs"}
+	op.query = url.Values{}
+	params.appendQuery(op.query)
+	var out WarehouseSegmentRunList
+	if err := s.client.do(ctx, op, ro, &out); err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RunsAll: Runs sonuçlarını next_cursor ile tüm sayfalar boyunca tek tek döndürür.
+// Hata olursa döngü (sıfır değer, hata) ile biter.
+func (s *WarehouseSegmentsService) RunsAll(ctx context.Context, params *WarehouseSegmentsRunsParams, opts ...RequestOption) iter.Seq2[WarehouseSegmentRunListDataItem, error] {
+	var p WarehouseSegmentsRunsParams
+	if params != nil {
+		p = *params
+	}
+	return paginate(func(cursor *string) ([]WarehouseSegmentRunListDataItem, *string, bool, error) {
+		if cursor != nil {
+			p.Cursor = cursor
+		}
+		page, err := s.Runs(ctx, &p, opts...)
 		if err != nil {
 			return nil, nil, false, err
 		}
